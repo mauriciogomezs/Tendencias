@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tendencias del Sector Postal - Análisis Integral</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base styles - Tailwind will handle most of this */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.7;
+            color: #1e293b; /* slate-900 */
+            overflow-x: hidden;
+        }
+        
+        /* Scroll suave */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Fixed header specific styles */
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.8); /* bg-white/80 */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08); /* shadow-lg */
+            z-index: 1000;
+            padding: 1rem 2rem;
+            border-bottom-left-radius: 1.5rem; /* rounded-bl-2xl */
+            border-bottom-right-radius: 1.5rem; /* rounded-br-2xl */
+        }
+        
+        .header-content {
+            max-width: 1280px; /* max-w-screen-xl */
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Lora', serif;
+            font-size: 1.8rem; /* text-2xl */
+            font-weight: 700; /* font-bold */
+            color: #4f46e5; /* text-indigo-600 */
+            text-decoration: none;
+        }
+        
+        nav {
+            display: flex;
+            gap: 1.5rem; /* gap-6 */
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #475569; /* text-slate-600 */
+            font-weight: 500; /* font-medium */
+            font-size: 0.95rem; /* text-base */
+            padding: 0.75rem 1.25rem; /* px-5 py-3 */
+            border-radius: 0.75rem; /* rounded-xl */
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        nav a:hover {
+            background-color: #f1f5f9; /* bg-slate-100 */
+            color: #4f46e5; /* text-indigo-600 */
+        }
+        
+        nav a.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6); /* bg-gradient-to-br from-indigo-500 to-violet-600 */
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4); /* shadow-md */
+        }
+        
+        .main-container {
+            max-width: 1280px; /* max-w-screen-xl */
+            margin: 100px auto 0; /* mt-24 */
+            padding: 2rem; /* p-8 */
+        }
+        
+        .section {
+            min-height: 100vh;
+            padding: 4rem 0; /* py-16 */
+            scroll-margin-top: 100px; /* mt-24 for fixed header */
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem; /* mb-16 */
+        }
+        
+        .section-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6); /* bg-gradient-to-br from-indigo-500 to-violet-600 */
+            color: white;
+            padding: 0.5rem 1.5rem; /* px-6 py-2 */
+            border-radius: 9999px; /* rounded-full */
+            font-size: 0.9rem; /* text-sm */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 1rem; /* mb-4 */
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+        
+        .section-title {
+            font-family: 'Lora', serif;
+            font-size: 3.5rem; /* text-5xl */
+            font-weight: 700; /* font-bold */
+            color: #1e293b; /* text-slate-900 */
+            margin-bottom: 1rem; /* mb-4 */
+            line-height: 1.2;
+        }
+        
+        .section-subtitle {
+            font-size: 1.25rem; /* text-xl */
+            color: #475569; /* text-slate-600 */
+            max-width: 768px; /* max-w-3xl */
+            margin: 0 auto;
+            font-weight: 400;
+        }
+        
+        .content-card {
+            border-radius: 1.5rem; /* rounded-2xl */
+            padding: 2.5rem; /* p-10 */
+            margin-bottom: 2rem; /* mb-8 */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08); /* shadow-xl */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12); /* shadow-2xl */
+        }
+        
+        .card-title {
+            font-family: 'Lora', serif;
+            font-size: 2.25rem; /* text-3xl */
+            color: #1e293b; /* text-slate-900 */
+            margin-bottom: 1rem; /* mb-4 */
+            font-weight: 600; /* font-semibold */
+        }
+        
+        .card-text {
+            font-size: 1.125rem; /* text-lg */
+            line-height: 1.8;
+            color: #334155; /* text-slate-700 */
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem; /* gap-6 */
+            margin: 2rem 0; /* my-8 */
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6); /* bg-gradient-to-br from-indigo-500 to-violet-600 */
+            color: white;
+            padding: 2rem; /* p-8 */
+            border-radius: 0.75rem; /* rounded-xl */
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12); /* shadow-lg */
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: scale(1.03);
+        }
+        
+        .stat-number {
+            font-size: 3.5rem; /* text-5xl */
+            font-weight: 800; /* font-extrabold */
+            margin-bottom: 0.5rem; /* mb-2 */
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 1.125rem; /* text-lg */
+            opacity: 0.95;
+            line-height: 1.4;
+        }
+        
+        .highlight-box {
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-left: 4px solid #f59e0b; /* border-yellow-500 */
+            padding: 2rem; /* p-8 */
+            margin: 2rem 0; /* my-8 */
+            border-radius: 0 0.75rem 0.75rem 0; /* rounded-r-xl */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* shadow-md */
+        }
+        
+        .highlight-title {
+            font-weight: 600; /* font-semibold */
+            color: #92400e; /* text-yellow-800 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            font-size: 1.25rem; /* text-xl */
+        }
+        
+        .highlight-text {
+            color: #78350f; /* text-yellow-700 */
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+        
+        .icon-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 1.5rem; /* mt-6 */
+            line-height: 1.8;
+            color: #334155; /* text-slate-700 */
+            font-size: 1.05rem;
+        }
+        
+        .icon-list li {
+            padding: 1rem 0; /* py-4 */
+            padding-left: 2.5rem; /* pl-10 */
+            position: relative;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            border-bottom: 1px solid #e2e8f0; /* border-slate-200 */
+        }
+        
+        .icon-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .icon-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #6366f1; /* text-indigo-500 */
+            font-weight: 700; /* font-bold */
+            font-size: 1.4rem; /* text-2xl */
+        }
+        
+        .case-study {
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 2px solid #34d399; /* border-emerald-400 */
+            padding: 2rem; /* p-8 */
+            margin: 2rem 0; /* my-8 */
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* shadow-md */
+        }
+        
+        .case-study-title {
+            color: #065f46; /* text-emerald-800 */
+            font-size: 1.3rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 1rem; /* mb-4 */
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; /* gap-3 */
+        }
+        
+        .case-study-title::before {
+            content: "✓";
+            background: #10b981; /* bg-emerald-500 */
+            color: white;
+            width: 32px; /* w-8 */
+            height: 32px; /* h-8 */
+            border-radius: 9999px; /* rounded-full */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700; /* font-bold */
+            font-size: 1.125rem; /* text-lg */
+            flex-shrink: 0;
+        }
+        
+        .chart-box {
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* shadow-sm */
+            margin: 2rem 0; /* my-8 */
+        }
+        
+        .chart-title {
+            text-align: center;
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 600; /* font-semibold */
+            color: #1e293b; /* text-slate-900 */
+            margin-bottom: 2rem; /* mb-8 */
+        }
+        
+        .progress-bar {
+            background: #e2e8f0; /* bg-slate-200 */
+            height: 40px; /* h-10 */
+            border-radius: 9999px; /* rounded-full */
+            overflow: hidden;
+            margin: 1rem 0; /* my-4 */
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6); /* bg-gradient-to-r from-indigo-500 to-violet-600 */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 1.5rem; /* pr-6 */
+            color: white;
+            font-weight: 600; /* font-semibold */
+            transition: width 1s ease;
+            font-size: 1.125rem; /* text-lg */
+        }
+        
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem; /* gap-6 */
+            margin: 2rem 0; /* my-8 */
+        }
+        
+        .platform-card {
+            border: 2px solid #e2e8f0; /* border-slate-200 */
+            padding: 1.5rem; /* p-6 */
+            border-radius: 0.75rem; /* rounded-xl */
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .platform-card:hover {
+            border-color: #6366f1; /* border-indigo-500 */
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12); /* shadow-md */
+        }
+        
+        .platform-name {
+            font-weight: 600; /* font-semibold */
+            font-size: 1.25rem; /* text-xl */
+            color: #1e293b; /* text-slate-900 */
+            margin-bottom: 0.5rem; /* mb-2 */
+        }
+        
+        .platform-tag {
+            display: inline-block;
+            background: #6366f1; /* bg-indigo-500 */
+            color: white;
+            padding: 0.3rem 1rem; /* px-4 py-1 */
+            border-radius: 9999px; /* rounded-full */
+            font-size: 0.85rem; /* text-sm */
+            margin-top: 0.5rem; /* mt-2 */
+        }
+        
+        footer {
+            color: white;
+            padding: 3rem; /* p-12 */
+            text-align: center;
+            margin-top: 4rem; /* mt-16 */
+            border-top-left-radius: 1.5rem; /* rounded-tl-2xl */
+            border-top-right-radius: 1.5rem; /* rounded-tr-2xl */
+        }
+        
+        /* Animaciones */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .fixed-header {
+                padding: 1rem;
+            }
+            
+            nav {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .section-title {
+                font-size: 2.5rem; /* text-4xl */
+            }
+            
+            .section-subtitle {
+                font-size: 1rem; /* text-base */
+            }
+
+            .content-card {
+                padding: 1.5rem; /* p-6 */
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .card-title {
+                font-size: 1.8rem; /* text-2xl */
+            }
+            .card-text {
+                font-size: 1rem; /* text-base */
+            }
+            .stat-number {
+                font-size: 3rem; /* text-4xl */
+            }
+            .stat-label {
+                font-size: 0.9rem; /* text-sm */
+            }
+        }
+        
+        /* Estilos para tarjetas de navegación */
+        .nav-card {
+            text-decoration: none;
+            padding: 2.5rem; /* p-10 */
+            border-radius: 1.5rem; /* rounded-2xl */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08); /* shadow-xl */
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: block;
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-10px); /* -translate-y-2.5 */
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15); /* shadow-2xl */
+            border-color: #6366f1; /* border-indigo-500 */
+        }
+    </style>
+</head>
+<body class="antialiased bg-gradient-to-br from-slate-50 to-slate-100">
+
+    <!-- Header fijo con navegación -->
+    <header class="fixed-header">
+        <div class="header-content">
+            <a href="#" class="logo">📮 Sector Postal</a>
+            <nav>
+                <a href="#badge-introduccion" class="nav-link">Introducción</a>
+                <a href="#tecnologias" class="nav-link">Tecnologías</a>
+                <a href="#industria" class="nav-link">Industria</a>
+                <a href="#gobernanza" class="nav-link">Gobernanza</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-container">
+
+        <!-- SECCIÓN INTRODUCTORIA -->
+        <section id="introduccion" class="section">
+
+             <!-- Título y subtítulo movidos aquí -->
+            <div class="text-center my-16">
+                <h1 class="section-title">La Evolución del Sector Postal</h1>
+                <p class="section-subtitle">De la correspondencia tradicional a la infraestructura crítica del ecosistema digital</p>
+            </div>
+
+            <!-- Mapa de Navegación -->
+            <div class="content-card bg-gradient-to-br from-slate-50/70 to-slate-100/70 border-2 border-indigo-500 shadow-xl hover:shadow-2xl hover:translate-y-0">
+                 
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <a href="#badge-introduccion" class="nav-card bg-gradient-to-br from-white to-slate-50">
+                        <div class="text-5xl text-center mb-4">📮</div>
+                        <h3 class="text-orange-600 text-center mb-4 text-2xl font-lora font-semibold">Introducción</h3>
+                        <p class="text-slate-600 text-center leading-relaxed text-base">
+                            Contexto general, dimensión del cambio y los tres ejes de transformación
+                        </p>
+                    </a>
+                
+                    <a href="#tecnologias" class="nav-card bg-gradient-to-br from-white to-slate-50">
+                        <div class="text-5xl text-center mb-4">🤖</div>
+                        <h3 class="text-indigo-600 text-center mb-4 text-2xl font-lora font-semibold">Tecnologías</h3>
+                        <p class="text-slate-600 text-center leading-relaxed text-base">
+                            Automatización, IA, billeteras digitales, e-commerce y transformación de última milla
+                        </p>
+                    </a>
+                    
+                    <a href="#industria" class="nav-card bg-gradient-to-br from-white to-slate-50">
+                        <div class="text-5xl text-center mb-4">🏭</div>
+                        <h3 class="text-emerald-600 text-center mb-4 text-2xl font-lora font-semibold">Industria</h3>
+                        <p class="text-slate-600 text-center leading-relaxed text-base">
+                            Modelos híbridos, interoperabilidad, inclusión financiera y casos internacionales
+                        </p>
+                    </a>
+                    
+                    <a href="#gobernanza" class="nav-card bg-gradient-to-br from-white to-slate-50">
+                        <div class="text-5xl text-center mb-4">⚖️</div>
+                        <h3 class="text-violet-600 text-center mb-4 text-2xl font-lora font-semibold">Gobernanza</h3>
+                        <p class="text-slate-600 text-center leading-relaxed text-base">
+                            Regulación internacional, competencia, casos Colombia, Reino Unido, Francia y Turquía
+                        </p>
+                    </a>
+                </div>
+            </div>
+
+           
+
+            <div class="section-header">
+                <span id="badge-introduccion" class="section-number bg-gradient-to-br from-orange-400 to-orange-600 shadow-orange-300">Introducción</span>
+            </div>
+
+            <!-- Contexto General -->
+            <div class="content-card bg-gradient-to-br from-yellow-50/70 to-yellow-100/70 border-l-8 border-yellow-500 shadow-lg hover:shadow-xl hover:translate-y-0">
+                <p class="card-text text-xl leading-loose italic text-yellow-800">
+                    Durante siglos, los servicios postales han sido el pilar fundamental de las comunicaciones globales, conectando personas, empresas y gobiernos a través de continentes. Sin embargo, en las últimas dos décadas, este sector centenario ha enfrentado su desafío más trascendental: <strong>la revolución digital ha transformado radicalmente no solo la forma en que nos comunicamos, sino el papel mismo que juega el sector postal en la sociedad moderna.</strong>
+                </p>
+            </div>
+
+            <!-- Estadísticas de Transformación -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">📉 La Dimensión del Cambio</h2>
+                <p class="card-text">Los números revelan una transformación sin precedentes. El correo tradicional está en declive acelerado mientras nuevos servicios emergen con fuerza disruptiva:</p>
+                
+                <div class="chart-box bg-gradient-to-br from-red-50/70 to-red-100/70 border-2 border-red-400 shadow-md">
+                    <div class="chart-title text-red-800">📬 Correo Tradicional: Un Modelo en Extinción</div>
+                    <div class="text-center py-8">
+                        <div class="text-6xl font-extrabold text-red-600 mb-4">-29%</div>
+                        <p class="text-xl text-red-700 mb-8">Caída proyectada del volumen de correo entre 2025-2035</p>
+                        <div class="bg-white p-6 rounded-lg max-w-xl mx-auto shadow-sm">
+                            <p class="text-red-800 text-base leading-relaxed">
+                                La digitalización de comunicaciones y documentos ha desplazado masivamente el correo físico. Los emails, mensajería instantánea y documentos electrónicos han sustituido cartas, facturas y correspondencia corporativa.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-box bg-gradient-to-br from-emerald-50/70 to-emerald-100/70 border-2 border-emerald-400 shadow-md mt-8">
+                    <div class="chart-title text-emerald-800">📦 Paquetería y E-commerce: El Nuevo Motor</div>
+                    <div class="text-center py-8">
+                        <div class="text-6xl font-extrabold text-emerald-600 mb-4">+6.8%</div>
+                        <p class="text-xl text-emerald-700 mb-8">Crecimiento del volumen de paquetería en 2023</p>
+                        <div class="bg-white p-6 rounded-lg max-w-xl mx-auto shadow-sm">
+                            <p class="text-emerald-800 text-base leading-relaxed">
+                                El comercio electrónico ha generado una explosión de demanda de servicios de paquetería y última milla, compensando parcialmente la caída del correo tradicional y abriendo nuevas oportunidades de negocio.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tres Ejes de Transformación -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🔄 Los Tres Ejes de la Transformación Postal</h2>
+                <p class="card-text mb-10">La metamorfosis del sector postal se articula en tres dimensiones interconectadas que están redefiniendo completamente su naturaleza, operación y marco regulatorio:</p>
+
+                <!-- EJE 1: TECNOLOGÍAS -->
+                <div class="bg-gradient-to-br from-blue-50/70 to-blue-100/70 border-l-8 border-blue-500 p-8 rounded-xl mb-8 shadow-md">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold flex-shrink-0">1</div>
+                        <h3 class="text-blue-700 text-2xl font-lora font-semibold m-0">Revolución Tecnológica</h3>
+                    </div>
+                    <p class="text-blue-800 leading-relaxed text-lg mb-6">
+                        La automatización, inteligencia artificial, robótica y blockchain están transformando radicalmente las operaciones postales. Los sistemas tradicionales de clasificación manual ceden paso a centros de distribución automatizados capaces de procesar millones de paquetes diarios con precisión milimétrica.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div class="bg-white p-6 rounded-lg text-center shadow-sm">
+                            <div class="text-3xl font-bold text-blue-600">USD 1.950M</div>
+                            <div class="text-sm text-slate-600 mt-2">Mercado de automatización postal 2030</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg text-center shadow-sm">
+                            <div class="text-3xl font-bold text-blue-600">6.31%</div>
+                            <div class="text-sm text-slate-600 mt-2">CAGR proyectado 2023-2030</div>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside mt-6 space-y-2 text-blue-800 text-lg">
+                        <li><strong>Automatización robótica:</strong> Reducción de ciclos de procesamiento de 24 horas a 2 horas</li>
+                        <li><strong>Billeteras digitales:</strong> Integración de servicios de pago y remesas en la red postal</li>
+                        <li><strong>Última milla inteligente:</strong> Vehículos eléctricos, lockers automatizados y rutas optimizadas por IA</li>
+                        <li><strong>Tracking en tiempo real:</strong> Trazabilidad completa mediante IoT y sistemas de geolocalización</li>
+                    </ul>
+                </div>
+
+                <!-- EJE 2: INDUSTRIA -->
+                <div class="bg-gradient-to-br from-emerald-50/70 to-emerald-100/70 border-l-8 border-emerald-500 p-8 rounded-xl mb-8 shadow-md">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="bg-emerald-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold flex-shrink-0">2</div>
+                        <h3 class="text-emerald-700 text-2xl font-lora font-semibold m-0">Reconfiguración Industrial</h3>
+                    </div>
+                    <p class="text-emerald-800 leading-relaxed text-lg mb-6">
+                        El modelo de negocio postal está mutando de la distribución de correspondencia hacia ecosistemas híbridos que integran logística avanzada, servicios financieros digitales, alianzas con plataformas de e-commerce y soluciones de gobierno electrónico. La supervivencia depende de la capacidad de diversificación.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div class="bg-white p-6 rounded-lg text-center shadow-sm">
+                            <div class="text-3xl font-bold text-emerald-600">93%</div>
+                            <div class="text-sm text-slate-600 mt-2">Operadores ofrecen servicios digitales</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg text-center shadow-sm">
+                            <div class="text-3xl font-bold text-emerald-600">USD 448B</div>
+                            <div class="text-sm text-slate-600 mt-2">Potencial digitalización pagos LATAM</div>
+                        </div>
+                    </div>
+                    <ul class="list-disc list-inside mt-6 space-y-2 text-emerald-800 text-lg">
+                        <li><strong>Modelos híbridos:</strong> Convergencia postal-logística-financiera-digital en un solo ecosistema</li>
+                        <li><strong>Interoperabilidad:</strong> 650.000+ oficinas postales globales como "puente digital" para inclusión</li>
+                        <li><strong>Plataformas digitales:</strong> Amazon, Alibaba y MercadoLibre como socios y competidores simultáneos</li>
+                        <li><strong>Inclusión financiera:</strong> La red postal como canal de servicios bancarios en zonas remotas</li>
+                    </ul>
+                </div>
+
+                <!-- EJE 3: GOBERNANZA -->
+                <div class="bg-gradient-to-br from-violet-50/70 to-violet-100/70 border-l-8 border-violet-500 p-8 rounded-xl shadow-md">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="bg-violet-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-2xl font-bold flex-shrink-0">3</div>
+                        <h3 class="text-violet-700 text-2xl font-lora font-semibold m-0">Evolución del Marco Regulatorio</h3>
+                    </div>
+                    <p class="text-violet-800 leading-relaxed text-lg mb-6">
+                        Los marcos normativos tradicionales se vuelven obsoletos ante la convergencia sectorial. La regulación debe evolucionar para garantizar competencia leal entre operadores tradicionales y plataformas tecnológicas, proteger a los consumidores, promover la interoperabilidad y mantener la viabilidad del servicio universal en la era digital.
+                    </p>
+                    <ul class="list-disc list-inside mt-6 space-y-2 text-violet-800 text-lg">
+                        <li><strong>Actualización UPU:</strong> Nuevos reglamentos de servicios financieros postales y guías para productos digitales</li>
+                        <li><strong>Competencia:</strong> Supervisión de plataformas dominantes (Apple Pay, Google Pay) y garantía de acceso justo</li>
+                        <li><strong>Flexibilización:</strong> Adaptación de obligaciones de servicio universal a la realidad del mercado actual</li>
+                        <li><strong>Convergencia regulatoria:</strong> Europa prepara "Delivery Act" que integra postal, logística y plataformas</li>
+                        <li><strong>Colombia:</strong> CRC Res. 7380 introduce libertad regulada en tarifas y habilita diversificación de servicios</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- El Imperativo de Adaptación -->
+            <div class="content-card bg-gradient-to-br from-indigo-700 to-violet-800 text-white shadow-xl hover:shadow-2xl hover:translate-y-0">
+                <h2 class="card-title text-white border-l-8 border-white pl-6">⚡ El Imperativo de la Adaptación</h2>
+                <p class="text-xl leading-loose mb-8">
+                    La transformación del sector postal no es opcional: es existencial. Los operadores enfrentan una encrucijada donde deben simultáneamente:
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                    <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20 shadow-lg">
+                        <div class="text-4xl mb-2">🔧</div>
+                        <div class="font-semibold mb-2 text-xl">Modernizar tecnología</div>
+                        <p class="text-base opacity-90 leading-relaxed">Invertir en automatización, IA y digitalización de procesos operativos</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20 shadow-lg">
+                        <div class="text-4xl mb-2">💼</div>
+                        <div class="font-semibold mb-2 text-xl">Diversificar ingresos</div>
+                        <p class="text-base opacity-90 leading-relaxed">Expandirse a servicios financieros, logística avanzada y soluciones digitales</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20 shadow-lg">
+                        <div class="text-4xl mb-2">🤝</div>
+                        <div class="font-semibold mb-2 text-xl">Colaborar estratégicamente</div>
+                        <p class="text-base opacity-90 leading-relaxed">Establecer alianzas con plataformas de e-commerce y fintechs</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/20 shadow-lg">
+                        <div class="text-4xl mb-2">⚖️</div>
+                        <div class="font-semibold mb-2 text-xl">Navegar regulación</div>
+                        <p class="text-base opacity-90 leading-relaxed">Adaptarse a marcos normativos en constante evolución</p>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 p-8 rounded-xl mt-10 border-2 border-white/10 shadow-inner">
+                    <p class="text-xl leading-relaxed text-center font-medium m-0">
+                        "Los operadores postales que logren integrar exitosamente tecnología, innovación y colaboración estratégica no solo sobrevivirán a esta transformación, sino que emergerán como infraestructura crítica del ecosistema digital del siglo XXI."
+                    </p>
+                </div>
+            </div>
+
+
+        </section>
+
+        <!-- SECCIÓN 1: TECNOLOGÍAS -->
+        <section id="tecnologias" class="section">
+            <div class="section-header">
+                <span class="section-number bg-gradient-to-br from-indigo-500 to-violet-600 shadow-indigo-300">01</span>
+                <h1 class="section-title">Tecnologías Emergentes</h1>
+                <p class="section-subtitle">La transformación digital está redefiniendo el sector postal con automatización, inteligencia artificial y nuevos modelos de entrega</p>
+            </div>
+
+            <!-- Automatización Postal -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🤖 Automatización y Robótica</h2>
+                <p class="card-text">El mercado global de sistemas de automatización postal experimenta un crecimiento acelerado impulsado por el auge del comercio electrónico. La necesidad de procesar volúmenes masivos de paquetes con mayor rapidez y precisión está transformando las operaciones logísticas.</p>
+                
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <span class="stat-number">USD 1.950M</span>
+                        <span class="stat-label">Valor proyectado del mercado en 2030</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">6.31%</span>
+                        <span class="stat-label">CAGR 2023-2030 (Data Bridge)</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">7.1%</span>
+                        <span class="stat-label">CAGR según Credence Research</span>
+                    </div>
+                </div>
+
+                <p class="card-text">Tecnologías como robótica, inteligencia artificial y aprendizaje automático están revolucionando las operaciones, permitiendo entregas ágiles y servicios sin contacto mientras reducen significativamente los costos laborales.</p>
+            </div>
+
+            <!-- E-commerce y Plataformas -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🛒 E-commerce y Plataformas Digitales</h2>
+                <p class="card-text">El comercio electrónico se ha consolidado como el principal motor de transformación del sector postal. Las ventas globales alcanzaron €3,6 billones en 2023 y se proyectan €5,4 billones para 2028.</p>
+                
+                <div class="chart-box bg-gradient-to-br from-white to-slate-50">
+                    <div class="chart-title">📈 Evolución de Usuarios de E-commerce</div>
+                    <div class="flex justify-between items-center my-8">
+                        <div class="text-center">
+                            <div class="text-5xl font-extrabold text-slate-500">1.660M</div>
+                            <div class="text-slate-500">2017</div>
+                        </div>
+                        <div class="text-5xl text-indigo-500">→</div>
+                        <div class="text-center">
+                            <div class="text-5xl font-extrabold text-indigo-600">3.590M</div>
+                            <div class="text-indigo-600 font-semibold">2029</div>
+                        </div>
+                    </div>
+                    <p class="text-center text-slate-600 text-sm italic">Crecimiento del 116% en una década</p>
+                </div>
+
+                <div class="highlight-box bg-gradient-to-br from-yellow-50/70 to-yellow-100/70">
+                    <div class="highlight-title">🎯 Impacto en Paquetería</div>
+                    <p class="highlight-text">En 2023, el volumen de paquetería creció 6,8% tras una caída del 4,4% en 2022, marcando la reanudación del crecimiento post-pandemia. Los consumidores ahora demandan entregas rápidas (24-48 horas), seguimiento en tiempo real y flexibilidad en puntos de entrega.</p>
+                </div>
+
+                <h3 class="mt-8 mb-4 text-slate-900 text-2xl font-semibold">Líderes Regionales</h3>
+                <div class="platform-grid">
+                    <div class="platform-card bg-gradient-to-br from-white to-slate-50">
+                        <div class="platform-name">Amazon</div>
+                        <p class="text-slate-600 text-base">Dominio en América del Norte</p>
+                        <span class="platform-tag">América & Europa</span>
+                    </div>
+                    <div class="platform-card bg-gradient-to-br from-white to-slate-50">
+                        <div class="platform-name">Alibaba</div>
+                        <p class="text-slate-600 text-base">Líder del mercado asiático</p>
+                        <span class="platform-tag">Asia-Pacífico</span>
+                    </div>
+                    <div class="platform-card bg-gradient-to-br from-white to-slate-50">
+                        <div class="platform-name">MercadoLibre</div>
+                        <p class="text-slate-600 text-base">Plataforma dominante</p>
+                        <span class="platform-tag">América Latina</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Billeteras Digitales -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">💳 Billeteras Digitales y Banca Abierta</h2>
+                <p class="card-text">El sector postal está expandiendo su oferta hacia servicios financieros digitales. La Unión Postal Universal identifica esto como eje estratégico de sostenibilidad, aprovechando su red de más de 650.000 oficinas a nivel mundial.</p>
+                
+                <ul class="icon-list">
+                    <li><strong>Open Banking:</strong> APIs financieras permiten que operadores postales integren servicios de pago, transferencias y microcréditos</li>
+                    <li><strong>Casos exitosos:</strong> MercadoPago integra billetera digital con logística, demostrando el potencial de convergencia</li>
+                    <li><strong>India Post APT 2.0:</strong> Pagos vía UPI, verificación OTP y seguimiento en tiempo real</li>
+                    <li><strong>Correos España:</strong> Correos Cash permite ingresar/retirar dinero en 2.388 oficinas con 6.000 carteros</li>
+                </ul>
+
+                <div class="case-study bg-gradient-to-br from-emerald-50/70 to-emerald-100/70">
+                    <div class="case-study-title">Correos España: Ecosistema Fintech</div>
+                    <p class="text-emerald-800 leading-relaxed">Citypaq (taquillas inteligentes 24/7), Correos Cash (servicios financieros en zonas rurales) y una futura Entidad de Dinero Electrónico (EDE) consolidan a Correos como actor clave en el ecosistema digital financiero.</p>
+                </div>
+            </div>
+
+            <!-- Innovación Última Milla -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🚚 Innovación en Última Milla</h2>
+                <p class="card-text">La última milla representa el 40-50% de los costos logísticos totales. Los operadores están adoptando soluciones disruptivas para optimizar este eslabón crítico.</p>
+                
+                <div class="stats-container">
+                    <div class="stat-card bg-gradient-to-br from-violet-500 to-purple-600 shadow-purple-300">
+                        <span class="stat-number">40-50%</span>
+                        <span class="stat-label">Costos de última milla sobre total logístico</span>
+                    </div>
+                    <div class="stat-card bg-gradient-to-br from-pink-500 to-rose-600 shadow-rose-300">
+                        <span class="stat-number">USD 153B</span>
+                        <span class="stat-label">Mercado global de última milla postal en 2024</span>
+                    </div>
+                </div>
+
+                <div class="highlight-box bg-gradient-to-br from-yellow-50/70 to-yellow-100/70">
+                    <div class="highlight-title">🌱 Sostenibilidad Ambiental</div>
+                    <p class="highlight-text">Vehículos eléctricos, bicicletas de carga, centros de microconsolidación urbana y rutas optimizadas por IA están reduciendo la huella de carbono mientras mejoran la eficiencia operativa.</p>
+                </div>
+
+                <p class="card-text">La pandemia aceleró estas innovaciones: entregas sin contacto, lockers inteligentes, puntos de recogida automatizados y aplicaciones móviles para gestión en tiempo real se han convertido en estándares del sector.</p>
+            </div>
+
+        </section>
+
+        <!-- SECCIÓN 2: INDUSTRIA -->
+        <section id="industria" class="section">
+            <div class="section-header">
+                <span class="section-number bg-gradient-to-br from-indigo-500 to-violet-600 shadow-indigo-300">02</span>
+                <h1 class="section-title">Transformación de la Industria</h1>
+                <p class="section-subtitle">Modelos híbridos, interoperabilidad y nuevas estrategias de diversificación están redefiniendo el negocio postal</p>
+            </div>
+
+            <!-- Modelos Híbridos -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🔄 Evolución hacia Modelos Híbridos</h2>
+                <p class="card-text">La disminución sustancial del correo tradicional (caída proyectada del 29% entre 2025-2035 según USPS) está obligando a los operadores a reinventar sus modelos de negocio, integrando servicios postales, financieros, logísticos y digitales.</p>
+                
+                <div class="chart-box bg-gradient-to-br from-white to-slate-50">
+                    <div class="chart-title">📊 Cambio en la Composición de Ingresos</div>
+                    <div class="my-8">
+                        <div class="mb-6">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-semibold text-slate-800">Correo Tradicional</span>
+                                <span class="text-red-600 font-semibold">↓ 29% proyectado</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-red-500 to-red-600" style="width: 45%;">
+                                    En declive
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-semibold text-slate-800">Paquetería y Logística</span>
+                                <span class="text-emerald-600 font-semibold">↑ En crecimiento</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-emerald-500 to-emerald-600" style="width: 75%;">
+                                    Principal fuente
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="font-semibold text-slate-800">Servicios Digitales y Fintech</span>
+                                <span class="text-violet-600 font-semibold">↑ Emergente</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill bg-gradient-to-r from-violet-500 to-purple-600" style="width: 55%;">
+                                    En expansión
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="card-text">Entre 2022 y 2023, más del 60% de los operadores reportó ingresos estables o en aumento, pero solo mediante la diversificación. La inflación y los costos de transporte y mano de obra representan desafíos adicionales.</p>
+            </div>
+
+            <!-- Interoperabilidad -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🌐 Interoperabilidad: El Operador como "Puente Digital"</h2>
+                <p class="card-text">La Unión Postal Universal reporta más de 650.000 oficinas postales globalmente, la mayoría en zonas rurales. Esta capilaridad convierte a la red postal en infraestructura única para inclusión digital.</p>
+                
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <span class="stat-number">650K+</span>
+                        <span class="stat-label">Oficinas postales en el mundo</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">93%</span>
+                        <span class="stat-label">Operadores que ofrecen servicios digitales</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">60%+</span>
+                        <span class="stat-label">Operadores con ingresos estables (2022-2023)</span>
+                    </div>
+                </div>
+
+                <div class="case-study bg-gradient-to-br from-emerald-50/70 to-emerald-100/70">
+                    <div class="case-study-title">UPU: Ready to Market Interoperability Group (RMIG)</div>
+                    <p class="text-emerald-800 leading-relaxed">Este organismo busca fortalecer la cooperación entre operadores mediante estándares técnicos comunes, APIs abiertas y plataformas interoperables que faciliten servicios transfronterizos y reduzcan costos de integración.</p>
+                </div>
+            </div>
+
+            <!-- Inclusión Financiera -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🏦 Inclusión Financiera a través de la Red Postal</h2>
+                <p class="card-text">En América Latina y el Caribe, el potencial sin explotar en digitalización de pagos alcanza USD 448 mil millones (Mastercard, 2025). Los operadores postales están posicionados para capturar este mercado mediante su presencia territorial.</p>
+                
+                <div class="highlight-box bg-gradient-to-br from-yellow-50/70 to-yellow-100/70">
+                    <div class="highlight-title">💰 Oportunidad Regional</div>
+                    <p class="highlight-text">La baja bancarización formal persiste en la región. Los smartphones y el acceso a internet móvil han facilitado la adopción de aplicaciones financieras digitales, pero millones de personas aún carecen de acceso a servicios bancarios tradicionales.</p>
+                </div>
+
+                <ul class="icon-list">
+                    <li><strong>Billeteras móviles:</strong> Democratización de pagos, transferencias y recargas</li>
+                    <li><strong>Convergencia postal-fintech:</strong> Alianzas estratégicas para distribución de efectivo y servicios digitales</li>
+                    <li><strong>Ventaja competitiva:</strong> Presencia física en zonas rurales donde fintechs no operan</li>
+                    <li><strong>Modelo híbrido:</strong> Servicios digitales con respaldo físico de la red postal</li>
+                </ul>
+            </div>
+
+            <!-- Diversificación Internacional -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🌍 Casos Internacionales de Diversificación</h2>
+                <p class="card-text">Operadores líderes han demostrado que la integración de servicios financieros, logísticos y digitales no solo es viable, sino esencial para la sostenibilidad a largo plazo.</p>
+                
+                <div class="case-study mb-6 bg-gradient-to-br from-emerald-50/70 to-emerald-100/70">
+                    <div class="case-study-title">La Poste (Francia)</div>
+                    <p class="text-emerald-800 leading-relaxed">Consolidó un ecosistema donde La Banque Postale, entrega de última milla y servicios digitales coexisten. Maneja más de 20 millones de cuentas bancarias, generando €30 mil millones anuales en ingresos combinados.</p>
+                </div>
+
+                <div class="case-study mb-6 bg-gradient-to-br from-emerald-50/70 to-emerald-100/70">
+                    <div class="case-study-title">India Post Payments Bank (IPPB)</div>
+                    <p class="text-emerald-800 leading-relaxed">Combina banca móvil de bajo costo con más de 130.000 oficinas postales rurales, facilitando inclusión financiera masiva en zonas sin servicios bancarios tradicionales.</p>
+                </div>
+
+                <div class="case-study bg-gradient-to-br from-emerald-50/70 to-emerald-100/70">
+                    <div class="case-study-title">Pitney Bowes - Designed Delivery (2022)</div>
+                    <p class="text-emerald-800 leading-relaxed">Plataforma de entrega regional que utiliza red modular de e-commerce global, demostrando la viabilidad de soluciones tecnológicas escalables para mercados fragmentados.</p>
+                </div>
+
+                <p class="card-text mt-8">Estas experiencias ofrecen un camino estratégico para operadores latinoamericanos como 4-72 (Colombia), Correios (Brasil) y Sepomex (México) que enfrentan limitaciones fiscales y competencia de plataformas digitales.</p>
+            </div>
+
+            <!-- Rol de Plataformas -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">📦 Plataformas Digitales: Cliente y Competidor</h2>
+                <p class="card-text">Amazon, Alibaba, MercadoLibre y JD.com han evolucionado de intermediarios comerciales a sistemas integrados que articulan producción, distribución y servicios financieros. Su relación con el sector postal es dual: grandes clientes y competidores directos.</p>
+                
+                <div class="stats-container">
+                    <div class="stat-card bg-gradient-to-br from-orange-500 to-yellow-600 shadow-yellow-300">
+                        <span class="stat-number">USD 6.86T</span>
+                        <span class="stat-label">E-commerce global proyectado 2025</span>
+                    </div>
+                    <div class="stat-card bg-gradient-to-br from-cyan-500 to-teal-600 shadow-teal-300">
+                        <span class="stat-number">7-8%</span>
+                        <span class="stat-label">CAGR estimado 2025-2027</span>
+                    </div>
+                </div>
+
+                <div class="highlight-box bg-gradient-to-br from-yellow-50/70 to-yellow-100/70">
+                    <div class="highlight-title">⚠️ Desafío Estratégico</div>
+                    <p class="highlight-text">Poste Italiane (plan 2024-2028) reconoce creciente interdependencia con Amazon, pero advierte sobre riesgos de desintermediación si plataformas desarrollan capacidades logísticas propias completas.</p>
+                </div>
+
+                <p class="card-text">Las formas de cooperación incluyen: convenios de última milla, lockers compartidos, externalización de centros de clasificación, desarrollo de apps logísticas e interoperabilidad de plataformas de seguimiento.</p>
+            </div>
+
+        </section>
+
+        <!-- SECCIÓN 3: GOBERNANZA -->
+        <section id="gobernanza" class="section">
+            <div class="section-header">
+                <span class="section-number bg-gradient-to-br from-indigo-500 to-violet-600 shadow-indigo-300">03</span>
+                <h1 class="section-title">Marco de Gobernanza</h1>
+                <p class="section-subtitle">Regulación, competencia y políticas públicas para un sector postal modernizado y competitivo</p>
+            </div>
+
+            <!-- Normativa Internacional -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">⚖️ Evolución Normativa Internacional</h2>
+                <p class="card-text">La regulación postal está atravesando reformas profundas para reflejar la realidad digital. La Unión Postal Universal ha actualizado reglamentos de servicios de pago y publicado guías para despliegue profesional de productos financieros digitales.</p>
+                
+                <ul class="icon-list">
+                    <li><strong>UPU (2024):</strong> Actualización de reglamentos de servicios de pago postal y guías operativas para productos financieros digitales</li>
+                    <li><strong>Europa:</strong> Posible "Delivery Act" consolidaría directiva postal con regulación de plataformas y last-mile logistics</li>
+                    <li><strong>Dinamarca:</strong> Trasladó decisiones regulatorias a Autoridad de Transportes, reconociendo convergencia postal-logística</li>
+                    <li><strong>India:</strong> India Post Payments Bank opera bajo supervisión del Banco Central como banco con licencia completa</li>
+                </ul>
+
+                <div class="highlight-box bg-gradient-to-br from-yellow-50/70 to-yellow-100/70">
+                    <div class="highlight-title">🎯 Tendencias Regulatorias Clave</div>
+                    <p class="highlight-text">
+                        i) Armonización multilateral en servicios financieros postales<br>
+                        ii) Flexibilización de obligaciones de servicio universal<br>
+                        iii) Regulación de interoperabilidad y estándares técnicos<br>
+                        iv) Supervisión de plataformas digitales dominantes
+                    </p>
+                </div>
+            </div>
+
+            <!-- Competencia y Big Tech -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🏛️ Competencia y Control de Infraestructuras Tecnológicas</h2>
+                <p class="card-text">Reguladores en Reino Unido y Francia han identificado riesgos de concentración de poder en billeteras digitales y sistemas de pago controlados por grandes plataformas tecnológicas.</p>
+                
+                <div class="case-study mb-6 bg-gradient-to-br from-emerald-50/70 to-emerald-100/70">
+                    <div class="case-study-title">Reino Unido: FCA & Payment Systems Regulator (2025)</div>
+                    <p class="text-emerald-800 leading-relaxed">Investigación FS25/1 "Big tech and digital wallets" documenta cómo Apple Pay, Google Pay y Samsung Pay concentran poder en mercados móviles. Proponen obligaciones de interoperabilidad y apertura de sistemas NFC.</p>
+                </div>
+
+                <div class="case-study bg-gradient-to-br from-emerald-50/70 to-emerald-100/70">
+                    <div class="case-study-title">Francia: Autorité de la concurrence (2021)</div>
+                    <p class="text-emerald-800 leading-relaxed">Advirtió sobre poder de mercado de plataformas en servicios de pago, identificando barreras de entrada para operadores tradicionales (incluidos postales) y riesgos de discriminación en acceso a infraestructuras.</p>
+                </div>
+
+                <p class="card-text mt-8">Estas intervenciones buscan garantizar competencia leal y evitar que grandes plataformas tecnológicas monopolicen infraestructuras críticas de pago y logística digital.</p>
+            </div>
+
+            <!-- Turquía: Acceso al Mercado -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🇹🇷 Plataformas y Acceso al Mercado: Caso Turquía</h2>
+                <p class="card-text">Las modificaciones regulatorias de marzo 2025 introducen requisitos de inscripción y autorización para plataformas de e-commerce que ofrecen servicios logísticos integrados.</p>
+                
+                <div class="highlight-box bg-gradient-to-br from-yellow-50/70 to-yellow-100/70">
+                    <div class="highlight-title">📋 Implicaciones Regulatorias</div>
+                    <p class="highlight-text">El modelo turco establece precedente: operadores con actividad logística integrada deben someterse a supervisión sectorial específica, delimitando fronteras entre comercio electrónico puro y servicios postales/logísticos.</p>
+                </div>
+
+                <p class="card-text">Esta tendencia podría expandirse a otras jurisdicciones donde la convergencia entre plataformas digitales y operadores logísticos genera vacíos regulatorios.</p>
+            </div>
+
+            <!-- Colombia -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🇨🇴 Normatividad del Sector Postal en Colombia</h2>
+                <p class="card-text">Colombia enfrenta transformación significativa impulsada por e-commerce, digitalización y diversificación de servicios. El marco normativo está evolucionando para adaptarse a estas realidades.</p>
+                
+                <ul class="icon-list">
+                    <li><strong>Resolución CRC 7380:</strong> Desde 2026, correo masivo operará bajo régimen de libertad regulada con reporte de tarifas (no aprobación previa)</li>
+                    <li><strong>Crecimiento operadores:</strong> +40% en última década, impulsado por mensajería, couriers y marketplaces con logística propia</li>
+                    <li><strong>Expansión fintech:</strong> Operadores exploran billeteras digitales y servicios financieros en alianza con actores regulados</li>
+                    <li><strong>Desafío informativo:</strong> Faltan datos sobre envíos vinculados a transacciones digitales, volúmenes de última milla y convergencia postal-logística-financiera</li>
+                </ul>
+
+                <div class="case-study bg-gradient-to-br from-emerald-50/70 to-emerald-100/70">
+                    <div class="case-study-title">Prioridades Regulatorias Colombia</div>
+                    <p class="text-emerald-800 leading-relaxed">
+                        • Desarrollar indicadores de calidad adaptados a nuevos servicios<br>
+                        • Clarificar tratamiento de operadores híbridos (postal-logística-fintech)<br>
+                        • Establecer mecanismos de interoperabilidad entre operadores<br>
+                        • Mejorar recolección de datos para toma de decisiones informada
+                    </p>
+                </div>
+            </div>
+
+            <!-- Acciones Futuras -->
+            <div class="content-card bg-gradient-to-br from-white to-slate-50">
+                <h2 class="card-title">🚀 Acciones para Anticipar Tendencias Tecnológicas</h2>
+                <p class="card-text">Los desafíos regulatorios y el aumento de competencia requieren modernización de marcos normativos postales para adaptarse a nuevas realidades tecnológicas y de mercado.</p>
+                
+                <div class="stats-container">
+                    <div class="stat-card bg-gradient-to-br from-indigo-600 to-violet-700 shadow-violet-300">
+                        <span class="stat-number">Connect.Post</span>
+                        <span class="stat-label">Plataforma UPU para ecosistemas postales abiertos</span>
+                    </div>
+                    <div class="stat-card bg-gradient-to-br from-rose-600 to-pink-700 shadow-pink-300">
+                        <span class="stat-number">RMIG</span>
+                        <span class="stat-label">Grupo de Interoperabilidad UPU</span>
+                    </div>
+                </div>
+
+                <div class="highlight-box bg-gradient-to-br from-yellow-50/70 to-yellow-100/70">
+                    <div class="highlight-title">🎯 Objetivos Regulatorios Modernos</div>
+                    <p class="highlight-text">
+                        i) Garantizar competencia leal entre actores tradicionales y plataformas<br>
+                        ii) Evitar vacíos regulatorios en convergencia postal-logística-financiera<br>
+                        iii) Promover interoperabilidad y estándares técnicos comunes<br>
+                        iv) Facilitar innovación sin comprometer protección al consumidor
+                    </p>
+                </div>
+
+                <p class="card-text">La transformación del sector postal evoluciona en contexto digital donde nuevos actores desdibujan fronteras entre sectores. Los marcos normativos deben equilibrar competencia, innovación y sostenibilidad del servicio universal.</p>
+            </div>
+
+            <!-- Reflexión Final -->
+            <div class="content-card bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-400 shadow-xl hover:shadow-2xl hover:translate-y-0">
+                <h2 class="card-title text-blue-700">💡 Reflexión Final</h2>
+                <p class="card-text text-lg leading-relaxed">
+                    El sector postal atraviesa su transformación más profunda desde su creación. La convergencia entre servicios físicos y digitales, la integración con ecosistemas financieros y logísticos, y el surgimiento de nuevos modelos de negocio plantean desafíos y oportunidades sin precedentes.
+                </p>
+                <p class="card-text text-lg leading-relaxed">
+                    Los operadores que logren integrar tecnología, diversificar servicios y colaborar estratégicamente con plataformas digitales no solo sobrevivirán, sino que se posicionarán como infraestructura crítica del siglo XXI. El éxito dependerá de la capacidad de adaptación, innovación y construcción de alianzas que aprovechen la capilaridad territorial única del sector postal.
+                </p>
+            </div>
+
+        </section>
+
+    </div>
+
+    <footer class="bg-gradient-to-br from-slate-900 to-slate-800">
+        <p class="text-xl font-bold mb-4"><strong>Tendencias del Sector Postal</strong></p>
+        <p class="text-base opacity-80">Documento de análisis integral | 2025</p>
+        <p class="text-sm mt-6 opacity-70">
+            Fuentes: UPU, Data Bridge Market Research, Credence Research, International Post Corporation,<br>
+            Statista, Mastercard, FCA, Autorité de la concurrence, MinTIC Colombia
+        </p>
+    </footer>
+
+    <script>
+        // Actualizar navegación activa según scroll
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Animación de entrada para elementos
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.content-card, .stat-card, .chart-box, .highlight-box, .case-study, .platform-card, .nav-card, .bg-gradient-to-br.from-blue-50\\/70, .bg-gradient-to-br.from-emerald-50\\/70, .bg-gradient-to-br.from-violet-50\\/70').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+
+</body>
+</html>
