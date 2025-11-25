@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capítulo 2: Tendencias en Telecomunicaciones</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .slide {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .slide-content {
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            max-width: 1200px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+            padding-left: 20px;
+        }
+
+        h3 {
+            color: #667eea;
+            font-size: 1.6em;
+            margin: 30px 0 15px 0;
+        }
+
+        .reveal-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            font-size: 1.4em;
+            font-weight: 600;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 10px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .info-box li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 30px 0;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border-left: 5px solid #e17055;
+        }
+
+        .highlight-box h3 {
+            color: #2d3436;
+            margin-top: 0;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .tech-card {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .tech-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .tech-card h4 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .conclusion-box {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .conclusion-box h3 {
+            color: white;
+            border-bottom: 3px solid white;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .conclusion-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .conclusion-box li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            font-size: 1.1em;
+        }
+
+        .conclusion-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 1.4em;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.6em;
+            }
+            
+            .slide-content {
+                padding: 30px;
+            }
+        }
+
+        .emphasis {
+            color: #e17055;
+            font-weight: bold;
+        }
+
+        p {
+            line-height: 1.8;
+            margin: 15px 0;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Slide 1: Portada -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>📡 Capítulo 2</h1>
+            <div class="reveal-text">
+                TENDENCIAS EN EL SECTOR DE TELECOMUNICACIONES
+            </div>
+            <p style="text-align: center; font-size: 1.3em; margin-top: 30px;">
+                La transformación digital de las redes hacia modelos más eficientes, flexibles y orientados a la experiencia del usuario
+            </p>
+        </div>
+        <div class="slide-number">1</div>
+    </div>
+
+    <!-- Slide 2: Contexto - Hábitos de usuarios -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>🌐 El Nuevo Ecosistema Digital</h2>
+            
+            <div class="reveal-text">
+                "Ya no basta con garantizar capacidad de tráfico. Los usuarios demandan experiencias personalizadas, confiables y de baja latencia"
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-number">1,088</span>
+                    <span class="stat-label">Exabytes mensuales proyectados de tráfico IA para 2033</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">24%</span>
+                    <span class="stat-label">TCAC de crecimiento del tráfico IA (2024-2033)</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">6,300M</span>
+                    <span class="stat-label">Suscripciones 5G globales estimadas para 2030</span>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>Desaceleración del crecimiento exponencial</h3>
+                <p>El tráfico global de datos móviles continúa creciendo, pero a un ritmo más sostenido. El futuro: IA, realidad aumentada y video generativo redefinirán la demanda.</p>
+            </div>
+        </div>
+        <div class="slide-number">2</div>
+    </div>
+
+    <!-- Slide 3: Tendencias de consumo y causantes -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>🚀 Impulsores del Cambio</h2>
+
+            <div class="reveal-text">
+                "La IA de consumo dominará el aumento del tráfico, representando una parte sustancial del tráfico WAN global"
+            </div>
+
+            <div class="chart-container">
+                <canvas id="trafficChart"></canvas>
+            </div>
+
+            <div class="two-columns">
+                <div class="info-box">
+                    <h3>Tráfico Directo de IA</h3>
+                    <p><span class="emphasis">TCAC 51%</span> - Alcanzando <strong>174 EB mensuales</strong> en 2033</p>
+                </div>
+                <div class="info-box">
+                    <h3>Tráfico Indirecto de IA</h3>
+                    <p><span class="emphasis">TCAC 21%</span> - Alcanzando <strong>832 EB mensuales</strong> en 2033</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Tecnologías Habilitadoras Clave</h3>
+                <p><strong>Edge Computing • Network Slicing • NFV/SDN • API Abiertas • 5G SA</strong></p>
+            </div>
+        </div>
+        <div class="slide-number">3</div>
+    </div>
+
+    <!-- Slide 4: Tecnologías Núcleo -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>⚡ Virtualización y Automatización</h2>
+
+            <div class="reveal-text">
+                "De infraestructuras de transporte a plataformas integrales orientadas a la experiencia digital"
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-number">$97B</span>
+                    <span class="stat-label">Mercado NFV/SDN para 2028</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">16%</span>
+                    <span class="stat-label">TCAC 2022-2028</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">40%</span>
+                    <span class="stat-label">Más rápido despliegue de funciones (Vodafone)</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">50%</span>
+                    <span class="stat-label">Reducción de costos con virtualización</span>
+                </div>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h4>🔷 5G Stand Alone</h4>
+                    <p>Núcleo nativo en la nube que habilita network slicing y monetización de servicios avanzados</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🔷 NFV/SDN</h4>
+                    <p>Desagrega funciones de red del hardware físico, reduciendo CAPEX y OPEX significativamente</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🔷 Edge Computing</h4>
+                    <p>Procesamiento cercano al usuario con reducción de latencia hasta 80% vs. arquitecturas tradicionales</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">4</div>
+    </div>
+
+    <!-- Slide 5: Edge Computing y CDN -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>🌩️ Edge Computing y Optimización</h2>
+
+            <div class="reveal-text">
+                "La arquitectura híbrida edge-cloud mejora hasta 50% la eficiencia de procesamiento"
+            </div>
+
+            <div class="chart-container">
+                <canvas id="edgeChart"></canvas>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-number">$36B</span>
+                    <span class="stat-label">Mercado global CDN proyectado para 2026</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">18.4%</span>
+                    <span class="stat-label">CAGR del mercado CDN</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">92%</span>
+                    <span class="stat-label">Del tráfico web móvil controlado por 6 proveedores</span>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>Aplicaciones Críticas</h3>
+                <ul>
+                    <li><strong>Vehículos autónomos:</strong> 40% reducción en tiempo de detección de obstáculos</li>
+                    <li><strong>Ciudades inteligentes:</strong> 25% menos tiempo de desplazamiento</li>
+                    <li><strong>Sostenibilidad:</strong> 15% reducción de emisiones relacionadas con tráfico</li>
+                </ul>
+            </div>
+        </div>
+        <div class="slide-number">5</div>
+    </div>
+
+    <!-- Slide 6: Network Slicing y APIs -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>🎯 Conectividad Diferenciada</h2>
+
+            <div class="reveal-text">
+                "Network Slicing permite crear redes virtuales personalizadas sobre una misma infraestructura física"
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-number">$2.36B</span>
+                    <span class="stat-label">Mercado Network Slicing para 2029</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">24.78%</span>
+                    <span class="stat-label">TCAC 2024-2029</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">$100-300B</span>
+                    <span class="stat-label">Ingresos potenciales con Open APIs en 5-7 años</span>
+                </div>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h4>📱 Casos de Uso</h4>
+                    <p>Conducción autónoma, atención remota a pacientes, fábricas inteligentes, ciudades inteligentes</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🔌 Open APIs</h4>
+                    <p>Permiten a aplicaciones externas aprovechar funciones de red: localización, autenticación, QoS</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🏢 Líderes del Mercado</h4>
+                    <p>Huawei, Cisco, ZTE, Nokia, Ericsson, Amdocs, HCL con 40% de cuota conjunta</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">6</div>
+    </div>
+
+    <!-- Slide 7: Expansión de Cobertura -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>📶 Cerrando la Brecha Digital</h2>
+
+            <div class="reveal-text">
+                "FTTx será la tecnología de banda ancha de más rápido crecimiento hasta 2028 con CAGR de 18.3%"
+            </div>
+
+            <div class="chart-container">
+                <canvas id="ftthChart"></canvas>
+            </div>
+
+            <div class="two-columns">
+                <div class="info-box">
+                    <h3>🌐 FWA (Fixed Wireless Access)</h3>
+                    <p>Representa <strong>47% de conexiones</strong> en mercados clave (EE.UU., Sudáfrica, Australia, China)</p>
+                    <p>Solo <strong>6% de suscripciones globales</strong> pero crecimiento del <span class="emphasis">18.3% anual</span></p>
+                </div>
+                <div class="info-box">
+                    <h3>💎 Fibra Óptica</h3>
+                    <p>Mercado de <strong>$56B en 2024</strong> a <strong>$110B en 2030</strong></p>
+                    <p><strong>29 países</strong> con penetración FTTH >50%</p>
+                    <p>América Latina: <strong>67M suscriptores</strong> en 2023, proyectados <strong>101M en 2028</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">7</div>
+    </div>
+
+    <!-- Slide 8: NTN 5G -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>🛰️ Conectividad Ubicua: NTN 5G</h2>
+
+            <div class="reveal-text">
+                "Las redes no terrestres llevarán conectividad 5G a cualquier rincón del planeta"
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-number">$42.2B</span>
+                    <span class="stat-label">Mercado 5G NTN para 2030</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">33.5%</span>
+                    <span class="stat-label">TCAC 2024-2030</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">$114B</span>
+                    <span class="stat-label">Proyección para 2034</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">35%</span>
+                    <span class="stat-label">Norte América lidera el mercado (2024)</span>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Modalidades NTN</h3>
+                <p><strong>SCS:</strong> Cobertura Suplementaria desde el Espacio</p>
+                <p><strong>D2C:</strong> Conexión Directa a la Celda</p>
+                <p><strong>D2D:</strong> Conexión Directa al Dispositivo</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Casos de Éxito en América Latina</h3>
+                <ul>
+                    <li><strong>Chile:</strong> Primera prueba Direct-To-Cell con Entel y SpaceX en febrero 2025</li>
+                    <li><strong>Perú:</strong> Entel envió SMS vía satélite desde zona sin cobertura en mayo 2025</li>
+                    <li><strong>Brasil:</strong> Anatel autorizó pruebas de Amazon Kuiper en junio 2025</li>
+                </ul>
+            </div>
+        </div>
+        <div class="slide-number">8</div>
+    </div>
+
+    <!-- Slide 9: Comportamiento de la Industria -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>🏭 Transformación de la Industria</h2>
+
+            <div class="reveal-text">
+                "Los operadores evolucionan de Telcos tradicionales a TechCos impulsados por tecnología y datos"
+            </div>
+
+            <div class="chart-container">
+                <canvas id="techcoChart"></canvas>
+            </div>
+
+            <div class="info-box">
+                <h3>Top 3 Líderes TechCo 2024</h3>
+                <ul>
+                    <li><strong>🥇 China Mobile:</strong> 29.4% ingresos de servicios digitales, líder en IA y Big Data</li>
+                    <li><strong>🥈 NTT:</strong> Fortaleza en software y servicios empresariales</li>
+                    <li><strong>🥉 SK Telecom:</strong> Apuesta fuerte por IA con asistente digital</li>
+                </ul>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h4>☁️ Cloud</h4>
+                    <p>Agilidad y escalabilidad para lanzamiento rápido de servicios</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🤖 IA/ML</h4>
+                    <p>Mantenimiento predictivo y experiencia personalizada</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🔗 Ecosistemas</h4>
+                    <p>Alianzas con proveedores tech para servicios integrales</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">9</div>
+    </div>
+
+    <!-- Slide 10: Compartición de Infraestructura -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>🤝 Infraestructura Colaborativa</h2>
+
+            <div class="reveal-text">
+                "La compartición puede reducir costos de despliegue hasta 60% en infraestructura activa"
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-number">30%</span>
+                    <span class="stat-label">Ahorro con compartición pasiva</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">60%</span>
+                    <span class="stat-label">Ahorro con compartición activa</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">217K</span>
+                    <span class="stat-label">Torres móviles en 13 países de LATAM</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">$11.7B</span>
+                    <span class="stat-label">Mercado global small cells 5G para 2034</span>
+                </div>
+            </div>
+
+            <div class="two-columns">
+                <div class="info-box">
+                    <h3>🌎 América Latina</h3>
+                    <p><strong>Brasil y México:</strong> Concentran >60% de sitios</p>
+                    <p><strong>48,000 torres</strong> gestionadas por American Tower</p>
+                    <p><strong>25% crecimiento</strong> anual en penetración FTTH 2024</p>
+                </div>
+                <div class="info-box">
+                    <h3>🇨🇴 Colombia</h3>
+                    <p>Alto grado de desarrollo en compartición</p>
+                    <p>Acuerdos como <strong>Movistar-Tigo</strong> amplían cobertura sin duplicar infraestructura</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-number">10</div>
+    </div>
+
+    <!-- Slide 11: Redes Privadas -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>🏢 Redes Privadas 5G</h2>
+
+            <div class="reveal-text">
+                "Infraestructuras dedicadas para comunicaciones de misión crítica en industrias"
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h4>🔧 Manufactura</h4>
+                    <p>Mantenimiento eficiente, AGVs, líneas automatizadas, IoT industrial</p>
+                </div>
+                <div class="tech-card">
+                    <h4>⛏️ Minería</h4>
+                    <p>Control remoto de equipos, vigilancia de operaciones y seguridad</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🚢 Puertos</h4>
+                    <p>Supervisión de grúas, monitoreo centralizado en tiempo real</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🎓 Educación</h4>
+                    <p>IA, blockchain, IoT mejorado en campus tecnológicos</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>Líderes Tecnológicos</h3>
+                <p><strong>Nokia • ZTE • Huawei Enterprise • Ericsson</strong></p>
+                <p>Madurez tecnológica y soluciones adaptadas a diversos sectores verticales</p>
+            </div>
+
+            <div class="info-box">
+                <h3>🇨🇴 Caso Colombia</h3>
+                <p><strong>Puerto Bahía (Cartagena):</strong> Red privada LTE/4.9G con Claro y Nokia para cobertura en muelles, integración con edge computing para analítica logística</p>
+            </div>
+        </div>
+        <div class="slide-number">11</div>
+    </div>
+
+    <!-- Slide 12: Calidad y Experiencia -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>📊 Evolución en Medición de Calidad</h2>
+
+            <div class="reveal-text">
+                "De QoS técnica a QoE centrada en la percepción del usuario"
+            </div>
+
+            <div class="two-columns">
+                <div class="info-box">
+                    <h3>QoS (Quality of Service)</h3>
+                    <ul>
+                        <li>Métricas técnicas objetivas</li>
+                        <li>Velocidad, latencia, jitter</li>
+                        <li>Pérdida de paquetes</li>
+                        <li>Medible con instrumentos</li>
+                    </ul>
+                </div>
+                <div class="info-box">
+                    <h3>QoE (Quality of Experience)</h3>
+                    <ul>
+                        <li>Percepción del usuario</li>
+                        <li>Satisfacción subjetiva</li>
+                        <li>Confiabilidad de red</li>
+                        <li>Capacidad para completar tareas</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-number">20 Gbps</span>
+                    <span class="stat-label">Meta de velocidad IMT-2020 para 5G</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">1 ms</span>
+                    <span class="stat-label">Latencia objetivo para URLLC</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">1M</span>
+                    <span class="stat-label">Dispositivos por km² en densidad de conexión</span>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🤖 Rol de la IA</h3>
+                <p>Las redes auto-organizadas (SON) con IA permiten lectura continua del estado de red, predicción de comportamiento y ajustes automáticos en tiempo real</p>
+            </div>
+        </div>
+        <div class="slide-number">12</div>
+    </div>
+
+    <!-- Slide 13: Gobernanza -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>⚖️ Marco Normativo y Gobernanza</h2>
+
+            <div class="reveal-text">
+                "Marcos regulatorios flexibles que traduzcan innovación en beneficios tangibles e inclusivos"
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h4>🇪🇺 Unión Europea</h4>
+                    <p><strong>Gigabit Infrastructure Act:</strong> Acelera despliegue de redes gigabit mediante compartición</p>
+                    <p><strong>SNS JU:</strong> €900M+ para I+D en 5G/6G hacia 2027</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🇧🇷 Brasil</h4>
+                    <p><strong>Resolución 777:</strong> Primer reglamento con principios específicos para IA en telecomunicaciones</p>
+                    <p>Simplifica operadores móviles virtuales y compartición</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🇨🇱 Chile</h4>
+                    <p><strong>Observatorio 5G:</strong> Intercambio de conocimiento y desarrollo de casos de uso</p>
+                    <p>Políticas de compartición para cierre de brecha digital</p>
+                </div>
+                <div class="tech-card">
+                    <h4>🇨🇴 Colombia</h4>
+                    <p><strong>Decreto 1031/2024:</strong> Procedimiento único para despliegue de redes</p>
+                    <p>Reducción de trámites y armonización territorial</p>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>Principios Clave de Regulación</h3>
+                <ul>
+                    <li><strong>Neutralidad de red:</strong> Permitir network slicing sin degradar acceso general</li>
+                    <li><strong>Protección de datos:</strong> GDPR y equivalentes para transferencias internacionales</li>
+                    <li><strong>Compartición incentivada:</strong> Reducir costos y acelerar cobertura</li>
+                    <li><strong>Transparencia:</strong> Publicación de métricas de calidad para competencia informada</li>
+                </ul>
+            </div>
+        </div>
+        <div class="slide-number">13</div>
+    </div>
+
+    <!-- Slide 14: Conclusiones -->
+    <div class="slide">
+        <div class="slide-content">
+            <h2>💡 Conclusiones e Insights</h2>
+
+            <div class="conclusion-box">
+                <h3>🎯 Hallazgos Clave</h3>
+                <ul>
+                    <li><strong>Transformación profunda:</strong> Las redes evolucionan de infraestructuras de transporte a plataformas inteligentes orientadas a la experiencia</li>
+                    <li><strong>IA como motor:</strong> El tráfico de IA crecerá a TCAC del 24%, alcanzando 1,088 EB mensuales en 2033</li>
+                    <li><strong>Virtualización esencial:</strong> Mercado NFV/SDN de $97B en 2028, con reducciones de hasta 50% en costos operativos</li>
+                    <li><strong>Conectividad ubicua:</strong> NTN 5G llevará cobertura a cualquier lugar con mercado de $114B en 2034</li>
+                    <li><strong>Colaboración necesaria:</strong> Compartición de infraestructura reduce costos hasta 60% y acelera despliegue</li>
+                    <li><strong>De QoS a QoE:</strong> La percepción del usuario se vuelve métrica crítica de éxito</li>
+                </ul>
+            </div>
+
+            <div class="conclusion-box" style="background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);">
+                <h3>📈 Recomendaciones Estratégicas</h3>
+                <ul>
+                    <li>Adoptar arquitecturas virtualizadas (NFV/SDN) y edge computing para optimizar eficiencia operativa</li>
+                    <li>Desarrollar capacidades en network slicing y APIs abiertas para nuevos modelos de negocio</li>
+                    <li>Impulsar compartición de infraestructura para acelerar cobertura y reducir CAPEX</li>
+                    <li>Integrar métricas de QoE en evaluación de calidad para alinearse con expectativas de usuarios</li>
+                    <li>Establecer marcos regulatorios flexibles que incentiven innovación sin comprometer competencia</li>
+                    <li>Preparar transición hacia modelo TechCo con capacidades en IA, cloud y servicios digitales</li>
+                </ul>
+            </div>
+        </div>
+        <div class="slide-number">14</div>
+    </div>
+
+    <!-- Slide 15: Cierre -->
+    <div class="slide">
+        <div class="slide-content">
+            <h1>🚀 El Futuro de las Telecomunicaciones</h1>
+            
+            <div class="reveal-text">
+                "Redes más modernas, resilientes e inclusivas, capaces de soportar la creciente demanda de conectividad, proteger a los usuarios y promover un entorno competitivo e innovador"
+            </div>
+
+            <div class="highlight-box">
+                <h3 style="color: #2d3436;">El camino hacia 2030</h3>
+                <p style="color: #2d3436; font-size: 1.2em; margin-top: 20px;">
+                    <strong>Virtualización • Automatización • IA • Conectividad Ubicua • Experiencia de Usuario</strong>
+                </p>
+                <p style="color: #2d3436; font-size: 1.1em; margin-top: 15px;">
+                    La convergencia de estas tecnologías y la evolución regulatoria crearán un ecosistema digital más eficiente, accesible y sostenible para todos.
+                </p>
+            </div>
+        </div>
+        <div class="slide-number">15</div>
+    </div>
+
+    <script>
+        // Chart 1: Tráfico de IA
+        const ctx1 = document.getElementById('trafficChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['IA Directo (Consumo)', 'IA Indirecto', 'IA Empresarial'],
+                datasets: [{
+                    label: 'TCAC 2023-2033 (%)',
+                    data: [51, 21, 57],
+                    backgroundColor: [
+                        'rgba(102, 126, 234, 0.8)',
+                        'rgba(118, 75, 162, 0.8)',
+                        'rgba(225, 112, 85, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(102, 126, 234, 1)',
+                        'rgba(118, 75, 162, 1)',
+                        'rgba(225, 112, 85, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Crecimiento del Tráfico de IA por Tipo',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'TCAC (%)',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 2: Edge Computing Benefits
+        const ctx2 = document.getElementById('edgeChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'radar',
+            data: {
+                labels: ['Eficiencia de Procesamiento', 'Reducción de Latencia', 'Detección de Obstáculos (Vehículos)', 'Reducción Tiempo Desplazamiento', 'Reducción Emisiones'],
+                datasets: [{
+                    label: 'Mejora vs. Arquitectura Tradicional (%)',
+                    data: [50, 80, 40, 25, 15],
+                    fill: true,
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(102, 126, 234, 1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Beneficios de Edge Computing',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Chart 3: FTTH América Latina
+        const ctx3 = document.getElementById('ftthChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'line',
+            data: {
+                labels: ['2023', '2024', '2025', '2026', '2027', '2028'],
+                datasets: [{
+                    label: 'Suscriptores FTTH (Millones)',
+                    data: [67, 75, 82, 89, 95, 101],
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Proyección Suscriptores FTTH en América Latina',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Millones de Suscriptores',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 4: TechCo Leaders
+        const ctx4 = document.getElementById('techcoChart').getContext('2d');
+        new Chart(ctx4, {
+            type: 'horizontalBar',
+            data: {
+                labels: ['China Mobile', 'NTT', 'SK Telecom', 'Telefónica', 'AT&T', 'e&', 'Vodafone'],
+                datasets: [{
+                    label: 'Puntuación TechCo 2024',
+                    data: [95, 88, 85, 80, 75, 75, 75],
+                    backgroundColor: [
+                        'rgba(102, 126, 234, 0.8)',
+                        'rgba(118, 75, 162, 0.8)',
+                        'rgba(225, 112, 85, 0.8)',
+                        'rgba(0, 184, 148, 0.8)',
+                        'rgba(253, 203, 110, 0.8)',
+                        'rgba(108, 92, 231, 0.8)',
+                        'rgba(162, 155, 254, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Líderes en Transformación TechCo (2024)',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Puntuación',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Smooth scrolling
+        document.addEventListener('wheel', (e) => {
+            if (Math.abs(e.deltaY) > 50) {
+                e.preventDefault();
+                const slides = document.querySelectorAll('.slide');
+                const currentSlide = Math.round(window.scrollY / window.innerHeight);
+                const nextSlide = e.deltaY > 0 ? Math.min(currentSlide + 1, slides.length - 1) : Math.max(currentSlide - 1, 0);
+                slides[nextSlide].scrollIntoView({ behavior: 'smooth' });
+            }
+        }, { passive: false });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const slides = document.querySelectorAll('.slide');
+            const currentSlide = Math.round(window.scrollY / window.innerHeight);
+            
+            if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                e.preventDefault();
+                const nextSlide = Math.min(currentSlide + 1, slides.length - 1);
+                slides[nextSlide].scrollIntoView({ behavior: 'smooth' });
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                const prevSlide = Math.max(currentSlide - 1, 0);
+                slides[prevSlide].scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
+
+</body>
+</html>
