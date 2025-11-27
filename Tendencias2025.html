@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRC Tendencias 2025</title>
+    
+    <!-- Estilos y Fuentes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Librerías React y Herramientas (UMD) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Recharts (Gráficas) -->
+    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide-react/dist/umd/lucide-react.js"></script>
+    
+    <!-- Babel para compilar JSX en el navegador -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f3f4f6;
+        margin: 0;
+        padding: 0;
+        overflow: hidden; /* App handles scrolling */
+      }
+      .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+      
+      /* Animaciones */
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.0"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- CÓDIGO DE LA APLICACIÓN -->
+    <script type="text/babel" data-presets="typescript,react">
+        const { useState, useEffect, useRef } = React;
+        
+        // --- Mapeo de Librerías Globales ---
+        // Al usar UMD, las librerías están en el objeto window
+        const { 
+            BarChart, Bar, LineChart, Line, AreaChart, Area, 
+            XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
+        } = window.Recharts;
+
+        const { 
+            ChevronRight, Globe, Radio, Mail, Tv, Home, CheckCircle, 
+            PieChart, Network, CheckCircle2, ChevronDown, ChevronUp,
+            ShieldCheck, Truck, Cpu, Zap, Lock, CreditCard, Target, Lightbulb, Users, ArrowRight 
+        } = window.LucideReact;
+
+        // --- TYPES & CONSTANTS ---
+        const SectionType = {
+            INTRO: 'Introducción',
+            TELECOM: 'Telecomunicaciones',
+            POSTAL: 'Postal',
+            AUDIOVISUAL: 'Audiovisual',
+            OUTRO: 'Cierre'
+        };
+
+        const SECTION_ORDER = [
+            SectionType.INTRO,
+            SectionType.TELECOM,
+            SectionType.POSTAL,
+            SectionType.AUDIOVISUAL,
+            SectionType.OUTRO
+        ];
+
+        // --- COMPONENTES AUXILIARES ---
+
+        // Internal Navigation (Botones flotantes)
+        const InternalNavigation = ({ prevId, nextId }) => {
+            const scrollTo = (id) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            };
+
+            if (!prevId && !nextId) return null;
+
+            return (
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-3 p-1.5 bg-white/80 backdrop-blur-md border border-slate-200/50 rounded-full shadow-lg transition-opacity duration-300 hover:bg-white">
+                    <button 
+                        onClick={() => prevId && scrollTo(prevId)}
+                        disabled={!prevId}
+                        className={`p-2 rounded-full transition-all duration-200 ${
+                            prevId 
+                                ? 'text-slate-700 hover:bg-indigo-100 hover:text-indigo-600 active:scale-95 cursor-pointer' 
+                                : 'text-slate-300 cursor-not-allowed'
+                        }`}
+                        title="Anterior Slide"
+                    >
+                        <ChevronUp size={24} />
+                    </button>
+                    <div className="h-4 w-px bg-slate-300 mx-1"></div>
+                    <button 
+                        onClick={() => nextId && scrollTo(nextId)}
+                        disabled={!nextId}
+                        className={`p-2 rounded-full transition-all duration-200 ${
+                            nextId 
+                                ? 'text-slate-700 hover:bg-indigo-100 hover:text-indigo-600 active:scale-95 cursor-pointer' 
+                                : 'text-slate-300 cursor-not-allowed'
+                        }`}
+                        title="Siguiente Slide"
+                    >
+                        <ChevronDown size={24} />
+                    </button>
+                </div>
+            );
+        };
+
+        // Section Navigation (Botón siguiente sección)
+        const SectionNavigation = ({ onNext, nextSectionTitle, isLast }) => {
+            if (isLast) return null;
+            return (
+                <div className="flex justify-end mt-8 mb-16 px-4">
+                    <button 
+                        onClick={onNext}
+                        className="group flex items-center gap-4 bg-slate-900 text-white pr-4 pl-6 py-4 rounded-full shadow-lg hover:bg-indigo-600 transition-all duration-300 transform hover:-translate-y-1"
+                    >
+                        <div className="text-right">
+                            <div className="text-xs text-slate-400 font-medium uppercase tracking-wider group-hover:text-indigo-200">Siguiente Sección</div>
+                            <div className="text-lg font-bold">{nextSectionTitle}</div>
+                        </div>
+                        <div className="bg-white/10 p-2 rounded-full group-hover:bg-white/20 transition-colors">
+                            <ArrowRight size={24} />
+                        </div>
+                    </button>
+                </div>
+            );
+        };
+
+        // Layout Base para Slides
+        const SlideLayout = ({ title, subtitle, children, chapter, isCover = false }) => {
+            if (isCover) {
+                return (
+                    <section className="h-full max-h-[85vh] w-full flex flex-col items-center justify-center text-center bg-gradient-to-br from-indigo-900 via-blue-800 to-blue-600 text-white p-8 md:p-12 rounded-3xl shadow-2xl relative overflow-hidden animate-fade-in mx-auto">
+                        <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+                            <div className="absolute -top-24 -left-24 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+                            <div className="absolute top-1/2 right-0 w-64 h-64 bg-purple-500 rounded-full blur-3xl"></div>
+                        </div>
+                        <div className="max-w-5xl w-full z-10 flex flex-col items-center justify-center h-full">
+                            {children}
+                        </div>
+                    </section>
+                );
+            }
+            return (
+                <section className="w-full h-full max-h-[90vh] flex flex-col bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-slate-200/60 mx-auto transition-all relative overflow-hidden">
+                    <div className="flex flex-col md:flex-row justify-between items-start mb-6 border-b border-slate-100 pb-4 flex-shrink-0">
+                        <div className="max-w-4xl">
+                            {chapter && (
+                                <span className="text-indigo-600 text-[10px] md:text-xs font-bold tracking-widest uppercase mb-2 block bg-indigo-50 px-3 py-1 rounded-full w-fit">
+                                    {chapter}
+                                </span>
+                            )}
+                            {title && <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">{title}</h2>}
+                            {subtitle && <h3 className="text-base md:text-lg text-slate-500 font-medium mt-2">{subtitle}</h3>}
+                        </div>
+                        <div className="hidden md:block mt-2">
+                            <div className="h-3 w-3 rounded-full bg-indigo-500 shadow-sm shadow-indigo-200"></div>
+                        </div>
+                    </div>
+                    <div className="flex-1 w-full overflow-y-auto custom-scrollbar pr-2 pb-12">
+                        {children}
+                    </div>
+                </section>
+            );
+        };
+
+        // --- COMPONENTES INTERACTIVOS ---
+
+        const InteractiveProblematicas = () => {
+            const [activeTab, setActiveTab] = useState('general');
+            const menuItems = [
+                { id: 'general', label: 'General', count: 5, icon: Globe, color: 'text-green-600', bg: 'bg-green-50' },
+                { id: 'telecom', label: 'Telecomunicaciones', count: 12, icon: Radio, color: 'text-blue-600', bg: 'bg-blue-50' },
+                { id: 'postal', label: 'Postales', count: 3, icon: Mail, color: 'text-amber-600', bg: 'bg-amber-50' },
+                { id: 'contenidos', label: 'Contenidos', count: 5, icon: Tv, color: 'text-red-600', bg: 'bg-red-50' },
+            ];
+            const content = {
+                general: ["Cargas y necesidad de simplificación regulatoria", "Innovación en mecanismos regulatorios + Celeridad en medidas", "Coordinación interinstitucional", "Acceso y confiabilidad de información reportada", "Participación del sector en proyectos"],
+                telecom: ["Falta de uso eficiente de recursos de red (infraestructura saturada)", "Saturación de red por demanda de contenidos", "Gestión de Espectro y Recursos", "Aumento de costos e inversión por cambios en calidad", "Preocupación por cambios en tarifas techo", "Dificultades para licencias de espectro (ANE)", "Falta de transparencia en cálculo de Contrapartidas", "Falta de armonización ANE - CRC", "Concentración de tráfico en redes internacionales", "Concentración de poder de mercado"],
+                postal: ["Pérdida de rentabilidad por operación no regulada", "Pérdida de mercado frente a billeteras digitales", "Dificultades para modelos híbridos (servicios financieros)"],
+                contenidos: ["Concentración de Poder de mercado en pocos proveedores", "Distribución no autorizada + Revisión Must Carry", "Disminución de suscriptores TV (cord-cutting)", "Problemas con validación de audiencias digitales", "Inequidad en obligaciones entre operadores"]
+            };
+
+            return (
+                <div className="flex flex-col md:flex-row h-full gap-6 bg-slate-50 rounded-xl overflow-hidden border border-slate-200">
+                    <div className="w-full md:w-1/3 bg-white border-r border-slate-200 flex flex-col">
+                        <div className="p-4 bg-slate-100 border-b border-slate-200">
+                            <h4 className="font-bold text-slate-700">Sectores</h4>
+                            <p className="text-xs text-slate-500">Seleccione para ver detalles</p>
+                        </div>
+                        <div className="flex-1 overflow-y-auto">
+                            {menuItems.map((item) => (
+                                <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full text-left p-4 flex items-center gap-4 transition-all border-b border-slate-100 ${activeTab === item.id ? 'bg-indigo-50 border-l-4 border-l-indigo-500' : 'hover:bg-slate-50 border-l-4 border-l-transparent'}`}>
+                                    <div className={`p-2 rounded-lg ${item.bg} ${item.color}`}><item.icon size={20} /></div>
+                                    <div><div className="font-semibold text-slate-700">{item.label}</div><div className="text-xs text-slate-500">{item.count} problemáticas</div></div>
+                                    {activeTab === item.id && <ChevronRight className="ml-auto text-indigo-400" size={16} />}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex-1 p-6 md:p-8 overflow-y-auto bg-white">
+                        <div className="flex items-center gap-3 mb-6">
+                            {(() => {
+                                const activeItem = menuItems.find(m => m.id === activeTab);
+                                return (<><div className={`p-3 rounded-xl ${activeItem.bg} ${activeItem.color}`}><activeItem.icon size={32} /></div><h3 className="text-2xl font-bold text-slate-800">Problemáticas: {activeItem.label}</h3></>);
+                            })()}
+                        </div>
+                        <ul className="space-y-3">
+                            {content[activeTab].map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-3 p-4 rounded-lg bg-slate-50 border border-slate-100 hover:shadow-sm transition-shadow">
+                                    <div className="mt-1.5 h-2 w-2 rounded-full bg-indigo-500 flex-shrink-0" />
+                                    <span className="text-slate-700 leading-relaxed">{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            );
+        };
+
+        const InteractiveMatrix = () => {
+            const [activeSection, setActiveSection] = useState('overview');
+            const [openAccordions, setOpenAccordions] = useState({ 'comm-tech': true, 'postal-tech': true, 'av-tech': true });
+            const toggleAccordion = (id) => setOpenAccordions(prev => ({ ...prev, [id]: !prev[id] }));
+            
+            const NavButton = ({ id, label, icon: Icon }) => (
+                <button onClick={() => setActiveSection(id)} className={`flex items-center gap-2 w-full p-3 rounded-lg text-sm font-medium transition-colors ${activeSection === id ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-600 hover:bg-slate-100'}`}>
+                    <Icon size={18} />{label}
+                </button>
+            );
+
+            return (
+                <div className="flex h-full gap-6">
+                    <div className="w-64 flex flex-col gap-2 border-r border-slate-200 pr-4">
+                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Navegación</h3>
+                        <NavButton id="overview" label="Resumen General" icon={PieChart} />
+                        <NavButton id="comms" label="Comunicaciones" icon={Network} />
+                        <NavButton id="postal" label="Sector Postal" icon={Mail} />
+                        <NavButton id="av" label="Contenidos" icon={Tv} />
+                        <div className="mt-auto p-4 bg-indigo-50 rounded-xl">
+                            <h4 className="font-bold text-indigo-900 text-sm mb-2">Grupos Temáticos</h4>
+                            <div className="flex flex-wrap gap-2">
+                                {['Modelo de Negocio', 'Regulación', 'Infraestructura', 'Mercado'].map(tag => (
+                                    <span key={tag} className="text-[10px] bg-white text-indigo-600 px-2 py-1 rounded-full border border-indigo-100 shadow-sm">{tag}</span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex-1 overflow-y-auto pr-2">
+                        {activeSection === 'overview' && (
+                            <div className="animate-fade-in">
+                                <h3 className="text-2xl font-bold text-slate-800 mb-6">Resumen General del Estudio</h3>
+                                <div className="grid grid-cols-3 gap-4 mb-8">
+                                    {[{ label: 'Problemáticas', val: '25' }, { label: 'Tendencias', val: '6' }, { label: 'Sectores', val: '3' }].map((stat) => (
+                                        <div key={stat.label} className="bg-slate-50 p-6 rounded-xl border border-slate-200 text-center">
+                                            <div className="text-3xl font-bold text-indigo-600 mb-1">{stat.val}</div>
+                                            <div className="text-sm text-slate-500 font-medium">{stat.label}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><span className="bg-red-100 text-red-600 p-1 rounded">🚨</span> Problemáticas Críticas</h4>
+                                <div className="space-y-2">
+                                    {["Aumento de costos e inversión por cambios en régimen de calidad", "Barreras económicas al despliegue de infraestructura", "Falta de uso eficiente de recursos de red", "Pérdida de mercado Postal frente a billeteras digitales", "Concentración de poder de mercado en contenidos"].map((prob, i) => (
+                                        <div key={i} className="flex items-center gap-3 p-3 bg-red-50 border-l-4 border-red-500 rounded-r-lg text-slate-700 text-sm">{prob}</div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                        {activeSection !== 'overview' && (
+                            <div className="animate-fade-in space-y-4">
+                                <h3 className="text-2xl font-bold text-slate-800 mb-4">{activeSection === 'comms' ? 'Tendencias en Comunicaciones' : activeSection === 'postal' ? 'Tendencias Sector Postal' : 'Tendencias Audiovisuales'}</h3>
+                                <div className="border border-slate-200 rounded-xl overflow-hidden">
+                                    <button onClick={() => toggleAccordion(`${activeSection}-tech`)} className="w-full flex justify-between items-center p-4 bg-slate-50 hover:bg-slate-100 font-bold text-slate-700">
+                                        <span>Tecnologías Emergentes</span>
+                                        {openAccordions[`${activeSection}-tech`] ? <ChevronUp size={20}/> : <ChevronDown size={20}/>}
+                                    </button>
+                                    {openAccordions[`${activeSection}-tech`] && (
+                                        <div className="p-4 bg-white space-y-4">
+                                            <div className="flex gap-4 items-start">
+                                                <CheckCircle2 className="text-green-500 mt-1 flex-shrink-0" size={20} />
+                                                <div>
+                                                    <h5 className="font-bold text-slate-800">Impacto Directo</h5>
+                                                    <p className="text-slate-600 text-sm">{activeSection === 'comms' ? 'Virtualización, Network Slicing y Edge Computing.' : activeSection === 'postal' ? 'Automatización logística, Robótica y Tracking avanzado.' : 'IA Generativa, Captura Volumétrica y Motores gráficos.'}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- GRÁFICAS ---
+        const TelecomAIChart = () => (
+            <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={[{ year: '2023', direct: 20, indirect: 300 }, { year: '2025', direct: 45, indirect: 400 }, { year: '2027', direct: 75, indirect: 520 }, { year: '2029', direct: 105, indirect: 640 }, { year: '2031', direct: 140, indirect: 730 }, { year: '2033', direct: 174, indirect: 832 }]} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <XAxis dataKey="year" stroke="#64748b" />
+                    <YAxis stroke="#64748b" label={{ value: 'EB/mes', angle: -90, position: 'insideLeft', fill: '#64748b' }} />
+                    <Tooltip cursor={{ fill: '#f1f5f9' }} />
+                    <Legend />
+                    <Bar dataKey="direct" name="Tráfico Directo IA" stackId="a" fill="#3b82f6" />
+                    <Bar dataKey="indirect" name="Tráfico Indirecto IA" stackId="a" fill="#86efac" />
+                </BarChart>
+            </ResponsiveContainer>
+        );
+
+        const Telecom5GChart = () => (
+            <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={[{ year: '2021', total: 670, sa: 100 }, { year: '2023', total: 1900, sa: 800 }, { year: '2025', total: 3200, sa: 1700 }, { year: '2027', total: 4500, sa: 2600 }, { year: '2029', total: 5600, sa: 3300 }, { year: '2030', total: 6300, sa: 3700 }]}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                    <XAxis dataKey="year" stroke="#64748b" />
+                    <YAxis stroke="#64748b" />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="total" name="Suscripciones 5G Totales (M)" stroke="#1e40af" strokeWidth={3} dot={{r: 4}} />
+                    <Line type="monotone" dataKey="sa" name="5G Stand Alone (M)" stroke="#22c55e" strokeWidth={3} dot={{r: 4}} />
+                </LineChart>
+            </ResponsiveContainer>
+        );
+
+        const TelecomNTNChart = () => (
+            <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={[{ year: '2023', val: 5.6 }, { year: '2024', val: 5.67 }, { year: '2026', val: 10.2 }, { year: '2028', val: 20.5 }, { year: '2030', val: 42.2 }]}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="year" />
+                    <YAxis label={{ value: '$ Billion', angle: -90, position: 'insideLeft' }} />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="val" name="Mercado 5G NTN ($B)" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
+                </AreaChart>
+            </ResponsiveContainer>
+        );
+
+        const PostalAutomationChart = () => (
+            <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={[{ year: '2024', val: 974 }, { year: '2026', val: 1150 }, { year: '2028', val: 1330 }, { year: '2030', val: 1510 }, { year: '2032', val: 1686 }]}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="year" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="val" name="Mercado Automatización ($M)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
+            </ResponsiveContainer>
+        );
+
+        const PostalEcommerceUserChart = () => (
+            <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={[{ year: '2019', val: 2.11 }, { year: '2021', val: 2.71 }, { year: '2023', val: 3.09 }, { year: '2025', val: 3.29 }, { year: '2027', val: 3.49 }, { year: '2029', val: 3.59 }]}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="year" />
+                    <YAxis />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="val" name="Usuarios E-commerce (Billions)" stroke="#f59e0b" fill="#fcd34d" />
+                </AreaChart>
+            </ResponsiveContainer>
+        );
+
+        const AVVideoTrafficChart = () => (
+            <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={[{ year: '2020', val: 50 }, { year: '2021', val: 53 }, { year: '2022', val: 57 }, { year: '2023', val: 60 }, { year: '2024', val: 74 }, { year: '2025', val: 77 }, { year: '2026', val: 80 }]}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="year" />
+                    <YAxis domain={[0, 100]} label={{ value: '%', angle: -90, position: 'insideLeft' }}/>
+                    <Tooltip />
+                    <Line type="monotone" dataKey="val" name="% Tráfico de Video Móvil" stroke="#ef4444" strokeWidth={3} />
+                </LineChart>
+            </ResponsiveContainer>
+        );
+
+        const AVEnergyChart = () => (
+            <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={[{ year: '2022', val: 460 }, { year: '2023', val: 550 }, { year: '2024', val: 650 }, { year: '2025', val: 800 }, { year: '2026', val: 1000 }]}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="year" />
+                    <YAxis label={{ value: 'TWh', angle: -90, position: 'insideLeft' }}/>
+                    <Tooltip />
+                    <Bar dataKey="val" name="Consumo Data Centers (TWh)" fill="#f87171" radius={[4, 4, 0, 0]} />
+                </BarChart>
+            </ResponsiveContainer>
+        );
+
+        // --- DEFINICIÓN DE SLIDES ---
+        const slides = [
+            {
+                id: 'intro-cover',
+                section: SectionType.INTRO,
+                component: (
+                    <SlideLayout isCover>
+                        <h1 className="text-5xl md:text-7xl font-bold mb-6">MONITOREO DE TENDENCIAS TECNOLÓGICAS 2025</h1>
+                        <div className="h-1 w-32 bg-white/30 mx-auto mb-8 rounded-full"></div>
+                        <p className="text-2xl text-white/90 font-light mb-2">Coordinación de Prospectiva Estratégica</p>
+                        <p className="text-lg text-white/70 uppercase tracking-widest">Noviembre de 2025</p>
+                        <div className="mt-12">
+                            <img src="logo.png" alt="Logo CRC" className="h-32 mx-auto object-contain bg-white p-4 rounded-xl shadow-lg" />
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'intro-obj',
+                section: SectionType.INTRO,
+                component: (
+                    <SlideLayout title="Monitoreo de Tendencias Tecnológicas" chapter="Introducción">
+                        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-xl border-l-4 border-indigo-500 mb-8 shadow-sm">
+                            <p className="text-lg text-slate-700 leading-relaxed"><strong>Objetivo:</strong> Identificar y analizar las principales tendencias tecnológicas que impactan los sectores de telecomunicaciones, postal y contenidos, proporcionando insights para la toma de decisiones regulatorias y estratégicas.</p>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                                <h3 className="text-xl font-bold text-indigo-600 mb-4 flex items-center gap-2"><span className="bg-indigo-100 p-2 rounded-lg"><Globe size={20}/></span> Metodología</h3>
+                                <ul className="space-y-3 text-slate-600">
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Mesas de diálogo con actores del sector</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Análisis de tendencias internacionales</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Revisión de benchmarking global</li>
+                                </ul>
+                            </div>
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                                <h3 className="text-xl font-bold text-indigo-600 mb-4 flex items-center gap-2"><span className="bg-indigo-100 p-2 rounded-lg"><Zap size={20}/></span> Estructura</h3>
+                                <ul className="space-y-3 text-slate-600">
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Tendencias en Comunicaciones</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Tendencias en el Sector Postal</li>
+                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Tendencias en Contenidos</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'intro-problems',
+                section: SectionType.INTRO,
+                component: (
+                    <SlideLayout title="Problemáticas Identificadas" chapter="Introducción" subtitle="Haz clic en cada sector para explorar detalles">
+                        <InteractiveProblematicas />
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'intro-matrix',
+                section: SectionType.INTRO,
+                component: (
+                    <SlideLayout title="Identificación de Temáticas" chapter="Introducción" subtitle="Matriz de relaciones entre problemáticas y tendencias">
+                        <InteractiveMatrix />
+                    </SlideLayout>
+                )
+            },
+            // TELECOM
+            {
+                id: 'tel-cover',
+                section: SectionType.TELECOM,
+                component: (
+                    <SlideLayout isCover>
+                        <div className="bg-white/20 p-4 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6"><Radio size={40} className="text-white"/></div>
+                        <h1 className="text-5xl font-bold mb-4">TELECOMUNICACIONES</h1>
+                        <p className="text-xl opacity-90">Redes Inteligentes, 5G y Nuevos Modelos de Infraestructura</p>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'tel-context',
+                section: SectionType.TELECOM,
+                component: (
+                    <SlideLayout title="Transformación del Sector" chapter="Telecomunicaciones">
+                        <div className="bg-blue-50 p-6 rounded-xl mb-8 border-l-4 border-blue-600"><h4 className="font-bold text-blue-900 text-lg mb-2">De Redes de Transporte a Plataformas de Experiencia Digital</h4><p className="text-slate-700">El sector atraviesa una transformación crítica. Ya no basta con garantizar capacidad; se requiere gestión inteligente, personalizada y confiable.</p></div>
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm"><h4 className="font-bold text-red-500 mb-4 flex items-center gap-2"><ShieldCheck size={20}/> Retos Críticos</h4><ul className="space-y-2 text-slate-600 text-sm"><li>• Incremento de costos operativos</li><li>• Barreras para despliegue de infraestructura</li><li>• Baja eficiencia en uso de recursos</li><li>• Estándares de calidad exigentes</li></ul></div>
+                            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm"><h4 className="font-bold text-green-500 mb-4 flex items-center gap-2"><Cpu size={20}/> Respuestas Tecnológicas</h4><ul className="space-y-2 text-slate-600 text-sm"><li>• Virtualización y automatización (NFV/SDN)</li><li>• 5G Stand Alone & Network Slicing</li><li>• Edge Computing e IA</li></ul></div>
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'tel-ai',
+                section: SectionType.TELECOM,
+                component: (
+                    <SlideLayout title="IA: Motor de Crecimiento" chapter="Telecomunicaciones" subtitle="Impacto proyectado en el tráfico de redes">
+                        <div className="flex flex-col h-full"><div className="flex-1 min-h-[300px]"><TelecomAIChart /></div><div className="grid grid-cols-3 gap-4 mt-6 text-center"><div className="p-4 bg-slate-50 rounded-lg"><div className="text-2xl font-bold text-blue-600">51%</div><div className="text-xs text-slate-500">CAGR Tráfico Directo</div></div><div className="p-4 bg-slate-50 rounded-lg"><div className="text-2xl font-bold text-green-600">21%</div><div className="text-xs text-slate-500">CAGR Tráfico Indirecto</div></div><div className="p-4 bg-slate-50 rounded-lg"><div className="text-2xl font-bold text-purple-600">1,088 EB</div><div className="text-xs text-slate-500">Tráfico mensual 2033</div></div></div></div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'tel-5g',
+                section: SectionType.TELECOM,
+                component: (
+                    <SlideLayout title="5G Stand Alone (SA)" chapter="Telecomunicaciones" subtitle="La verdadera revolución de la virtualización nativa">
+                        <div className="flex flex-col h-full"><div className="flex-1 min-h-[300px]"><Telecom5GChart /></div><div className="bg-indigo-50 p-4 rounded-lg mt-6 text-center text-indigo-900 text-sm"><strong>Dato Clave:</strong> Se proyectan 3,700 Millones de suscripciones 5G SA para 2030, habilitando el <em>Network Slicing</em> masivo.</div></div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'tel-techs',
+                section: SectionType.TELECOM,
+                component: (
+                    <SlideLayout title="Tecnologías Habilitadoras" chapter="Telecomunicaciones">
+                        <div className="grid grid-cols-2 gap-6">
+                            {[{ title: "NFV y SDN", desc: "Virtualización de funciones. Reducen CAPEX/OPEX y aceleran despliegue.", icon: Cpu, color: "text-blue-500" }, { title: "Edge Computing", desc: "Procesamiento cercano al usuario. Reduce latencia hasta 80%.", icon: Zap, color: "text-amber-500" }, { title: "Network Slicing", desc: "Segmentación para servicios diferenciados. Mercado de $2.7B para 2033.", icon: Radio, color: "text-purple-500" }, { title: "Hollow Core Fiber", desc: "30% menos latencia. Ideal para comunicaciones críticas.", icon: Globe, color: "text-cyan-500" }].map((tech, i) => (
+                                <div key={i} className="bg-white border border-slate-100 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                                    <tech.icon className={`mb-4 ${tech.color}`} size={32} />
+                                    <h4 className="font-bold text-lg text-slate-800 mb-2">{tech.title}</h4>
+                                    <p className="text-slate-600 text-sm">{tech.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'tel-ntn',
+                section: SectionType.TELECOM,
+                component: (
+                    <SlideLayout title="5G NTN: Redes No Terrestres" chapter="Telecomunicaciones" subtitle="Conectividad satelital ubicua">
+                        <div className="flex flex-col h-full"><div className="flex-1 min-h-[300px]"><TelecomNTNChart /></div><div className="mt-6 flex justify-between bg-slate-50 p-6 rounded-xl"><div><h5 className="font-bold text-slate-700">Crecimiento Acelerado</h5><p className="text-3xl font-bold text-indigo-600">33.5% <span className="text-sm font-normal text-slate-500">CAGR</span></p></div><div className="text-right"><h5 className="font-bold text-slate-700">Modalidades</h5><p className="text-sm text-slate-600">Directo a Celda (D2C) & Directo a Dispositivo (D2D)</p></div></div></div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'tel-collab',
+                section: SectionType.TELECOM,
+                component: (
+                    <SlideLayout title="Infraestructura Colaborativa" chapter="Telecomunicaciones">
+                        <div className="grid md:grid-cols-2 gap-8 h-full">
+                            <div className="bg-slate-50 p-6 rounded-xl flex flex-col justify-center items-center text-center"><div className="text-6xl font-bold text-green-500 mb-2">30%</div><p className="text-lg text-slate-700 font-medium">Reducción potencial de OPEX</p><p className="text-sm text-slate-500 mt-2">mediante acuerdos de compartición y redes neutras.</p></div>
+                            <div className="space-y-4"><h4 className="font-bold text-slate-800">Tendencias Globales</h4><div className="bg-white border-l-4 border-indigo-500 p-4 shadow-sm"><h5 className="font-bold text-indigo-700">Estados Unidos</h5><p className="text-sm text-slate-600">AT&T + BlackRock (Gigapower), T-Mobile + KKR.</p></div><div className="bg-white border-l-4 border-green-500 p-4 shadow-sm"><h5 className="font-bold text-green-700">América Latina</h5><p className="text-sm text-slate-600">FiBrasil (Redes Neutras), On Net Fibra (Colombia).</p></div></div>
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'tel-conclusions',
+                section: SectionType.TELECOM,
+                component: (
+                    <SlideLayout title="Conclusiones y Acciones Estratégicas" chapter="Telecomunicaciones">
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border-l-4 border-blue-600 mb-6"><p className="text-slate-700">La sostenibilidad del sector exige una visión articulada. La política pública debe ser habilitadora para la adopción de tecnologías como <strong>SDN, NFV, Edge Computing y 5G SA</strong>, garantizando competencia y protección al usuario.</p></div>
+                        <div className="grid md:grid-cols-3 gap-6">
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col"><div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center text-blue-600 mb-4"><Zap size={24} /></div><h4 className="font-bold text-slate-800 mb-2">Gestión Inteligente</h4><p className="text-sm text-slate-600">Impulso a la adopción de APIs abiertas y mecanismos de caching. Incentivos para infraestructura perimetral (Edge) para descargar redes troncales.</p></div>
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col"><div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center text-green-600 mb-4"><Target size={24} /></div><h4 className="font-bold text-slate-800 mb-2">Cobertura y Equidad</h4><p className="text-sm text-slate-600">Acelerar expansión de FTTx y adoptar redes NTN 5G para zonas remotas. Fomentar pilotos de tecnologías ágiles como FWA y Taara Lightbridge.</p></div>
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col"><div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center text-purple-600 mb-4"><Users size={24} /></div><h4 className="font-bold text-slate-800 mb-2">Nueva Medición de Calidad</h4><p className="text-sm text-slate-600">Transición hacia un enfoque híbrido que integre métricas técnicas (QoS) con la percepción del usuario (QoE), alineado con recomendaciones UIT-T.</p></div>
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            // POSTAL
+            {
+                id: 'postal-cover',
+                section: SectionType.POSTAL,
+                component: (
+                    <SlideLayout isCover>
+                        <div className="bg-white/20 p-4 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6"><Truck size={40} className="text-white"/></div>
+                        <h1 className="text-5xl font-bold mb-4">SECTOR POSTAL</h1>
+                        <p className="text-xl opacity-90">Transformación Digital y Nuevos Modelos de Negocio</p>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'postal-context',
+                section: SectionType.POSTAL,
+                component: (
+                    <SlideLayout title="Transformación del Sector" chapter="Postal">
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <div className="space-y-6">
+                                <div className="bg-red-50 p-6 rounded-xl border border-red-100"><h4 className="font-bold text-red-700 mb-2">Desafíos</h4><ul className="list-disc pl-4 text-slate-700 space-y-1"><li>Caída del 40% en volumen de correo tradicional (Europa).</li><li>Infraestructuras antiguas.</li><li>Competencia feroz de plataformas digitales nativas.</li></ul></div>
+                                <div className="bg-green-50 p-6 rounded-xl border border-green-100"><h4 className="font-bold text-green-700 mb-2">Oportunidades</h4><ul className="list-disc pl-4 text-slate-700 space-y-1"><li>Crecimiento explosivo del E-commerce.</li><li>Automatización para eficiencia operativa.</li><li>Diversificación hacia servicios financieros.</li></ul></div>
+                            </div>
+                            <div className="flex items-center justify-center"><div className="bg-white p-8 rounded-full shadow-xl border-8 border-slate-50 w-64 h-64 flex flex-col items-center justify-center text-center"><div className="text-5xl font-bold text-slate-800">40%</div><div className="text-sm text-slate-500 mt-2">Caída volumen correo tradicional</div></div></div>
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'postal-automation',
+                section: SectionType.POSTAL,
+                component: (
+                    <SlideLayout title="Automatización Postal" chapter="Postal" subtitle="Un mercado en expansión (CAGR 7.1%)">
+                        <div className="flex flex-col h-full"><div className="flex-1 min-h-[300px]"><PostalAutomationChart /></div><div className="grid grid-cols-3 gap-4 mt-6">{[{ icon: Cpu, label: "Robótica", desc: "Clasificación automatizada 4,800/hora" }, { icon: Zap, label: "IA/ML", desc: "Optimización de rutas y tracking" }, { icon: Radio, label: "IoT", desc: "Trazabilidad en tiempo real" }].map((item, i) => (<div key={i} className="bg-slate-50 p-4 rounded-lg flex flex-col items-center text-center"><item.icon className="text-blue-500 mb-2" size={24} /><div className="font-bold text-slate-700">{item.label}</div><div className="text-xs text-slate-500">{item.desc}</div></div>))}</div></div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'postal-ecommerce',
+                section: SectionType.POSTAL,
+                component: (
+                    <SlideLayout title="E-commerce: El Motor Central" chapter="Postal">
+                        <div className="flex flex-col h-full"><div className="flex-1 min-h-[300px]"><PostalEcommerceUserChart /></div><div className="bg-amber-50 p-6 rounded-xl mt-6 flex justify-between items-center"><div><h4 className="font-bold text-amber-800 text-lg">Liderazgo LatAm</h4><p className="text-amber-700">La región con mayor tasa de crecimiento en E-commerce (63% en 2020).</p></div><div className="text-4xl font-bold text-amber-600">3.59B</div></div></div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'postal-ecosystem',
+                section: SectionType.POSTAL,
+                component: (
+                    <SlideLayout title="El Nuevo Ecosistema" chapter="Postal">
+                        <div className="flex flex-col md:flex-row gap-6 h-full items-center justify-center">
+                            <div className="w-full md:w-1/3 p-6 bg-slate-100 rounded-xl text-center opacity-60 grayscale"><h4 className="font-bold text-xl text-slate-600 mb-4">Modelo Tradicional</h4><ul className="text-sm text-slate-500 space-y-2"><li>Sistema Autónomo</li><li>Envíos Físicos</li><li>Cadena Lineal</li></ul></div>
+                            <div className="hidden md:block text-slate-300"><ChevronRight size={48} /></div>
+                            <div className="w-full md:w-1/3 p-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl text-center text-white shadow-xl transform scale-110"><h4 className="font-bold text-2xl mb-4">Modelo Digital</h4><ul className="text-sm text-blue-100 space-y-3 font-medium"><li>Integración con Plataformas</li><li>Servicios Híbridos (Físico/Digital)</li><li>Ecosistema Interconectado</li><li>Última Milla Inteligente</li></ul></div>
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'postal-conclusions',
+                section: SectionType.POSTAL,
+                component: (
+                    <SlideLayout title="Acciones y Futuro del Sector" chapter="Postal">
+                        <div className="grid md:grid-cols-2 gap-8 h-full">
+                            <div className="flex flex-col justify-center space-y-6"><h3 className="text-2xl font-bold text-slate-800">Competencia y Modernización</h3><p className="text-slate-600 leading-relaxed">La cadena de suministro global del comercio electrónico se enfrenta a nuevos desafíos regulatorios y competitivos. La tendencia indica que el canal comercial y el inventario reubicado están ganando terreno sobre el canal postal tradicional.</p><div className="bg-amber-50 border-l-4 border-amber-500 p-4"><span className="font-bold text-amber-800">Acción Clave: </span>Modernizar marcos normativos para garantizar competencia leal entre actores tradicionales y plataformas digitales, incorporando interoperabilidad y protección de datos.</div></div>
+                            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-4">
+                                <div className="flex items-start gap-4"><div className="bg-blue-100 p-3 rounded-lg text-blue-600"><CreditCard size={24}/></div><div><h4 className="font-bold text-slate-800">Inclusión Híbrida</h4><p className="text-sm text-slate-600">Los operadores postales deben aprovechar su capilaridad en zonas con baja cobertura bancaria para ofrecer servicios financieros, logísticos y digitales integrados (modelo híbrido).</p></div></div>
+                                <div className="flex items-start gap-4"><div className="bg-indigo-100 p-3 rounded-lg text-indigo-600"><Globe size={24}/></div><div><h4 className="font-bold text-slate-800">Estándares Globales</h4><p className="text-sm text-slate-600">Adopción de iniciativas como <em>Connect.Post</em> y <em>Ready to Market Interoperability Group</em> para fortalecer ciberseguridad e integración de pagos.</p></div></div>
+                            </div>
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            // AUDIOVISUAL
+            {
+                id: 'av-cover',
+                section: SectionType.AUDIOVISUAL,
+                component: (
+                    <SlideLayout isCover>
+                        <div className="bg-white/20 p-4 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6"><Video size={40} className="text-white"/></div>
+                        <h1 className="text-5xl font-bold mb-4">SECTOR AUDIOVISUAL</h1>
+                        <p className="text-xl opacity-90">Convergencia, Producción Virtual y Sostenibilidad</p>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'av-context',
+                section: SectionType.AUDIOVISUAL,
+                component: (
+                    <SlideLayout title="Convergencia Total" chapter="Audiovisual">
+                        <div className="bg-purple-50 p-6 rounded-xl border-l-4 border-purple-500 mb-8"><p className="text-lg text-slate-700">La tecnología está eliminando las fronteras entre producción, distribución y consumo. Estudios virtuales, 5G Broadcast y nuevos modelos de monetización redefinen el juego.</p></div>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-white p-6 shadow-sm rounded-lg border border-slate-100"><h4 className="font-bold text-purple-600 mb-2">Producción</h4><p className="text-sm text-slate-600">Estudios LED virtuales, Captura Volumétrica 3D, IA Generativa para guiones y post-producción.</p></div>
+                            <div className="bg-white p-6 shadow-sm rounded-lg border border-slate-100"><h4 className="font-bold text-pink-600 mb-2">Consumo</h4><p className="text-sm text-slate-600">SVoD, AVoD, FAST channels. Experiencias inmersivas (XR) y compras en vivo (Live Commerce).</p></div>
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'av-video',
+                section: SectionType.AUDIOVISUAL,
+                component: (
+                    <SlideLayout title="Dominio del Video Móvil" chapter="Audiovisual">
+                        <div className="flex flex-col h-full"><div className="flex-1 min-h-[300px]"><AVVideoTrafficChart /></div><div className="mt-6 text-center"><p className="text-slate-600 mb-2">Para 2026, el <strong>80%</strong> del tráfico móvil mundial será video.</p><div className="inline-block bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm font-bold">Reto: Eficiencia de Red (Edge Computing + 5G Broadcast)</div></div></div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'av-sustainability',
+                section: SectionType.AUDIOVISUAL,
+                component: (
+                    <SlideLayout title="Sostenibilidad: Desafío Crítico" chapter="Audiovisual">
+                        <div className="flex flex-col md:flex-row gap-8 h-full">
+                            <div className="flex-1"><AVEnergyChart /></div>
+                            <div className="w-full md:w-1/3 flex flex-col justify-center space-y-6">
+                                <div className="bg-green-50 p-6 rounded-xl border border-green-100"><h4 className="font-bold text-green-800 text-xl mb-1">20-50%</h4><p className="text-sm text-green-700">Reducción de emisiones gracias a la <strong>Producción Virtual</strong> (menos desplazamientos).</p></div>
+                                <div className="bg-red-50 p-6 rounded-xl border border-red-100"><h4 className="font-bold text-red-800 text-xl mb-1">1,000 TWh</h4><p className="text-sm text-red-700">Consumo proyectado de Data Centers para 2026. Requiere métricas verificables (CSRD).</p></div>
+                            </div>
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'av-regulation',
+                section: SectionType.AUDIOVISUAL,
+                component: (
+                    <SlideLayout title="Nuevo Paradigma Regulatorio" chapter="Audiovisual">
+                        <div className="grid gap-6">
+                            {[{ title: "EMFA (European Media Freedom Act)", desc: "Protección de independencia de medios y pluralismo.", icon: ShieldCheck }, { title: "DSA (Digital Services Act)", desc: "Transparencia algorítmica y protección de menores.", icon: Lock }, { title: "Sostenibilidad (CSRD)", desc: "Métricas ambientales obligatorias para streaming y data centers.", icon: Globe }].map((reg, i) => (
+                                <div key={i} className="flex items-start gap-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100"><div className="bg-indigo-50 p-3 rounded-lg text-indigo-600"><reg.icon size={24} /></div><div><h4 className="font-bold text-lg text-slate-800">{reg.title}</h4><p className="text-slate-600">{reg.desc}</p></div></div>
+                            ))}
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'av-conclusions',
+                section: SectionType.AUDIOVISUAL,
+                component: (
+                    <SlideLayout title="Gobernanza y Acciones" chapter="Audiovisual">
+                        <div className="mb-6"><p className="text-slate-700 mb-4">La gobernanza del ecosistema audiovisual no es un fin en sí mismo, sino el andamiaje para convertir innovaciones en garantías de derechos y pluralismo.</p></div>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-purple-50 p-5 rounded-lg"><h4 className="font-bold text-purple-800 mb-2 flex items-center gap-2"><Lightbulb size={20}/> Monitoreo y Prospectiva</h4><p className="text-sm text-slate-700">Consolidar sistemas de información sobre consumo y sostenibilidad. Desarrollar hojas de ruta tecnológicas anticipatorias.</p></div>
+                            <div className="bg-blue-50 p-5 rounded-lg"><h4 className="font-bold text-blue-800 mb-2 flex items-center gap-2"><ShieldCheck size={20}/> Herramientas Técnicas</h4><p className="text-sm text-slate-700">Capacidades para auditoría algorítmica y evaluación de sistemas de recomendación. Adopción de estándares como C2PA para autenticidad.</p></div>
+                            <div className="bg-indigo-50 p-5 rounded-lg"><h4 className="font-bold text-indigo-800 mb-2 flex items-center gap-2"><Users size={20}/> Co-regulación</h4><p className="text-sm text-slate-700">Esquemas de corresponsabilidad con la industria: códigos de conducta, interoperabilidad de verificación de edad y transparencia publicitaria.</p></div>
+                            <div className="bg-green-50 p-5 rounded-lg"><h4 className="font-bold text-green-800 mb-2 flex items-center gap-2"><Globe size={20}/> Agenda Pública</h4><p className="text-sm text-slate-700">Integrar alfabetización digital y métricas de eficiencia energética en el otorgamiento de licencias y espectro.</p></div>
+                        </div>
+                    </SlideLayout>
+                )
+            },
+            // OUTRO
+            {
+                id: 'outro',
+                section: SectionType.OUTRO,
+                component: (
+                    <SlideLayout isCover>
+                        <h1 className="text-6xl font-bold mb-4">¡Gracias!</h1>
+                        <div className="bg-white/10 p-8 rounded-2xl backdrop-blur-md max-w-2xl w-full flex flex-col items-center">
+                            <p className="text-2xl mb-2 font-bold">Comisión de Regulación de Comunicaciones</p>
+                            <p className="text-xl text-white/90 font-light">Coordinación de Prospectiva Estratégica</p>
+                            <div className="h-px bg-white/30 w-1/2 my-6"></div>
+                            <img src="logo.png" alt="Logo CRC" className="h-24 object-contain bg-white p-2 rounded-lg" />
+                        </div>
+                    </SlideLayout>
+                )
+            }
+        ];
+
+        // --- COMPONENTE PRINCIPAL APP ---
+        const App = () => {
+            const [activeSection, setActiveSection] = useState(SectionType.INTRO);
+            const mainContentRef = useRef(null);
+
+            const sectionSlides = slides.filter(slide => slide.section === activeSection);
+
+            const handleSectionJump = (section) => {
+                setActiveSection(section);
+                if (mainContentRef.current) {
+                    mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            const handleNextSection = () => {
+                const currentIndex = SECTION_ORDER.indexOf(activeSection);
+                if (currentIndex < SECTION_ORDER.length - 1) {
+                    handleSectionJump(SECTION_ORDER[currentIndex + 1]);
+                }
+            };
+
+            const currentSectionIndex = SECTION_ORDER.indexOf(activeSection);
+            const nextSection = currentSectionIndex < SECTION_ORDER.length - 1 ? SECTION_ORDER[currentSectionIndex + 1] : null;
+            const progress = ((currentSectionIndex + 1) / SECTION_ORDER.length) * 100;
+
+            const NavItem = ({ item, isActive }) => (
+                <button
+                    onClick={() => handleSectionJump(item.type)}
+                    className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-all duration-300 w-full group relative ${isActive ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 translate-x-1' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+                    title={item.label}
+                >
+                    <item.icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+                    <span className="absolute left-full ml-4 px-3 py-1.5 bg-slate-800 text-white text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-50 pointer-events-none">
+                        {item.label}
+                        <span className="absolute left-0 top-1/2 -translate-x-1 -translate-y-1/2 w-2 h-2 bg-slate-800 rotate-45"></span>
+                    </span>
+                </button>
+            );
+
+            const navItems = [
+                { type: SectionType.INTRO, icon: Home, label: 'Inicio' },
+                { type: SectionType.TELECOM, icon: Radio, label: 'Telecom' },
+                { type: SectionType.POSTAL, icon: Mail, label: 'Postal' },
+                { type: SectionType.AUDIOVISUAL, icon: Video, label: 'Audiovisual' },
+                { type: SectionType.OUTRO, icon: CheckCircle, label: 'Cierre' },
+            ];
+
+            return (
+                <div className="flex h-screen w-screen overflow-hidden bg-slate-100 font-sans text-slate-900">
+                    <div className="fixed left-0 top-0 h-full w-20 bg-slate-900 flex flex-col items-center py-8 z-50 shadow-2xl border-r border-slate-800">
+                        <div className="font-bold text-white text-xs mb-10 tracking-widest bg-indigo-600 px-2 py-1 rounded">CRC</div>
+                        <nav className="flex-1 flex flex-col gap-8 w-full px-2">
+                            {navItems.map(item => <NavItem key={item.type} item={item} isActive={activeSection === item.type} />)}
+                        </nav>
+                        <div className="w-full px-4 flex flex-col items-center gap-2">
+                            <div className="text-[10px] text-slate-500 font-mono">{Math.round(progress)}%</div>
+                            <div className="h-24 w-1.5 bg-slate-800 rounded-full overflow-hidden relative">
+                                <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-indigo-500 to-purple-500 transition-all duration-500 ease-out" style={{ height: `${progress}%` }} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <main ref={mainContentRef} className="flex-1 ml-20 h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth">
+                        <div className="w-full">
+                            {sectionSlides.map((slide, index) => {
+                                const prevSlide = sectionSlides[index - 1];
+                                const nextSlide = sectionSlides[index + 1];
+                                return (
+                                    <div key={slide.id} id={slide.id} className="relative h-screen w-full snap-start flex flex-col items-center justify-center p-4 md:p-8 lg:p-12 overflow-hidden">
+                                        <div className="w-full max-w-7xl h-full flex flex-col justify-center relative z-0">
+                                            {slide.component}
+                                        </div>
+                                        <InternalNavigation prevId={prevSlide?.id} nextId={nextSlide?.id} />
+                                    </div>
+                                );
+                            })}
+                            
+                            {nextSection && (
+                                <div className="h-screen w-full snap-start flex items-center justify-center bg-slate-200">
+                                    <div className="text-center">
+                                        <h3 className="text-2xl text-slate-600 mb-8">Fin de la sección {activeSection}</h3>
+                                        <SectionNavigation onNext={handleNextSection} nextSectionTitle={nextSection} />
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeSection === SectionType.OUTRO && (
+                                <footer className="snap-start py-12 text-center text-slate-400 text-sm">
+                                    &copy; 2025 Comisión de Regulación de Comunicaciones. Todos los derechos reservados.
+                                </footer>
+                            )}
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
