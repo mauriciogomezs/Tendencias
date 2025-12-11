@@ -1,239 +1,115 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CRC Tendencias 2025</title>
+    <title>CRC Tendencias 2025 - Micrositio</title>
     
     <!-- 1. Estilos (Tailwind CSS) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- 2. Fuentes -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- 3. Librerías del Núcleo (Orden Crítico) -->
-    
-    <!-- React & ReactDOM -->
+    <!-- 3. Librerías del Núcleo -->
     <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-    
-    <!-- Prop-Types (Requerido por Recharts en modo UMD) -->
     <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
-    
-    <!-- Recharts (Gráficos) -->
     <script src="https://unpkg.com/recharts@2.10.3/umd/Recharts.js"></script>
-    
-    <!-- Babel (Compilador JSX) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #f3f4f6;
+        background-color: #f8fafc;
         margin: 0;
         padding: 0;
-        overflow: hidden; 
+        overflow-y: hidden;
       }
       
-      .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-      .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-      .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-      .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
       
-      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-      .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
-      
-      .snap-container {
-        scroll-snap-type: y mandatory;
-        overflow-y: scroll;
-        height: 100vh;
-        scroll-behavior: smooth;
-      }
-      .snap-child {
-        scroll-snap-align: start;
-        height: 100vh;
-        width: 100%;
-        position: relative;
-      }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
 
-      #error-overlay {
-        display: none;
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: white;
-        z-index: 9999;
-        padding: 2rem;
-        color: red;
-        border: 5px solid red;
+      .web-section {
+          min-height: 80vh;
+          padding: 4rem 2rem;
+          border-bottom: 1px solid #e2e8f0;
       }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "recharts": "https://aistudiocdn.com/recharts@^3.5.0"
+    "react": "https://esm.sh/react@^19.2.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.1/",
+    "react/": "https://esm.sh/react@^19.2.1/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.559.0",
+    "recharts": "https://esm.sh/recharts@^3.5.1"
   }
 }
 </script>
 </head>
 <body>
     <div id="root"></div>
-    <div id="error-overlay"></div>
-
-    <script>
-      // Manejador de errores básico
-      window.onerror = function(message, source, lineno, colno, error) {
-        console.error("Error global:", message, error);
-        const overlay = document.getElementById('error-overlay');
-        overlay.style.display = 'block';
-        overlay.innerHTML = `
-            <h2 style="font-size:24px; font-weight:bold; margin-bottom:10px;">Ocurrió un error al cargar</h2>
-            <p><strong>Mensaje:</strong> ${message}</p>
-            <p><strong>Línea:</strong> ${lineno}</p>
-            <p style="margin-top:20px; color:black;">Intenta recargar la página o revisa la consola (F12).</p>
-        `;
-      };
-    </script>
 
     <script type="text/babel">
-        // --- VALIDACIÓN DE DEPENDENCIAS ---
-        if (!window.React || !window.ReactDOM || !window.Recharts) {
-            throw new Error("Las librerías externas (React o Recharts) no se cargaron correctamente. Revisa tu conexión a internet.");
-        }
-
         const { useState, useEffect, useRef } = React;
-        
-        // Extraer componentes de Recharts de manera segura
-        const { 
-            BarChart, Bar, LineChart, Line, AreaChart, Area, 
-            XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
-        } = window.Recharts;
+        const { BarChart, Bar, LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = window.Recharts;
 
-        // --- ICONOS SVG ---
+        // --- ICONOS ---
         const Icon = ({ children, size = 24, className = "" }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                {children}
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
         );
-
-        // Definición del Mapa de Iconos (Objeto Global)
         const Icons = {
-            Home: (props) => <Icon {...props}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></Icon>,
-            Radio: (props) => <Icon {...props}><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></Icon>,
-            Mail: (props) => <Icon {...props}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></Icon>,
-            Video: (props) => <Icon {...props}><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></Icon>,
-            CheckCircle: (props) => <Icon {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></Icon>,
-            Globe: (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10 15.3 15.3 0 0 1 4 10z"/></Icon>,
-            Zap: (props) => <Icon {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></Icon>,
-            Tv: (props) => <Icon {...props}><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></Icon>,
-            ChevronRight: (props) => <Icon {...props}><path d="m9 18 6-6-6-6"/></Icon>,
-            ChevronDown: (props) => <Icon {...props}><path d="m6 9 6 6 6-6"/></Icon>,
-            ChevronUp: (props) => <Icon {...props}><path d="m18 15-6-6-6 6"/></Icon>,
-            ArrowRight: (props) => <Icon {...props}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></Icon>,
-            ShieldCheck: (props) => <Icon {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></Icon>,
-            Cpu: (props) => <Icon {...props}><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></Icon>,
-            Target: (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></Icon>,
-            Users: (props) => <Icon {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></Icon>,
-            CreditCard: (props) => <Icon {...props}><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></Icon>,
-            Lightbulb: (props) => <Icon {...props}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></Icon>,
-            Lock: (props) => <Icon {...props}><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></Icon>,
-            PieChart: (props) => <Icon {...props}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></Icon>,
-            Network: (props) => <Icon {...props}><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></Icon>,
-            CheckCircle2: (props) => <Icon {...props}><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></Icon>,
-            Truck: (props) => <Icon {...props}><path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5"/><path d="M14 17h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></Icon>,
-            Box: (props) => <Icon {...props}><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></Icon>,
-            Building: (props) => <Icon {...props}><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></Icon>
+            Home: (p) => <Icon {...p}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></Icon>,
+            Radio: (p) => <Icon {...p}><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></Icon>,
+            Mail: (p) => <Icon {...p}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></Icon>,
+            Video: (p) => <Icon {...p}><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></Icon>,
+            CheckCircle: (p) => <Icon {...p}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></Icon>,
+            Globe: (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10 15.3 15.3 0 0 1 4 10z"/></Icon>,
+            Zap: (p) => <Icon {...p}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></Icon>,
+            Tv: (p) => <Icon {...p}><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></Icon>,
+            ChevronDown: (p) => <Icon {...p}><path d="m6 9 6 6 6-6"/></Icon>,
+            ChevronUp: (p) => <Icon {...p}><path d="m18 15-6-6-6 6"/></Icon>,
+            ArrowRight: (p) => <Icon {...p}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></Icon>,
+            ShieldCheck: (p) => <Icon {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></Icon>,
+            Cpu: (p) => <Icon {...p}><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></Icon>,
+            Target: (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></Icon>,
+            Users: (p) => <Icon {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></Icon>,
+            CreditCard: (p) => <Icon {...p}><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></Icon>,
+            Lightbulb: (p) => <Icon {...p}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></Icon>,
+            Lock: (p) => <Icon {...p}><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></Icon>,
+            PieChart: (p) => <Icon {...p}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></Icon>,
+            Network: (p) => <Icon {...p}><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></Icon>,
+            CheckCircle2: (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></Icon>,
+            Truck: (p) => <Icon {...p}><path d="M10 17h4V5H2v12h3"/><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5"/><path d="M14 17h1"/><circle cx="7.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></Icon>,
+            Box: (p) => <Icon {...p}><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></Icon>,
+            Signal: (p) => <Icon {...p}><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 20V4"/></Icon>,
+            Share2: (p) => <Icon {...p}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></Icon>,
+            BarChart3: (p) => <Icon {...p}><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></Icon>
         };
 
-        // Desestructurar para uso global en JSX
-        const { 
-            Home, Radio, Mail, Video, CheckCircle, Globe, Zap, Tv, 
-            ChevronRight, ChevronDown, ChevronUp, ArrowRight, ShieldCheck, 
-            Cpu, Target, Users, CreditCard, Lightbulb, Lock, PieChart, 
-            Network, CheckCircle2, Truck, Box, Building 
-        } = Icons;
+        const { Home, Radio, Mail, Video, CheckCircle, Globe, Zap, Tv, ChevronDown, ChevronUp, ArrowRight, ShieldCheck, Cpu, Target, Users, CreditCard, Lightbulb, Lock, PieChart, Network, CheckCircle2, Truck, Box, Signal, Share2, BarChart3 } = Icons;
 
-        // --- CONSTANTES ---
-        const SectionType = {
-            INTRO: 'Introducción',
-            TELECOM: 'Telecomunicaciones',
-            POSTAL: 'Postal',
-            AUDIOVISUAL: 'Audiovisual',
-            OUTRO: 'Cierre'
-        };
-
-        const SECTION_ORDER = [
-            SectionType.INTRO,
-            SectionType.TELECOM,
-            SectionType.POSTAL,
-            SectionType.AUDIOVISUAL,
-            SectionType.OUTRO
-        ];
+        const SectionType = { INTRO: 'Introducción', TELECOM: 'Telecomunicaciones', POSTAL: 'Postal', AUDIOVISUAL: 'Audiovisual', OUTRO: 'Cierre' };
+        const SECTION_ORDER = [SectionType.INTRO, SectionType.TELECOM, SectionType.POSTAL, SectionType.AUDIOVISUAL, SectionType.OUTRO];
 
         // --- COMPONENTES UI ---
-
-        const InternalNavigation = ({ prevId, nextId }) => {
-            const scrollTo = (id) => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            };
-
-            if (!prevId && !nextId) return null;
-
-            return (
-                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-3 p-1.5 bg-white/80 backdrop-blur-md border border-slate-200/50 rounded-full shadow-lg transition-opacity duration-300 hover:bg-white">
-                    <button 
-                        onClick={() => prevId && scrollTo(prevId)}
-                        disabled={!prevId}
-                        className={`p-2 rounded-full transition-all duration-200 ${
-                            prevId 
-                                ? 'text-slate-700 hover:bg-indigo-100 hover:text-indigo-600 cursor-pointer' 
-                                : 'text-slate-300 cursor-not-allowed'
-                        }`}
-                        title="Anterior"
-                    >
-                        <ChevronUp size={24} />
-                    </button>
-                    <div className="h-4 w-px bg-slate-300 mx-1"></div>
-                    <button 
-                        onClick={() => nextId && scrollTo(nextId)}
-                        disabled={!nextId}
-                        className={`p-2 rounded-full transition-all duration-200 ${
-                            nextId 
-                                ? 'text-slate-700 hover:bg-indigo-100 hover:text-indigo-600 cursor-pointer' 
-                                : 'text-slate-300 cursor-not-allowed'
-                        }`}
-                        title="Siguiente"
-                    >
-                        <ChevronDown size={24} />
-                    </button>
-                </div>
-            );
-        };
-
         const SectionNavigation = ({ onNext, nextSectionTitle, isLast }) => {
             if (isLast) return null;
             return (
-                <div className="flex flex-col items-center justify-center h-full w-full">
-                    <div className="text-center mb-8">
-                        <h3 className="text-3xl text-slate-700 font-light"></h3>
-                    </div>
-                    <button 
-                        onClick={onNext}
-                        className="group flex items-center gap-6 bg-slate-900 text-white pr-6 pl-8 py-5 rounded-full shadow-2xl hover:bg-indigo-600 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-indigo-500/30 cursor-pointer"
-                    >
+                <div className="w-full flex justify-center py-20 bg-slate-100/50">
+                    <button onClick={onNext} className="group flex items-center gap-6 bg-slate-900 text-white pr-6 pl-10 py-5 rounded-full shadow-2xl hover:bg-indigo-600 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-indigo-500/30 cursor-pointer">
                         <div className="text-right">
-                            <div className="text-xs text-slate-400 font-bold uppercase tracking-widest group-hover:text-indigo-200">Siguiente</div>
+                            <div className="text-xs text-slate-400 font-bold uppercase tracking-widest group-hover:text-indigo-200 mb-1">Siguiente Capítulo</div>
                             <div className="text-2xl font-bold">{nextSectionTitle}</div>
                         </div>
                         <div className="bg-white/10 p-3 rounded-full group-hover:bg-white/20 transition-colors">
-                            <ArrowRight size={32} />
+                            <ArrowRight size={28} />
                         </div>
                     </button>
                 </div>
@@ -243,246 +119,35 @@
         const SlideLayout = ({ title, subtitle, children, chapter, isCover = false }) => {
             if (isCover) {
                 return (
-                    <section className="h-full w-full max-w-[1600px] flex flex-col items-center justify-center text-center bg-gradient-to-br from-indigo-900 via-blue-800 to-blue-600 text-white p-8 md:p-12 rounded-none md:rounded-3xl shadow-none md:shadow-2xl relative overflow-hidden animate-fade-in mx-auto">
+                    <section className="min-h-screen w-full flex flex-col items-center justify-center text-center bg-gradient-to-br from-indigo-900 via-blue-800 to-blue-600 text-white p-8 md:p-20 relative overflow-hidden animate-fade-in">
                         <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
                             <div className="absolute -top-24 -left-24 w-96 h-96 bg-white rounded-full blur-3xl"></div>
                             <div className="absolute top-1/2 right-0 w-64 h-64 bg-purple-500 rounded-full blur-3xl"></div>
                         </div>
-                        <div className="w-full z-10 flex flex-col items-center justify-center h-full">
+                        <div className="max-w-6xl w-full z-10 flex flex-col items-center justify-center">
                             {children}
                         </div>
                     </section>
                 );
             }
             return (
-                <section className="w-full h-full max-h-[90vh] max-w-[1400px] flex flex-col bg-white p-6 md:p-10 rounded-none md:rounded-3xl shadow-none md:shadow-xl border-x-0 md:border border-slate-200/60 mx-auto transition-all relative overflow-hidden">
-                    <div className="flex flex-col md:flex-row justify-between items-start mb-4 border-b border-slate-100 pb-4 flex-shrink-0">
-                        <div className="max-w-5xl">
+                <section className="w-full flex flex-col items-center bg-white border-b border-slate-100 py-24 px-6 md:px-12 lg:px-24">
+                    <div className="w-full max-w-[1400px]">
+                        <div className="mb-16">
                             {chapter && (
-                                <span className="text-indigo-600 text-[10px] md:text-xs font-bold tracking-widest uppercase mb-2 block bg-indigo-50 px-3 py-1 rounded-full w-fit">
-                                    {chapter}
-                                </span>
+                                <div className="flex items-center gap-3 mb-5">
+                                    <span className="h-1 w-10 bg-indigo-500 rounded-full"></span>
+                                    <span className="text-indigo-600 text-sm font-bold tracking-widest uppercase">{chapter}</span>
+                                </div>
                             )}
-                            {title && <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-slate-900 leading-tight">{title}</h2>}
-                            {subtitle && <h3 className="text-base md:text-lg text-slate-500 font-medium mt-1">{subtitle}</h3>}
+                            <div className="space-y-6 max-w-4xl">
+                                {title && <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight tracking-tight">{title}</h2>}
+                                {subtitle && <p className="text-xl md:text-2xl text-slate-500 font-light leading-relaxed">{subtitle}</p>}
+                            </div>
                         </div>
-                        <div className="hidden md:block mt-2">
-                            <div className="h-3 w-3 rounded-full bg-indigo-500 shadow-sm shadow-indigo-200"></div>
-                        </div>
-                    </div>
-                    <div className="flex-1 w-full overflow-y-auto custom-scrollbar pr-2 pb-16">
-                        {children}
+                        <div className="w-full">{children}</div>
                     </div>
                 </section>
-            );
-        };
-
-        // --- CHARTS ---
-        const TelecomAIChart = () => {
-            const data = [
-                { year: '2023', direct: 20, indirect: 300 },
-                { year: '2025', direct: 45, indirect: 400 },
-                { year: '2027', direct: 75, indirect: 520 },
-                { year: '2029', direct: 105, indirect: 640 },
-                { year: '2031', direct: 140, indirect: 730 },
-                { year: '2033', direct: 174, indirect: 832 },
-            ];
-            return (
-                <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="year" stroke="#64748b" />
-                    <YAxis stroke="#64748b" label={{ value: 'EB/mes', angle: -90, position: 'insideLeft', fill: '#64748b' }} />
-                    <Tooltip cursor={{ fill: '#f1f5f9' }} />
-                    <Legend />
-                    <Bar dataKey="direct" name="Tráfico Directo IA" stackId="a" fill="#3b82f6" />
-                    <Bar dataKey="indirect" name="Tráfico Indirecto IA" stackId="a" fill="#86efac" />
-                </BarChart>
-                </ResponsiveContainer>
-            );
-        };
-        
-        const Telecom5GChart = () => {
-            const data = [
-                { year: '2021', total: 670, sa: 100 },
-                { year: '2023', total: 1900, sa: 800 },
-                { year: '2025', total: 3200, sa: 1700 },
-                { year: '2027', total: 4500, sa: 2600 },
-                { year: '2029', total: 5600, sa: 3300 },
-                { year: '2030', total: 6300, sa: 3700 },
-            ];
-            return (
-                <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="year" stroke="#64748b" />
-                    <YAxis stroke="#64748b" />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="total" name="Suscripciones 5G Totales (M)" stroke="#1e40af" strokeWidth={3} dot={{r: 4}} />
-                    <Line type="monotone" dataKey="sa" name="5G Stand Alone (M)" stroke="#22c55e" strokeWidth={3} dot={{r: 4}} />
-                </LineChart>
-                </ResponsiveContainer>
-            );
-        };
-
-        const TelecomNTNChart = () => {
-            const data = [
-                { year: '2023', val: 5.6 },
-                { year: '2024', val: 5.67 },
-                { year: '2026', val: 10.2 },
-                { year: '2028', val: 20.5 },
-                { year: '2030', val: 42.2 },
-            ];
-            return (
-                <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="year" />
-                    <YAxis label={{ value: '$ Billion', angle: -90, position: 'insideLeft' }} />
-                    <Tooltip />
-                    <Area type="monotone" dataKey="val" name="Mercado 5G NTN ($B)" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
-                </AreaChart>
-                </ResponsiveContainer>
-            );
-        };
-
-        const PostalAutomationChart = () => {
-            const data = [
-                { year: '2024', val: 974 },
-                { year: '2026', val: 1150 },
-                { year: '2028', val: 1330 },
-                { year: '2030', val: 1510 },
-                { year: '2032', val: 1686 },
-            ];
-            return (
-                <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="year" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="val" name="Mercado Automatización ($M)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                </BarChart>
-                </ResponsiveContainer>
-            );
-        };
-
-        const PostalEcommerceUserChart = () => {
-            const data = [
-                { year: '2019', val: 2.11 },
-                { year: '2021', val: 2.71 },
-                { year: '2023', val: 3.09 },
-                { year: '2025', val: 3.29 },
-                { year: '2027', val: 3.49 },
-                { year: '2029', val: 3.59 },
-            ];
-            return (
-                <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="year" />
-                    <YAxis />
-                    <Tooltip />
-                    <Area type="monotone" dataKey="val" name="Usuarios E-commerce (Billions)" stroke="#f59e0b" fill="#fcd34d" />
-                </AreaChart>
-                </ResponsiveContainer>
-            );
-        };
-
-        const AVVideoTrafficChart = () => {
-            const data = [
-                { year: '2020', val: 50 },
-                { year: '2021', val: 53 },
-                { year: '2022', val: 57 },
-                { year: '2023', val: 60 },
-                { year: '2024', val: 74 },
-                { year: '2025', val: 77 },
-                { year: '2026', val: 80 },
-            ];
-            return (
-                <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                        <XAxis dataKey="year" />
-                        <YAxis domain={[0, 100]} label={{ value: '%', angle: -90, position: 'insideLeft' }}/>
-                        <Tooltip />
-                        <Line type="monotone" dataKey="val" name="% Tráfico de Video Móvil" stroke="#ef4444" strokeWidth={3} />
-                    </LineChart>
-                </ResponsiveContainer>
-            );
-        };
-
-        const AVEnergyChart = () => {
-            const data = [
-                { year: '2022', val: 460 },
-                { year: '2023', val: 550 },
-                { year: '2024', val: 650 },
-                { year: '2025', val: 800 },
-                { year: '2026', val: 1000 },
-            ];
-            return (
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                        <XAxis dataKey="year" />
-                        <YAxis label={{ value: 'TWh', angle: -90, position: 'insideLeft' }}/>
-                        <Tooltip />
-                        <Bar dataKey="val" name="Consumo Data Centers (TWh)" fill="#f87171" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                </ResponsiveContainer>
-            );
-        };
-
-        const InteractiveProblematicas = () => {
-            const [activeTab, setActiveTab] = useState('general');
-            const menuItems = [
-                { id: 'general', label: 'General', count: 5, icon: Globe, color: 'text-green-600', bg: 'bg-green-50' },
-                { id: 'telecom', label: 'Telecomunicaciones', count: 12, icon: Radio, color: 'text-blue-600', bg: 'bg-blue-50' },
-                { id: 'postal', label: 'Postales', count: 3, icon: Mail, color: 'text-amber-600', bg: 'bg-amber-50' },
-                { id: 'contenidos', label: 'Contenidos', count: 5, icon: Tv, color: 'text-red-600', bg: 'bg-red-50' },
-            ];
-            const content = {
-                general: ["Cargas y necesidad de simplificación regulatoria", "Innovación en mecanismos regulatorios + Celeridad en medidas", "Coordinación interinstitucional", "Acceso y confiabilidad de información reportada", "Participación del sector en proyectos"],
-                telecom: ["Falta de uso eficiente de recursos de red (infraestructura saturada)", "Saturación de red por demanda de contenidos", "Concentración de tráfico en redes internacionales", "Gestión de Espectro y Recursos", "Aumento de costos e inversión", "Preocupación por cambios en tarifas", "Dificultades para licencias de espectro", "Falta de transparencia en cálculo de contrapartidas", "Falta de armonización", "Concentración de poder de mercado"],
-                postal: ["Pérdida de rentabilidad por operación no regulada", "Pérdida de mercado frente a billeteras digitales", "Dificultades para modelos híbridos (servicios financieros)"],
-                contenidos: ["Concentración de Poder de mercado en pocos proveedores", "Distribución no autorizada", "Disminución de suscriptores TV (cord-cutting)", "Problemas con validación de audiencias digitales", "Inequidad en obligaciones entre operadores"]
-            };
-
-            return (
-                <div className="flex flex-col md:flex-row h-full gap-6 bg-slate-50 rounded-xl overflow-hidden border border-slate-200">
-                    <div className="w-full md:w-1/3 bg-white border-r border-slate-200 flex flex-col">
-                        <div className="p-4 bg-slate-100 border-b border-slate-200">
-                            <h4 className="font-bold text-slate-700">Sectores</h4>
-                            <p className="text-xs text-slate-500">Seleccione para ver detalles</p>
-                        </div>
-                        <div className="flex-1 overflow-y-auto">
-                            {menuItems.map((item) => (
-                                <button key={item.id} onClick={() => setActiveTab(item.id)} className={`w-full text-left p-4 flex items-center gap-4 transition-all border-b border-slate-100 ${activeTab === item.id ? 'bg-indigo-50 border-l-4 border-l-indigo-500' : 'hover:bg-slate-50 border-l-4 border-l-transparent'}`}>
-                                    <div className={`p-2 rounded-lg ${item.bg} ${item.color}`}><item.icon size={20} /></div>
-                                    <div><div className="font-semibold text-slate-700">{item.label}</div><div className="text-xs text-slate-500">{item.count} problemáticas</div></div>
-                                    {activeTab === item.id && <ChevronRight className="ml-auto text-indigo-400" size={16} />}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="flex-1 p-6 md:p-8 overflow-y-auto bg-white">
-                        <div className="flex items-center gap-3 mb-6">
-                            {(() => {
-                                const activeItem = menuItems.find(m => m.id === activeTab);
-                                return (<><div className={`p-3 rounded-xl ${activeItem.bg} ${activeItem.color}`}><activeItem.icon size={32} /></div><h3 className="text-2xl font-bold text-slate-800">Problemáticas: {activeItem.label}</h3></>);
-                            })()}
-                        </div>
-                        <ul className="space-y-3">
-                            {content[activeTab].map((item, idx) => (
-                                <li key={idx} className="flex items-start gap-3 p-4 rounded-lg bg-slate-50 border border-slate-100 hover:shadow-sm transition-shadow">
-                                    <div className="mt-1.5 h-2 w-2 rounded-full bg-indigo-500 flex-shrink-0" />
-                                    <span className="text-slate-700 leading-relaxed">{item}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
             );
         };
 
@@ -505,110 +170,22 @@
                 comms: {
                     title: 'Tendencias en Comunicaciones',
                     items: [
-                        {
-                            title: 'Tecnologías para el uso eficiente de las redes, la cobertura y la calidad',
-                            details: [
-                                { subtitle: 'Gestión Inteligente, Automatizada y Escalable', text: '5G SA, Virtualización, NFV, SDN, Edge Computing, API' },
-                                { subtitle: 'Tecnologías de acceso con mayor eficiencia o rápido despliegue', text: 'Segmentación de red, acceso fijo inalámbrico, NTN 5G, Taara, FTTx, HCF' },
-                                { subtitle: 'Medición y gestión de la calidad', text: '' }
-                            ]
-                        },
-                        {
-                            title: 'Comportamiento de la industria y modelos de negocio',
-                            details: [
-                                { subtitle: 'Virtualización y automatización', text: '' },
-                                { subtitle: 'Edge Computing', text: '' },
-                                { subtitle: 'Network Slicing', text: '' },
-                                { subtitle: 'NTN 5G', text: '' },
-                                { subtitle: 'Redes Privadas', text: '' },
-                                { subtitle: 'Compartición de infraestructura y redes neutras', text: '' },
-                                { subtitle: 'De Telco a Techco', text: '' },
-                                { subtitle: 'Métricas para medición de la calidad', text: '' }
-                            ]
-                        },
-                        {
-                            title: 'Marco normativo para el uso eficiente de las redes, el despliegue y la calidad',
-                            details: [
-                                { subtitle: 'Modelos híbridos', text: '' },
-                                { subtitle: 'Despliegue de redes', text: '' },
-                                { subtitle: 'Compartición de infraestructura', text: '' },
-                                { subtitle: 'Gestión de la calidad', text: '' }
-                            ]
-                        },
-                        {
-                            title: 'Acciones para enfrentar y anticipar las tendencias tecnológicas en el sector de telecomunicaciones',
-                            details: [
-                                { subtitle: 'Gestión inteligente', text: '' },
-                                { subtitle: 'Cobertura de redes', text: '' },
-                                { subtitle: 'Medición de calidad', text: '' }
-                            ]
-                        }
+                        { title: 'Tecnologías para uso eficiente, cobertura y calidad', details: [{ subtitle: 'Gestión Inteligente', text: '5G SA, NFV, SDN, Edge Computing' }, { subtitle: 'Acceso eficiente', text: 'NTN 5G, FTTx, HCF' }] },
+                        { title: 'Modelos de negocio', details: [{ subtitle: 'Virtualización', text: '' }, { subtitle: 'Network Slicing', text: '' }, { subtitle: 'Redes Privadas', text: '' }] }
                     ]
                 },
                 postal: {
                     title: 'Tendencias Sector Postal',
                     items: [
-                        {
-                            title: 'E-commerce y plataformas digitales',
-                            details: [
-                                { subtitle: 'Rol de las plataformas digitales', text: 'Digitalización e Integración Tecnológica, Billeteras digitales y banca abierta' },
-                                { subtitle: 'Innovación en última milla', text: '' }
-                            ]
-                        },
-                        {
-                            title: 'Comportamiento de la industria hacia modelos de negocio híbridos',
-                            details: [
-                                { subtitle: 'Potencial de interoperabilidad (operador postal como «puente digital»)', text: '' },
-                                { subtitle: 'Inclusión financiera a través de la red postal', text: '' },
-                                { subtitle: 'Diversificación del sector postal', text: '' }
-                            ]
-                        },
-                        {
-                            title: 'Marco normativo',
-                            details: [
-                                { subtitle: 'Normativa del sector postal a nivel internacional', text: 'Competencia y control de infraestructuras tecnológicas, Plataformas y acceso al mercado, La frontera entre banca y redes postales' },
-                                { subtitle: 'Normatividad del sector postal en Colombia', text: '' }
-                            ]
-                        },
-                        {
-                            title: 'Acciones para enfrentar y anticipar las tendencias tecnológicas en el sector postal',
-                            details: []
-                        }
+                        { title: 'E-commerce', details: [{ subtitle: 'Plataformas digitales', text: 'Integración tecnológica' }] },
+                        { title: 'Modelos híbridos', details: [{ subtitle: 'Interoperabilidad', text: '' }] }
                     ]
                 },
                 av: {
-                    title: 'Tendencias en el Sector Audiovisual',
+                    title: 'Tendencias Sector Audiovisual',
                     items: [
-                        {
-                            title: 'Tecnologías para creación, emisión y consumo de contenido audiovisual',
-                            details: [
-                                { subtitle: 'Infraestructuras futuras: plataformas como Unreal Engine, NVIDIA Omniverse y redes distribuidas', text: '' },
-                                { subtitle: 'Automatización y colaboración digital en procesos creativos', text: '' },
-                                { subtitle: 'Convergencia tecnológica en la producción, distribución y consumo audiovisual', text: '' },
-                                { subtitle: 'Nuevas arquitecturas de emisión: 5G Broadcast como alternativa eficiente y sostenible', text: '' }
-                            ]
-                        },
-                        {
-                            title: 'Comportamiento de la industria y modelos de negocio',
-                            details: [
-                                { subtitle: 'Desarrollo de la industria audiovisual mediante plataformas', text: '' },
-                                { subtitle: 'Tendencias en el consumo de plataformas digitales', text: '' },
-                                { subtitle: 'Monetización a través de plataformas, personalización y experiencias inmersivas', text: '' },
-                                { subtitle: 'Sostenibilidad ambiental', text: '' }
-                            ]
-                        },
-                        {
-                            title: 'Marco normativo',
-                            details: [
-                                { subtitle: 'Gobernanza y normatividad en entornos digitales', text: '' },
-                                { subtitle: 'Entornos seguros para protección de audiencias', text: '' },
-                                { subtitle: 'Regulación climática emergente y métricas de CO₂ en licencias y espectro audiovisual', text: '' }
-                            ]
-                        },
-                        {
-                            title: 'Acciones para enfrentar y anticipar las tendencias tecnológicas en el sector audiovisual',
-                            details: []
-                        }
+                        { title: 'Tecnologías de creación', details: [{ subtitle: 'Infraestructuras futuras', text: 'Unreal Engine, Omniverse' }] },
+                        { title: 'Modelos de negocio', details: [{ subtitle: 'Plataformas', text: '' }] }
                     ]
                 }
             };
@@ -621,14 +198,6 @@
                         <NavButton id="comms" label="Comunicaciones" icon={Network} />
                         <NavButton id="postal" label="Sector Postal" icon={Mail} />
                         <NavButton id="av" label="Sector Audiovisual" icon={Tv} />
-                        <div className="mt-auto p-4 bg-indigo-50 rounded-xl">
-                            <h4 className="font-bold text-indigo-900 text-sm mb-2">Grupos Temáticos</h4>
-                            <div className="flex flex-wrap gap-2">
-                                {['Modelo de Negocio', 'Regulación', 'Infraestructura', 'Mercado'].map(tag => (
-                                    <span key={tag} className="text-[10px] bg-white text-indigo-600 px-2 py-1 rounded-full border border-indigo-100 shadow-sm">{tag}</span>
-                                ))}
-                            </div>
-                        </div>
                     </div>
                     <div className="flex-1 overflow-y-auto pr-2">
                         {activeSection === 'overview' && (
@@ -644,7 +213,7 @@
                                 </div>
                                 <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><span className="bg-red-100 text-red-600 p-1 rounded">🚨</span> Problemáticas Críticas</h4>
                                 <div className="space-y-2">
-                                    {["Aumento de costos e inversión por cambios en régimen de calidad", "Barreras económicas al despliegue de infraestructura", "Falta de uso eficiente de recursos de red", "Pérdida de mercado Postal frente a billeteras digitales", "Concentración de poder de mercado en contenidos"].map((prob, i) => (
+                                    {["Costos operativos elevados", "Barreras al despliegue", "Uso ineficiente de red", "Pérdida de mercado postal", "Concentración de contenidos"].map((prob, i) => (
                                         <div key={i} className="flex items-center gap-3 p-3 bg-red-50 border-l-4 border-red-500 rounded-r-lg text-slate-700 text-sm">{prob}</div>
                                     ))}
                                 </div>
@@ -654,7 +223,6 @@
                             <div className="animate-fade-in space-y-4">
                                 <h3 className="text-2xl font-bold text-slate-800 mb-4">{sectionContent[activeSection].title}</h3>
                                 {sectionContent[activeSection].items.map((item, idx) => {
-                                    // Default closed (false or undefined)
                                     const isOpen = !!openAccordions[`${activeSection}-${idx}`];
                                     return (
                                         <div key={idx} className="border border-slate-200 rounded-xl overflow-hidden">
@@ -685,6 +253,29 @@
             );
         };
 
+        // --- GRÁFICOS ---
+        const TelecomAIChart = () => (
+            <ResponsiveContainer width="100%" height={300}><BarChart data={[{year:'2023',d:20,i:300},{year:'2025',d:45,i:400},{year:'2027',d:75,i:520},{year:'2029',d:105,i:640},{year:'2031',d:140,i:730},{year:'2033',d:174,i:832}]} margin={{top:20,right:30,left:20,bottom:5}}><CartesianGrid strokeDasharray="3 3" vertical={false}/><XAxis dataKey="year"/><YAxis label={{value:'EB/mes',angle:-90,position:'insideLeft' }}/><Tooltip/><Legend/><Bar dataKey="d" name="Tráfico Directo IA" stackId="a" fill="#3b82f6"/><Bar dataKey="i" name="Tráfico Indirecto IA" stackId="a" fill="#86efac"/></BarChart></ResponsiveContainer>
+        );
+        const Telecom5GChart = () => (
+            <ResponsiveContainer width="100%" height={300}><LineChart data={[{year:'2021',t:670,s:100},{year:'2023',t:1900,s:800},{year:'2025',t:3200,s:1700},{year:'2027',t:4500,s:2600},{year:'2029',t:5600,s:3300},{year:'2030',t:6300,s:3700}]}><CartesianGrid strokeDasharray="3 3" vertical={false}/><XAxis dataKey="year"/><YAxis/><Tooltip/><Legend/><Line type="monotone" dataKey="t" name="Suscripciones 5G Totales (M)" stroke="#1e40af" strokeWidth={3} dot={{r:4}}/><Line type="monotone" dataKey="s" name="5G Stand Alone (M)" stroke="#22c55e" strokeWidth={3} dot={{r:4}}/></LineChart></ResponsiveContainer>
+        );
+        const TelecomNTNChart = () => (
+            <ResponsiveContainer width="100%" height={250}><AreaChart data={[{year:'2023',v:5.6},{year:'2024',v:5.67},{year:'2026',v:10.2},{year:'2028',v:20.5},{year:'2030',v:42.2}]}><CartesianGrid strokeDasharray="3 3" vertical={false}/><XAxis dataKey="year"/><YAxis label={{value:'$ Billion',angle:-90,position:'insideLeft' }}/><Tooltip/><Area type="monotone" dataKey="v" name="Mercado 5G NTN ($B)" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3}/></AreaChart></ResponsiveContainer>
+        );
+        const PostalAutomationChart = () => (
+            <ResponsiveContainer width="100%" height={300}><BarChart data={[{ year: '2024', val: 974 }, { year: '2026', val: 1150 }, { year: '2028', val: 1330 }, { year: '2030', val: 1510 }, { year: '2032', val: 1686 }]}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="year" /><YAxis /><Tooltip /><Bar dataKey="val" name="Mercado Automatización ($M)" fill="#3b82f6" radius={[4, 4, 0, 0]} /></BarChart></ResponsiveContainer>
+        );
+        const PostalEcommerceUserChart = () => (
+            <ResponsiveContainer width="100%" height={300}><AreaChart data={[{ year: '2019', val: 2.11 }, { year: '2021', val: 2.71 }, { year: '2023', val: 3.09 }, { year: '2025', val: 3.29 }, { year: '2027', val: 3.49 }, { year: '2029', val: 3.59 }]}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="year" /><YAxis /><Tooltip /><Area type="monotone" dataKey="val" name="Usuarios E-commerce (Billions)" stroke="#f59e0b" fill="#fcd34d" /></AreaChart></ResponsiveContainer>
+        );
+        const AVVideoTrafficChart = () => (
+            <ResponsiveContainer width="100%" height={300}><LineChart data={[{ year: '2020', val: 50 }, { year: '2021', val: 53 }, { year: '2022', val: 57 }, { year: '2023', val: 60 }, { year: '2024', val: 74 }, { year: '2025', val: 77 }, { year: '2026', val: 80 }]}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="year" /><YAxis domain={[0, 100]} label={{ value: '%', angle: -90, position: 'insideLeft' }}/><Tooltip /><Line type="monotone" dataKey="val" name="% Tráfico de Video Móvil" stroke="#ef4444" strokeWidth={3} /></LineChart></ResponsiveContainer>
+        );
+        const AVEnergyChart = () => (
+            <ResponsiveContainer width="100%" height={300}><BarChart data={[{ year: '2022', val: 460 }, { year: '2023', val: 550 }, { year: '2024', val: 650 }, { year: '2025', val: 800 }, { year: '2026', val: 1000 }]}><CartesianGrid strokeDasharray="3 3" vertical={false} /><XAxis dataKey="year" /><YAxis label={{ value: 'TWh', angle: -90, position: 'insideLeft' }}/><Tooltip /><Bar dataKey="val" name="Consumo Data Centers (TWh)" fill="#f87171" radius={[4, 4, 0, 0]} /></BarChart></ResponsiveContainer>
+        );
+
         // --- DEFINICIÓN DE SLIDES ---
         const slides = [
             // INTRO
@@ -693,11 +284,11 @@
                 section: SectionType.INTRO,
                 component: (
                     <SlideLayout isCover>
-                        <h1 className="text-4xl md:text-7xl font-bold mb-6 leading-tight">MONITOREO DE TENDENCIAS TECNOLÓGICAS 2025</h1>
+                        <h1 className="text-5xl md:text-8xl font-bold mb-8 leading-tight">MONITOREO DE TENDENCIAS TECNOLÓGICAS 2025</h1>
                         <div className="h-1 w-32 bg-white/30 mx-auto mb-8 rounded-full"></div>
                         <p className="text-xl md:text-2xl text-white/90 font-light mb-2">Coordinación de Prospectiva Estratégica e Innovación</p>
                         <p className="text-lg text-white/70 uppercase tracking-widest">Diciembre de 2025</p>
-                        <div className="mt-12 bg-white/10 p-4 rounded-xl backdrop-blur-sm">
+                        <div className="mt-12 bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20 shadow-2xl">
                             <img src="logo.png" alt="Logo CRC" className="h-24 md:h-32 object-contain mx-auto" />
                         </div>
                     </SlideLayout>
@@ -707,70 +298,67 @@
                 id: 'intro-obj',
                 section: SectionType.INTRO,
                 component: (
-                    <SlideLayout title="Monitoreo de Tendencias Tecnológicas" chapter="Introducción">
-                        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-xl border-l-4 border-indigo-500 mb-8 shadow-sm">
-                            <p className="text-lg text-slate-700 leading-relaxed"><strong>Objetivo:</strong> Identificar y analizar las principales tendencias tecnológicas que impactan los sectores de telecomunicaciones, postal y contenidos.</p>
+                    <SlideLayout title="Monitoreo de Tendencias Tecnológicas" chapter="Introducción" subtitle="Un enfoque estratégico para anticipar el futuro regulatorio.">
+                        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-8 rounded-2xl border-l-8 border-indigo-500 mb-12 shadow-sm">
+                            <p className="text-xl text-slate-700 leading-relaxed"><strong>Objetivo:</strong> Identificar y analizar las principales tendencias tecnológicas que impactan los sectores de telecomunicaciones, postal y contenidos.</p>
                         </div>
-                        <div className="grid md:grid-cols-2 gap-8">
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                                <h3 className="text-xl font-bold text-indigo-600 mb-4 flex items-center gap-2"><span className="bg-indigo-100 p-2 rounded-lg"><Globe size={20}/></span> Metodología</h3>
-                                <ul className="space-y-3 text-slate-600">
-                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Mesas de diálogo con actores del sector</li>
-                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Análisis de tendencias internacionales</li>
-                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Revisión de benchmarking global</li>
+                        <div className="grid md:grid-cols-2 gap-10">
+                            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                                <h3 className="text-2xl font-bold text-indigo-600 mb-6 flex items-center gap-3"><Globe size={24}/> Metodología</h3>
+                                <ul className="space-y-4 text-slate-600 text-lg">
+                                    <li>• Mesas de diálogo con actores del sector</li>
+                                    <li>• Análisis de tendencias internacionales</li>
+                                    <li>• Revisión de benchmarking global</li>
                                 </ul>
                             </div>
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                                <h3 className="text-xl font-bold text-indigo-600 mb-4 flex items-center gap-2"><span className="bg-indigo-100 p-2 rounded-lg"><Zap size={20}/></span> Estructura</h3>
-                                <ul className="space-y-3 text-slate-600">
-                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Tendencias en Comunicaciones</li>
-                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Tendencias en el Sector Postal</li>
-                                    <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-indigo-400 rounded-full"/> Tendencias en Contenidos</li>
+                            <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                                <h3 className="text-2xl font-bold text-indigo-600 mb-6 flex items-center gap-3"><Zap size={24}/> Estructura</h3>
+                                <ul className="space-y-4 text-slate-600 text-lg">
+                                    <li>• Tendencias en Comunicaciones</li>
+                                    <li>• Tendencias en el Sector Postal</li>
+                                    <li>• Tendencias en Contenidos</li>
                                 </ul>
                             </div>
                         </div>
                     </SlideLayout>
                 )
             },
-            {
-                id: 'intro-problems',
-                section: SectionType.INTRO,
-                component: (
-                    <SlideLayout title="Problemáticas Identificadas" chapter="Introducción" subtitle="Haz clic en cada sector para explorar detalles">
-                        <InteractiveProblematicas />
-                    </SlideLayout>
-                )
-            },
-            {
-                id: 'intro-matrix',
-                section: SectionType.INTRO,
-                component: (
-                    <SlideLayout title="Identificación de Temáticas" chapter="Introducción" subtitle="Matriz de relaciones entre problemáticas y tendencias">
-                        <InteractiveMatrix />
-                    </SlideLayout>
-                )
-            },
+            { id: 'intro-matrix', section: SectionType.INTRO, component: <SlideLayout title="Identificación de Temáticas" chapter="Introducción" subtitle="Matriz de relaciones entre problemáticas y tendencias"><InteractiveMatrix /></SlideLayout> },
+            
             // TELECOM
             {
                 id: 'tel-cover',
                 section: SectionType.TELECOM,
-                component: (
-                    <SlideLayout isCover>
-                        <div className="bg-white/20 p-6 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6"><Radio size={48} className="text-white"/></div>
-                        <h1 className="text-5xl md:text-6xl font-bold mb-4">TELECOMUNICACIONES</h1>
-                        <p className="text-xl md:text-2xl opacity-90">Redes Inteligentes, 5G y Nuevos Modelos de Negocio</p>
-                    </SlideLayout>
-                )
+                component: <SlideLayout isCover><div className="bg-white/20 p-6 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6"><Radio size={48} className="text-white"/></div><h1 className="text-5xl md:text-6xl font-bold mb-4">TELECOMUNICACIONES</h1><p className="text-xl md:text-2xl opacity-90">Redes Inteligentes, 5G y Nuevos Modelos de Negocio</p></SlideLayout>
             },
             {
                 id: 'tel-context',
                 section: SectionType.TELECOM,
                 component: (
                     <SlideLayout title="Transformación del Sector" chapter="Telecomunicaciones">
-                        <div className="bg-blue-50 p-6 rounded-xl mb-8 border-l-4 border-blue-600"><h4 className="font-bold text-blue-900 text-lg mb-2">De Redes de Transporte a Plataformas de Experiencia Digital</h4><p className="text-slate-700">El sector atraviesa una transformación crítica. Ya no basta con garantizar capacidad; se requiere gestión inteligente, personalizada y confiable.</p></div>
+                        <div className="bg-blue-50 p-6 rounded-xl mb-8 border-l-4 border-blue-600">
+                            <h4 className="font-bold text-blue-900 text-lg mb-2">De Redes de Transporte a Plataformas de Experiencia Digital</h4>
+                            <p className="text-slate-700">Las redes deben evolucionar para atender necesidades de nuevas aplicaciones y servicios: Industria 4.0 (IoT, IA, Cloud, Big Data), vehículos autónomos, Telemedicina, realidad aumentada y realidad extendida.</p>
+                        </div>
                         <div className="grid md:grid-cols-2 gap-8">
-                            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm"><h4 className="font-bold text-red-500 mb-4 flex items-center gap-2"><ShieldCheck size={20}/> Retos Críticos</h4><ul className="space-y-2 text-slate-600 text-sm"><li>• Incremento de costos operativos</li><li>• Barreras para despliegue de infraestructura</li><li>• Baja eficiencia en uso de recursos</li><li>• Estándares de calidad exigentes</li></ul></div>
-                            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm"><h4 className="font-bold text-green-500 mb-4 flex items-center gap-2"><Cpu size={20}/> Respuestas Tecnológicas</h4><ul className="space-y-2 text-slate-600 text-sm"><li>• Virtualización y automatización (NFV/SDN)</li><li>• 5G Stand Alone & Network Slicing</li><li>• Edge Computing e IA</li></ul></div>
+                            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
+                                <h4 className="font-bold text-green-500 mb-4 flex items-center gap-2"><Cpu size={20}/> Respuestas Tecnológicas</h4>
+                                <ul className="space-y-2 text-slate-600 text-sm">
+                                    <li>• Virtualización y automatización (NFV/SDN)</li>
+                                    <li>• 5G Stand Alone & Network Slicing</li>
+                                    <li>• Edge Computing e IA</li>
+                                    <li>• <strong>NTN 5G</strong> (Redes No Terrestres)</li>
+                                    <li>• <strong>Compartición de infraestructura</strong> y Redes Neutras</li>
+                                </ul>
+                            </div>
+                            <div className="bg-white border border-slate-200 p-6 rounded-xl shadow-sm">
+                                <h4 className="font-bold text-red-500 mb-4 flex items-center gap-2"><ShieldCheck size={20}/> Retos Críticos</h4>
+                                <ul className="space-y-2 text-slate-600 text-sm">
+                                    <li>• Incremento de costos operativos</li>
+                                    <li>• Barreras para despliegue de infraestructura</li>
+                                    <li>• Baja eficiencia en uso de recursos</li>
+                                </ul>
+                            </div>
                         </div>
                     </SlideLayout>
                 )
@@ -781,20 +369,16 @@
                 component: (
                     <SlideLayout title="IA: Motor de Crecimiento" chapter="Telecomunicaciones" subtitle="Impacto proyectado en el tráfico de redes">
                         <div className="flex flex-col h-full">
-                            <div className="flex-1 min-h-[300px]">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={[{ year: '2023', direct: 20, indirect: 300 }, { year: '2025', direct: 45, indirect: 400 }, { year: '2027', direct: 75, indirect: 520 }, { year: '2029', direct: 105, indirect: 640 }, { year: '2031', direct: 140, indirect: 730 }, { year: '2033', direct: 174, indirect: 832 }]} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                        <XAxis dataKey="year" stroke="#64748b" />
-                                        <YAxis stroke="#64748b" label={{ value: 'EB/mes', angle: -90, position: 'insideLeft', fill: '#64748b' }} />
-                                        <Tooltip cursor={{ fill: '#f1f5f9' }} />
-                                        <Legend />
-                                        <Bar dataKey="direct" name="Tráfico Directo IA" stackId="a" fill="#3b82f6" />
-                                        <Bar dataKey="indirect" name="Tráfico Indirecto IA" stackId="a" fill="#86efac" />
-                                    </BarChart>
-                                </ResponsiveContainer>
+                            <div className="flex-1 min-h-[300px] bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <TelecomAIChart />
+                                <p className="text-xs text-center text-slate-400 mt-2">Fuente: CRC a partir de Nokia Global Network Traffic Report</p>
                             </div>
-                            <div className="grid grid-cols-3 gap-4 mt-6 text-center"><div className="p-4 bg-slate-50 rounded-lg"><div className="text-2xl font-bold text-blue-600">51%</div><div className="text-xs text-slate-500">CAGR Tráfico Directo</div></div><div className="p-4 bg-slate-50 rounded-lg"><div className="text-2xl font-bold text-green-600">21%</div><div className="text-xs text-slate-500">CAGR Tráfico Indirecto</div></div><div className="p-4 bg-slate-50 rounded-lg"><div className="text-2xl font-bold text-purple-600">1,088 EB</div><div className="text-xs text-slate-500">Tráfico mensual 2033</div></div></div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-center">
+                                <div className="p-4 bg-slate-50 rounded-lg"><div className="text-2xl font-bold text-blue-600">1.088 EB</div><div className="text-xs text-slate-500">Consumo mensual IA (2033)</div></div>
+                                <div className="p-4 bg-slate-50 rounded-lg"><div className="text-2xl font-bold text-green-600">24%</div><div className="text-xs text-slate-500">CAGR Tráfico IA</div></div>
+                                <div className="p-4 bg-slate-50 rounded-lg"><div className="text-xl font-bold text-purple-600">$921.6B</div><div className="text-xs text-slate-500">Ingresos Internet (2027)</div></div>
+                                <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-100 col-span-2 md:col-span-1"><div className="text-xs font-bold text-indigo-700">Implicación</div><div className="text-[10px] text-indigo-600">Requiere redes eficientes: Edge, NFV, SDN y APIs.</div></div>
+                            </div>
                         </div>
                     </SlideLayout>
                 )
@@ -803,22 +387,27 @@
                 id: 'tel-5g',
                 section: SectionType.TELECOM,
                 component: (
-                    <SlideLayout title="5G Stand Alone (SA)" chapter="Telecomunicaciones" subtitle="La verdadera revolución de la virtualización nativa">
-                        <div className="flex flex-col h-full">
-                            <div className="flex-1 min-h-[300px]">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={[{ year: '2021', total: 670, sa: 100 }, { year: '2023', total: 1900, sa: 800 }, { year: '2025', total: 3200, sa: 1700 }, { year: '2027', total: 4500, sa: 2600 }, { year: '2029', total: 5600, sa: 3300 }, { year: '2030', total: 6300, sa: 3700 }]}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                        <XAxis dataKey="year" stroke="#64748b" />
-                                        <YAxis stroke="#64748b" />
-                                        <Tooltip />
-                                        <Legend />
-                                        <Line type="monotone" dataKey="total" name="Suscripciones 5G Totales (M)" stroke="#1e40af" strokeWidth={3} dot={{r: 4}} />
-                                        <Line type="monotone" dataKey="sa" name="5G Stand Alone (M)" stroke="#22c55e" strokeWidth={3} dot={{r: 4}} />
-                                    </LineChart>
-                                </ResponsiveContainer>
+                    <SlideLayout title="5G Stand Alone (SA)" chapter="Telecomunicaciones" subtitle="Transición hacia núcleos nativos en la nube">
+                        <div className="flex flex-col h-full gap-6">
+                            <div className="flex-1 min-h-[300px] bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <Telecom5GChart />
+                                <p className="text-xs text-center text-slate-400 mt-2">Fuente: CRC a partir de Ericsson Mobility Report 2025</p>
                             </div>
-                            <div className="bg-indigo-50 p-4 rounded-lg mt-6 text-center text-indigo-900 text-sm"><strong>Dato Clave:</strong> Se proyectan 3,700 Millones de suscripciones 5G SA para 2030, habilitando el <em>Network Slicing</em> masivo.</div>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="space-y-2 text-sm text-slate-600">
+                                    <h5 className="font-bold text-slate-800">Proyecciones 2030:</h5>
+                                    <p>• <strong>6.300 M</strong> Suscripciones 5G totales.</p>
+                                    <p>• <strong>3.700 M</strong> Suscripciones 5G SA.</p>
+                                    <div className="flex gap-2 mt-2">
+                                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">Europa: 93%</span>
+                                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Norteamérica: 91%</span>
+                                    </div>
+                                </div>
+                                <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                                    <h5 className="font-bold text-emerald-800 mb-1">Inversión (CAPEX)</h5>
+                                    <p className="text-sm text-emerald-700"><strong>USD 180.000 Millones</strong> en 2025 para expansión 5G y eliminación de 2G/3G.</p>
+                                </div>
+                            </div>
                         </div>
                     </SlideLayout>
                 )
@@ -829,557 +418,802 @@
                 component: (
                     <SlideLayout title="Tecnologías Habilitadoras" chapter="Telecomunicaciones">
                         <div className="grid grid-cols-2 gap-6">
-                            {[{ title: "NFV y SDN", desc: "Virtualización de funciones. Reducen CAPEX/OPEX y aceleran despliegue.", Icon: Cpu, color: "text-blue-500" }, { title: "Edge Computing", desc: "Procesamiento cercano al usuario. Reduce latencia hasta 80%.", Icon: Zap, color: "text-amber-500" }, { title: "Network Slicing", desc: "Segmentación para servicios diferenciados. Mercado de $2.7B para 2033.", Icon: Radio, color: "text-purple-500" }, { title: "Hollow Core Fiber", desc: "30% menos latencia. Ideal para comunicaciones críticas.", Icon: Globe, color: "text-cyan-500" }].map((tech, i) => (
-                                <div key={i} className="bg-white border border-slate-100 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                                    <tech.Icon className={`mb-4 ${tech.color}`} size={32} />
-                                    <h4 className="font-bold text-lg text-slate-800 mb-2">{tech.title}</h4>
-                                    <p className="text-slate-600 text-sm">{tech.desc}</p>
-                                </div>
-                            ))}
+                            <div className="bg-white border border-slate-100 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                                <Cpu className="text-blue-500 mb-4" size={32} />
+                                <h4 className="font-bold text-lg text-slate-800 mb-2">NFV y SDN</h4>
+                                <p className="text-slate-600 text-xs mb-2">Mercado: USD 33B (2021) → <strong>USD 95-97B (2028)</strong></p>
+                                <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-bold">CAGR 16%</span>
+                            </div>
+                            <div className="bg-white border border-slate-100 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                                <Zap className="text-amber-500 mb-4" size={32} />
+                                <h4 className="font-bold text-lg text-slate-800 mb-2">Edge Computing</h4>
+                                <p className="text-slate-600 text-xs mb-2">LatAm: USD 128M (2023) → <strong>USD 622M (2032)</strong></p>
+                                <span className="bg-amber-50 text-amber-700 px-2 py-1 rounded text-xs font-bold">50% +Eficiencia</span>
+                            </div>
+                            <div className="bg-white border border-slate-100 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                                <Radio className="text-purple-500 mb-4" size={32} />
+                                <h4 className="font-bold text-lg text-slate-800 mb-2">Network Slicing</h4>
+                                <p className="text-slate-600 text-xs mb-2">Global: USD 1.9B (2025) → <strong>USD 13.5B (2030)</strong></p>
+                                <span className="bg-purple-50 text-purple-700 px-2 py-1 rounded text-xs font-bold">Crecimiento x7</span>
+                            </div>
+                            <div className="bg-white border border-slate-100 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                                <Network className="text-cyan-500 mb-4" size={32} />
+                                <h4 className="font-bold text-lg text-slate-800 mb-2">Ecosistema APIs</h4>
+                                <p className="text-slate-600 text-xs mb-2">Ingresos potenciales: <strong>$100-300B</strong> (5-7 años)</p>
+                                <span className="bg-cyan-50 text-cyan-700 px-2 py-1 rounded text-xs font-bold">Interoperabilidad</span>
+                            </div>
                         </div>
                     </SlideLayout>
                 )
             },
             {
-                id: 'tel-ntn',
+                id: 'tel-connectivity',
                 section: SectionType.TELECOM,
                 component: (
-                    <SlideLayout title="5G NTN: Redes No Terrestres" chapter="Telecomunicaciones" subtitle="Conectividad satelital ubicua">
-                        <div className="flex flex-col h-full">
-                            <div className="flex-1 min-h-[300px]">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={[{ year: '2023', val: 5.6 }, { year: '2024', val: 5.67 }, { year: '2026', val: 10.2 }, { year: '2028', val: 20.5 }, { year: '2030', val: 42.2 }]}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                        <XAxis dataKey="year" />
-                                        <YAxis label={{ value: '$ Billion', angle: -90, position: 'insideLeft' }} />
-                                        <Tooltip />
-                                        <Area type="monotone" dataKey="val" name="Mercado 5G NTN ($B)" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} />
-                                    </AreaChart>
-                                </ResponsiveContainer>
+                    <SlideLayout title="Soluciones de Conectividad" chapter="Telecomunicaciones" subtitle="Integración Satelital y Fibra Óptica">
+                        <div className="grid md:grid-cols-2 gap-8 h-full">
+                            {/* NTN */}
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <Globe className="text-indigo-600" size={24}/>
+                                    <h4 className="font-bold text-xl text-indigo-900">5G NTN (Satelital)</h4>
+                                </div>
+                                <div className="h-[200px] w-full mb-4"><TelecomNTNChart /></div>
+                                <div className="mt-auto space-y-2 text-sm text-slate-600">
+                                    <p>Mercado Global (2030): <strong>USD 42.200M</strong></p>
+                                    <p className="text-xs text-slate-500">Líderes: Norteamérica (35%), Europa (28%)</p>
+                                </div>
                             </div>
-                            <div className="mt-6 flex justify-between bg-slate-50 p-6 rounded-xl"><div><h5 className="font-bold text-slate-700">Crecimiento Acelerado</h5><p className="text-3xl font-bold text-indigo-600">33.5% <span className="text-sm font-normal text-slate-500">CAGR</span></p></div><div className="text-right"><h5 className="font-bold text-slate-700">Modalidades</h5><p className="text-sm text-slate-600">Directo a Celda (D2C) & Directo a Dispositivo (D2D)</p></div></div>
+                            {/* Fibra */}
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <Network className="text-emerald-600" size={24}/>
+                                    <h4 className="font-bold text-xl text-emerald-900">Fibra Óptica (FTTx)</h4>
+                                </div>
+                                <div className="space-y-4 text-sm text-slate-600">
+                                    <p className="bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                                        Mercado: USD 56B (2024) → <strong>USD 110B (2030)</strong>
+                                    </p>
+                                    <ul className="space-y-2">
+                                        <li className="flex justify-between"><span>LatAm (2023):</span><span className="font-bold">37% (67M subs)</span></li>
+                                        <li className="flex justify-between"><span>Proyección LatAm (2028):</span><span className="font-bold text-emerald-600">101 Millones</span></li>
+                                    </ul>
+                                    <div className="pt-4 border-t border-slate-100">
+                                        <h5 className="font-bold text-slate-700 mb-1 flex items-center gap-2"><Zap size={16} className="text-yellow-500"/> Innovación: Fibra Hueca (HCF)</h5>
+                                        <p className="text-xs text-slate-500">30% menos latencia. Ideal para Data Centers.</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </SlideLayout>
                 )
             },
             {
-                id: 'tel-collab',
+                id: 'tel-quality',
                 section: SectionType.TELECOM,
                 component: (
-                <SlideLayout title="Modelos de Negocio" chapter="Telecomunicaciones">
-                    <div className="grid md:grid-cols-2 gap-6 h-full overflow-y-auto pb-20">
-                        {/* 1. Virtualización */}
-                        <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                            <h4 className="font-bold text-indigo-700 mb-3 flex items-center gap-2"><Cpu size={20}/> Virtualización y automatización</h4>
-                            <div className="space-y-3 text-sm text-slate-600">
-                                <p><strong>Europa:</strong> Vodafone + VMware, plataforma escalable para la provisión de 5G Stand Alone (5G SA).</p>
-                                <div className="bg-green-100 text-green-800 p-2 rounded-lg text-xs font-semibold mt-2">
-                                    🚀 Logrando desplegar nuevas funciones de red 40% más rápido y con 50% menos de costo.
+                    <SlideLayout title="Medición y Gestión de la Calidad" chapter="Telecomunicaciones" subtitle="De QoS (Servicio) a QoE (Experiencia)">
+                        <div className="grid md:grid-cols-2 gap-10 items-center h-full">
+                            <div className="space-y-6">
+                                <p className="text-lg text-slate-600 leading-relaxed">La evolución tecnológica exige indicadores que midan la <strong>experiencia real del usuario</strong> más allá de los parámetros técnicos.</p>
+                                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                                    <h4 className="font-bold text-indigo-700 mb-3">Avances Clave</h4>
+                                    <ul className="space-y-4">
+                                        <li className="flex gap-4">
+                                            <Signal className="text-indigo-600 mt-1" size={20}/>
+                                            <div><h5 className="font-bold text-slate-800 text-sm">Redes Auto-organizadas (SON)</h5><p className="text-xs text-slate-500">Ajustes automáticos basados en predicción.</p></div>
+                                        </li>
+                                        <li className="flex gap-4">
+                                            <Cpu className="text-purple-600 mt-1" size={20}/>
+                                            <div><h5 className="font-bold text-slate-800 text-sm">Redes Neuronales</h5><p className="text-xs text-slate-500">Mapeo de QoS técnico hacia QoE percibido.</p></div>
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* 2. Network Slicing */}
-                        <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                            <h4 className="font-bold text-purple-700 mb-3 flex items-center gap-2"><Radio size={20}/> Segmentación de Red (Network slicing)</h4>
-                            <ul className="space-y-3 text-sm text-slate-600">
-                                <li className="border-b border-slate-200 pb-2 mb-2">
-                                    <strong>Emiratos Arabes:</strong> Nokia + e& UAE. Solución Multi-Access Edge Slicing, ofrece servicios de slicing premium a través de redes 4G/5G, acceso fijo inalámbrico (FWA) y acceso fijo (FA).
-                                </li>
-                                <li>
-                                    <strong>EEUU:</strong> Verizon implementó servicios basados en segmentación como llamadas de video mejoradas en aplicaciones como FaceTime y WhatsApp.
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* 3. Redes Privadas */}
-                        <div className="bg-slate-50 p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                            <h4 className="font-bold text-blue-700 mb-3 flex items-center gap-2"><Lock size={20}/> Redes privadas en el sector de comunicaciones</h4>
-                            <div className="text-sm text-slate-600 space-y-2">
-                                <p className="mb-2 text-xs font-semibold uppercase text-slate-400 tracking-wider">Principales proveedores: Nokia, ZTE, Huawei, Ericsson</p>
-                                <div className="space-y-2 bg-white p-3 rounded-lg border border-slate-100">
-                                    <p>🇲🇽 <strong>México:</strong> AT&T + Ericsson, red privada 5G en el Tecnológico de Monterrey.</p>
-                                    <p>🇧🇷 <strong>Brasil:</strong> TIM Brasil + Nokia, red privada 5G en el operador portuario Brasil Terminal Portuario.</p>
-                                </div>
+                            <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl flex flex-col justify-center gap-6">
+                                <h3 className="text-2xl font-bold text-center text-blue-300">Beneficios</h3>
+                                <div className="flex items-center gap-4"><div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-300 font-bold">1</div><p>Gestión dinámica y eficiente.</p></div>
+                                <div className="flex items-center gap-4"><div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-300 font-bold">2</div><p>Servicios más confiables.</p></div>
+                                <div className="flex items-center gap-4"><div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-300 font-bold">3</div><p>Mejor experiencia final.</p></div>
                             </div>
                         </div>
-
-                        {/* 4. Infraestructura Colaborativa (Restored) */}
-                        <div className="bg-white p-5 rounded-xl border-l-4 border-green-500 shadow-sm hover:shadow-md transition-shadow">
-                            <h4 className="font-bold text-green-700 mb-2 flex items-center gap-2 text-sm"><Network size={18}/> Infraestructura Colaborativa</h4>
-                            <div className="flex items-center gap-4 mb-3">
-                                <div className="text-3xl font-bold text-green-600">30%</div>
-                                <div className="text-xs text-slate-600 leading-tight">Reducción potencial de OPEX mediante acuerdos de compartición y redes neutras.</div>
+                    </SlideLayout>
+                )
+            },
+            {
+                id: 'tel-sharing',
+                section: SectionType.TELECOM,
+                component: (
+                    <SlideLayout title="Compartición de Infraestructura" chapter="Telecomunicaciones">
+                        <div className="grid md:grid-cols-2 gap-8 h-full">
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                                <h4 className="font-bold text-green-700 mb-4 flex items-center gap-2"><Share2 size={24}/> Ahorros Potenciales (UIT)</h4>
+                                <div className="grid grid-cols-2 gap-4 text-center">
+                                    <div className="bg-green-50 p-4 rounded-xl"><div className="text-3xl font-bold text-green-600">30%</div><div className="text-xs text-green-800">Pasiva</div></div>
+                                    <div className="bg-emerald-50 p-4 rounded-xl"><div className="text-3xl font-bold text-emerald-600">60%</div><div className="text-xs text-emerald-800">Activa</div></div>
+                                </div>
                             </div>
-                            <div className="space-y-2 text-xs text-slate-500">
-                                <div>
-                                    <span className="font-bold text-slate-700 block">Tendencias Globales (EEUU):</span>
-                                    AT&T + BlackRock (Gigapower), T-Mobile + KKR.
-                                </div>
-                                <div>
-                                    <span className="font-bold text-slate-700 block">América Latina:</span>
-                                    FiBrasil (Redes Neutras), On Net Fibra (Colombia).
-                                </div>
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                                <h4 className="font-bold text-blue-700 mb-4 flex items-center gap-2"><Radio size={24}/> Small Cells 5G</h4>
+                                <p className="text-sm text-slate-600 mb-2">Mercado: <strong>$1.0B (2024) → $11.7B (2034)</strong></p>
+                                <div className="w-full bg-slate-100 rounded-full h-2 mb-1"><div className="bg-blue-500 h-2 rounded-full" style={{width:'45%'}}></div></div>
+                                <p className="text-xs text-slate-500">45% Despliegue Metropolitano</p>
+                            </div>
+                            <div className="md:col-span-2 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                                <h4 className="font-bold text-slate-800 mb-2">Casos Globales</h4>
+                                <ul className="grid md:grid-cols-3 gap-4 text-sm text-slate-600">
+                                    <li>🌏 <strong>China Tower:</strong> 2.1M torres (1.8 ops/torre).</li>
+                                    <li>🇺🇸 <strong>EE.UU./Europa:</strong> 90% torres en TowerCos.</li>
+                                    <li>🌎 <strong>LatAm:</strong> >200k sitios nuevos para 2030.</li>
+                                </ul>
                             </div>
                         </div>
-                    </div>
-                </SlideLayout>
+                    </SlideLayout>
                 )
             },
             {
                 id: 'tel-conclusions',
                 section: SectionType.TELECOM,
                 component: (
-                    <SlideLayout title="Acciones para enfrentar y anticipar las tendencias tecnológicas en el sector de telecomunicaciones" chapter="Telecomunicaciones">
-                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border-l-4 border-blue-600 mb-6"><p className="text-slate-700">La sostenibilidad del sector exige una visión articulada. La política pública debe ser habilitadora para la adopción de tecnologías como <strong>SDN, NFV, Edge Computing y 5G SA</strong>, garantizando competencia y protección al usuario.</p></div>
+                    <SlideLayout title="Acciones y Conclusiones" chapter="Telecomunicaciones">
+                        <div className="bg-blue-50 p-6 rounded-xl border-l-4 border-blue-600 mb-6">
+                            <p className="text-slate-700">La política pública debe habilitar tecnologías como <strong>SDN, NFV, Edge y 5G SA</strong>, garantizando competencia y protección.</p>
+                        </div>
                         <div className="grid md:grid-cols-3 gap-6">
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col"><div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center text-blue-600 mb-4"><Zap size={24} /></div><h4 className="font-bold text-slate-800 mb-2">Gestión Inteligente</h4><p className="text-sm text-slate-600">Impulso a la adopción de APIs abiertas y mecanismos de caching. Incentivos para infraestructura perimetral (Edge) para descargar redes troncales.</p></div>
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col"><div className="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center text-green-600 mb-4"><Target size={24} /></div><h4 className="font-bold text-slate-800 mb-2">Cobertura y Equidad</h4><p className="text-sm text-slate-600">Acelerar expansión de FTTx y adoptar redes NTN 5G para zonas remotas. Fomentar pilotos de tecnologías ágiles como FWA y Taara Lightbridge.</p></div>
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 flex flex-col"><div className="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center text-purple-600 mb-4"><Users size={24} /></div><h4 className="font-bold text-slate-800 mb-2">Nueva Medición de Calidad</h4><p className="text-sm text-slate-600">Transición hacia un enfoque híbrido que integre métricas técnicas (QoS) con la percepción del usuario (QoE), alineado con recomendaciones UIT-T.</p></div>
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100"><Zap className="text-blue-600 mb-2" size={24}/><h4 className="font-bold text-slate-900 mb-1">Gestión Inteligente</h4><p className="text-sm text-slate-600">Adopción de APIs abiertas y caching.</p></div>
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100"><Target className="text-green-600 mb-2" size={24}/><h4 className="font-bold text-slate-900 mb-1">Cobertura</h4><p className="text-sm text-slate-600">Expansión FTTx y NTN 5G en zonas remotas.</p></div>
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100"><Users className="text-purple-600 mb-2" size={24}/><h4 className="font-bold text-slate-900 mb-1">Calidad Híbrida</h4><p className="text-sm text-slate-600">Integrar QoS y QoE (UIT-T).</p></div>
                         </div>
                     </SlideLayout>
                 )
             },
-            // POSTAL
+            
+            // --- POSTAL ---
             {
                 id: 'postal-cover',
                 section: SectionType.POSTAL,
                 component: (
-                    <SlideLayout isCover>
-                        <div className="bg-white/20 p-6 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6"><Truck size={48} className="text-white"/></div>
-                        <h1 className="text-5xl md:text-6xl font-bold mb-4">SECTOR POSTAL</h1>
-                        <p className="text-xl md:text-2xl opacity-90">Transformación Digital y Nuevos Modelos de Negocio</p>
-                    </SlideLayout>
+                <SlideLayout isCover>
+                    <div className="bg-white/20 p-8 rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-8"><Truck size={64} className="text-white"/></div>
+                    <h1 className="text-5xl md:text-7xl font-bold mb-6">SECTOR POSTAL</h1>
+                    <p className="text-2xl opacity-90 max-w-3xl mx-auto">Transformación Digital y Nuevos Modelos de Negocio</p>
+                </SlideLayout>
                 )
             },
             {
                 id: 'postal-context',
                 section: SectionType.POSTAL,
                 component: (
-                    <SlideLayout title="Transformación del Sector" chapter="Postal">
-                        <div className="flex flex-col gap-8 h-full">
-                            <div className="grid md:grid-cols-3 gap-6">
-                                <div className="md:col-span-2 space-y-4">
-                                    <div className="bg-red-50 p-5 rounded-xl border-l-4 border-red-500">
-                                        <h4 className="font-bold text-red-700 mb-1">Desafíos</h4>
-                                        <ul className="list-disc pl-4 text-slate-700 text-sm">
-                                            <li>Caída del volumen de correo tradicional.</li>
-                                            <li>Infraestructuras antiguas.</li>
-                                            <li>Competencia feroz de plataformas digitales nativas.</li>
-                                        </ul>
-                                    </div>
-                                    <div className="bg-green-50 p-5 rounded-xl border-l-4 border-green-500">
-                                        <h4 className="font-bold text-green-700 mb-1">Oportunidades</h4>
-                                        <ul className="list-disc pl-4 text-slate-700 text-sm">
-                                            <li>Crecimiento explosivo del E-commerce.</li>
-                                            <li>Automatización para eficiencia operativa.</li>
-                                            <li>Diversificación hacia servicios financieros.</li>
-                                        </ul>
-                                    </div>
+                <SlideLayout 
+                    title="Transformación del Sector" 
+                    chapter="Postal"
+                    subtitle="Del declive del correo físico al auge de la logística digital."
+                >
+                    <div className="flex flex-col gap-10">
+                        <div className="grid md:grid-cols-3 gap-8">
+                            <div className="md:col-span-2 space-y-6">
+                                <div className="bg-red-50 p-6 rounded-2xl border-l-8 border-red-500">
+                                    <h4 className="font-bold text-red-800 text-lg mb-2">Desafíos Estructurales</h4>
+                                    <ul className="list-disc pl-5 text-slate-700 space-y-1">
+                                        <li>Caída del volumen de correo tradicional.</li>
+                                        <li>Infraestructuras antiguas.</li>
+                                        <li>Competencia feroz de plataformas digitales nativas.</li>
+                                    </ul>
                                 </div>
-                                <div className="flex items-center justify-center">
-                                    <div className="bg-slate-800 text-white p-6 rounded-2xl shadow-xl w-full h-full flex flex-col items-center justify-center text-center">
-                                        <div className="text-5xl font-bold text-red-400">40%</div>
-                                        <div className="text-sm text-slate-300 mt-2">Caída volumen correo tradicional (Europa)</div>
-                                    </div>
+                                <div className="bg-emerald-50 p-6 rounded-2xl border-l-8 border-emerald-500">
+                                    <h4 className="font-bold text-emerald-800 text-lg mb-2">Oportunidades</h4>
+                                    <ul className="list-disc pl-5 text-slate-700 space-y-1">
+                                        <li>Crecimiento explosivo del E-commerce.</li>
+                                        <li>Automatización para eficiencia operativa.</li>
+                                        <li>Diversificación hacia servicios financieros.</li>
+                                    </ul>
                                 </div>
                             </div>
-
-                            {/* El nuevo ecosistema (Fusionado) */}
-                            <div className="flex-1 bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col md:flex-row items-center justify-around gap-4 relative overflow-hidden">
-                                <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] opacity-50"></div>
-                                
-                                <div className="text-center z-10 opacity-60 grayscale transition-all hover:grayscale-0 hover:opacity-100">
-                                    <div className="bg-white p-4 rounded-full shadow-md w-20 h-20 flex items-center justify-center mx-auto mb-3 border border-slate-100">
-                                        <Mail className="text-slate-400" size={32}/>
-                                    </div>
-                                    <h4 className="font-bold text-slate-600">Modelo Tradicional</h4>
-                                    <p className="text-xs text-slate-500 mt-1">Físico • Lineal • Autónomo</p>
-                                </div>
-
-                                <div className="hidden md:flex flex-1 h-px bg-slate-300 items-center justify-center relative mx-8">
-                                    <div className="absolute -top-3 p-1 bg-slate-50 rounded-full text-slate-400">
-                                        <ArrowRight size={20} />
-                                    </div>
-                                </div>
-
-                                <div className="text-center z-10 transform scale-105">
-                                    <div className="bg-gradient-to-br from-indigo-500 to-blue-600 p-4 rounded-full shadow-lg shadow-blue-200 w-24 h-24 flex items-center justify-center mx-auto mb-3 ring-4 ring-blue-50">
-                                        <Globe className="text-white" size={40}/>
-                                    </div>
-                                    <h4 className="font-bold text-indigo-700 text-lg">Modelo Digital</h4>
-                                    <p className="text-xs text-indigo-600 font-medium mt-1 px-2 py-1 bg-indigo-50 rounded-full inline-block">Plataforma • Híbrido • Conectado</p>
+                            <div className="flex items-center justify-center">
+                                <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-2xl w-full h-full flex flex-col items-center justify-center text-center">
+                                    <div className="text-6xl font-bold text-red-400 mb-2">40%</div>
+                                    <div className="text-slate-300">Caída volumen correo tradicional (Europa)</div>
                                 </div>
                             </div>
                         </div>
-                    </SlideLayout>
+
+                        {/* El nuevo ecosistema */}
+                        <div className="w-full bg-white rounded-3xl p-8 border border-slate-200 flex flex-col md:flex-row items-center justify-around gap-8 relative overflow-hidden shadow-sm">
+                        <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:20px_20px] opacity-40"></div>
+                        
+                        <div className="text-center z-10 opacity-60 grayscale transition-all hover:grayscale-0 hover:opacity-100 group cursor-default">
+                            <div className="bg-white p-6 rounded-full shadow-md w-24 h-24 flex items-center justify-center mx-auto mb-4 border border-slate-100 group-hover:scale-110 transition-transform">
+                                <Mail className="text-slate-400" size={40}/>
+                            </div>
+                            <h4 className="font-bold text-slate-600 text-xl">Modelo Tradicional</h4>
+                            <p className="text-sm text-slate-500 mt-1">Físico • Lineal • Autónomo</p>
+                        </div>
+
+                        <div className="hidden md:flex flex-1 h-px bg-slate-300 items-center justify-center relative mx-4">
+                            <div className="absolute -top-4 p-2 bg-slate-50 rounded-full text-slate-400">
+                                <ArrowRight size={24} />
+                            </div>
+                        </div>
+
+                        <div className="text-center z-10 transform scale-105">
+                            <div className="bg-gradient-to-br from-indigo-500 to-blue-600 p-6 rounded-full shadow-xl shadow-indigo-200 w-32 h-32 flex items-center justify-center mx-auto mb-4 ring-4 ring-white">
+                                <Globe className="text-white" size={56}/>
+                            </div>
+                            <h4 className="font-bold text-indigo-700 text-2xl">Modelo Digital</h4>
+                            <p className="text-sm text-indigo-600 font-medium mt-2 px-4 py-1 bg-indigo-50 rounded-full inline-block border border-indigo-100">Plataforma • Híbrido • Conectado</p>
+                        </div>
+                        </div>
+                    </div>
+                </SlideLayout>
                 )
             },
             {
                 id: 'postal-automation',
                 section: SectionType.POSTAL,
                 component: (
-                    <SlideLayout title="Automatización Postal" chapter="Postal" subtitle="Un mercado en expansión (CAGR 7.1%)">
-                        <div className="flex flex-col h-full">
-                            <div className="flex-1 min-h-[300px]">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={[{ year: '2024', val: 974 }, { year: '2026', val: 1150 }, { year: '2028', val: 1330 }, { year: '2030', val: 1510 }, { year: '2032', val: 1686 }]}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                        <XAxis dataKey="year" />
-                                        <YAxis />
-                                        <Tooltip />
-                                        <Bar dataKey="val" name="Mercado Automatización ($M)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
-                            <div className="grid grid-cols-3 gap-4 mt-6">{[{ icon: Cpu, label: "Robótica", desc: "Clasificación automatizada 4,800/hora" }, { icon: Zap, label: "IA/ML", desc: "Optimización de rutas y tracking" }, { icon: Radio, label: "IoT", desc: "Trazabilidad en tiempo real" }].map((item, i) => (<div key={i} className="bg-slate-50 p-4 rounded-lg flex flex-col items-center text-center"><item.icon className="text-blue-500 mb-2" size={24} /><div className="font-bold text-slate-700">{item.label}</div><div className="text-xs text-slate-500">{item.desc}</div></div>))}</div>
+                <SlideLayout 
+                    title="Automatización Postal" 
+                    chapter="Postal" 
+                    subtitle="Eficiencia operativa a través de tecnología: Un mercado en expansión (CAGR 7.1%)."
+                >
+                    <div className="flex flex-col h-full gap-8">
+                        <div className="h-[400px] w-full">
+                            <PostalAutomationChart />
                         </div>
-                    </SlideLayout>
+                        <div className="grid grid-cols-3 gap-6">
+                            {[
+                                { icon: Cpu, label: "Robótica", desc: "Clasificación automatizada 4,800/hora" },
+                                { icon: Zap, label: "IA/ML", desc: "Optimización de rutas y tracking" },
+                                { icon: Radio, label: "IoT", desc: "Trazabilidad en tiempo real" },
+                            ].map((item, i) => (
+                                <div key={i} className="bg-slate-50 p-6 rounded-2xl flex flex-col items-center text-center border border-slate-100">
+                                    <item.icon className="text-blue-500 mb-3" size={32} />
+                                    <div className="font-bold text-slate-800 text-lg">{item.label}</div>
+                                    <div className="text-sm text-slate-500 mt-1">{item.desc}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </SlideLayout>
                 )
             },
             {
                 id: 'postal-ecommerce',
                 section: SectionType.POSTAL,
                 component: (
-                    <SlideLayout title="E-commerce: El Motor Central" chapter="Postal">
-                        <div className="flex flex-col h-full">
-                            <div className="flex-1 min-h-[300px]">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={[{ year: '2019', val: 2.11 }, { year: '2021', val: 2.71 }, { year: '2023', val: 3.09 }, { year: '2025', val: 3.29 }, { year: '2027', val: 3.49 }, { year: '2029', val: 3.59 }]}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                        <XAxis dataKey="year" />
-                                        <YAxis />
-                                        <Tooltip />
-                                        <Area type="monotone" dataKey="val" name="Usuarios E-commerce (Billions)" stroke="#f59e0b" fill="#fcd34d" />
-                                    </AreaChart>
-                                </ResponsiveContainer>
-                            </div>
-                            <div className="bg-amber-50 p-6 rounded-xl mt-6 flex justify-between items-center"><div><h4 className="font-bold text-amber-800 text-lg">Liderazgo LatAm</h4><p className="text-amber-700">La región con mayor tasa de crecimiento en E-commerce (63% en 2020).</p></div><div className="text-4xl font-bold text-amber-600">3.59B</div></div>
+                <SlideLayout 
+                    title="E-commerce: El Motor Central" 
+                    chapter="Postal"
+                    subtitle="El crecimiento del comercio electrónico impulsa la demanda logística."
+                >
+                    <div className="flex flex-col h-full gap-6">
+                        <div className="h-[400px] w-full">
+                            <PostalEcommerceUserChart />
                         </div>
-                    </SlideLayout>
+                        <div className="bg-amber-50 p-8 rounded-2xl mt-6 flex flex-col md:flex-row justify-between items-center border border-amber-100">
+                            <div>
+                                <h4 className="font-bold text-amber-800 text-2xl mb-1">Liderazgo LatAm</h4>
+                                <p className="text-amber-700 text-lg">La región con mayor tasa de crecimiento en E-commerce (63% en 2020).</p>
+                            </div>
+                            <div className="text-6xl font-bold text-amber-600 mt-4 md:mt-0">3.59B</div>
+                        </div>
+                    </div>
+                </SlideLayout>
                 )
             },
-            // NUEVO SLIDE: MODELOS DE NEGOCIO POSTAL (DISEÑO MÁS SUAVE)
             {
                 id: 'postal-business-models',
                 section: SectionType.POSTAL,
                 component: (
-                    <SlideLayout title="Modelos de Negocio" chapter="Sector Postal">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full overflow-y-auto pb-10">
-                            {/* Card 1: Automatización */}
-                            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group">
-                                <div className="bg-white w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-sm text-blue-600"><Cpu size={28} /></div>
-                                <h3 className="text-xl font-bold text-blue-900 mb-2">Automatización</h3>
-                                <p className="text-blue-700 text-sm leading-relaxed">Enfoque en maximizar la velocidad y precisión en el procesamiento de paquetes.</p>
-                            </div>
-                            {/* Card 2: E-commerce */}
-                            <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group">
-                                <div className="bg-white w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-sm text-indigo-600"><Globe size={28} /></div>
-                                <h3 className="text-xl font-bold text-indigo-900 mb-2">Integración E-commerce</h3>
-                                <p className="text-indigo-700 text-sm leading-relaxed">Socios logísticos estratégicos, dejando de ser meros transportadores.</p>
-                            </div>
-                            {/* Card 3: Última Milla */}
-                            <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group">
-                                <div className="bg-white w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-sm text-emerald-600"><Truck size={28} /></div>
-                                <h3 className="text-xl font-bold text-emerald-900 mb-2">Última Milla</h3>
-                                <p className="text-emerald-700 text-sm leading-relaxed">Diversificación hacia soluciones flexibles de entrega rápida urbana.</p>
-                            </div>
-                            {/* Card 4: Financiero */}
-                            <div className="bg-purple-50 border border-purple-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group">
-                                <div className="bg-white w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-sm text-purple-600"><CreditCard size={28} /></div>
-                                <h3 className="text-xl font-bold text-purple-900 mb-2">Servicios Financieros</h3>
-                                <p className="text-purple-700 text-sm leading-relaxed">Plataformas de inclusión financiera, especialmente en zonas rurales.</p>
-                            </div>
-                            {/* Card 5: Gobierno */}
-                            <div className="bg-rose-50 border border-rose-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group">
-                                <div className="bg-white w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-sm text-rose-600"><Users size={28} /></div>
-                                <h3 className="text-xl font-bold text-rose-900 mb-2">Gobierno Digital</h3>
-                                <p className="text-rose-700 text-sm leading-relaxed">Evolución de la oficina postal como centro multiservicios para ciudadanos.</p>
-                            </div>
-                            {/* Card 6: Híbrido */}
-                            <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group">
-                                <div className="bg-white w-12 h-12 rounded-xl flex items-center justify-center mb-4 shadow-sm text-amber-600"><Zap size={28} /></div>
-                                <h3 className="text-xl font-bold text-amber-900 mb-2">Modelo Híbrido</h3>
-                                <p className="text-amber-700 text-sm leading-relaxed">Combinación de la red física con soluciones digitales avanzadas.</p>
-                            </div>
-                        </div>
-                    </SlideLayout>
+                <SlideLayout 
+                    title="Modelos de Negocio" 
+                    chapter="Sector Postal"
+                    subtitle="Diversificación estratégica para la sostenibilidad del sector."
+                >
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 h-full overflow-y-auto pb-10">
+                    
+                    <div className="bg-blue-50 border border-blue-100 rounded-3xl p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group">
+                        <div className="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-blue-600"><Cpu size={32} /></div>
+                        <h3 className="text-xl font-bold text-blue-900 mb-3">Automatización Logística</h3>
+                        <p className="text-blue-700 text-base leading-relaxed">Enfoque en maximizar la velocidad y precisión en el procesamiento de paquetes.</p>
+                    </div>
+
+                    <div className="bg-indigo-50 border border-indigo-100 rounded-3xl p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group">
+                        <div className="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-indigo-600"><Globe size={32} /></div>
+                        <h3 className="text-xl font-bold text-indigo-900 mb-3">Integración con E-commerce</h3>
+                        <p className="text-indigo-700 text-base leading-relaxed">Socios logísticos estratégicos, dejando de ser meros transportadores.</p>
+                    </div>
+
+                    <div className="bg-emerald-50 border border-emerald-100 rounded-3xl p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group">
+                        <div className="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-emerald-600"><Truck size={32} /></div>
+                        <h3 className="text-xl font-bold text-emerald-900 mb-3">Servicios de Última Milla</h3>
+                        <p className="text-emerald-700 text-base leading-relaxed">Diversificación hacia soluciones flexibles de entrega rápida urbana.</p>
+                    </div>
+
+                    <div className="bg-purple-50 border border-purple-100 rounded-3xl p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group">
+                        <div className="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-purple-600"><CreditCard size={32} /></div>
+                        <h3 className="text-xl font-bold text-purple-900 mb-3">Servicios Financieros</h3>
+                        <p className="text-purple-700 text-base leading-relaxed">Plataformas de inclusión financiera, especialmente en zonas rurales.</p>
+                    </div>
+
+                    <div className="bg-rose-50 border border-rose-100 rounded-3xl p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group">
+                        <div className="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-rose-600"><Users size={32} /></div>
+                        <h3 className="text-xl font-bold text-rose-900 mb-3">Gobierno Digital</h3>
+                        <p className="text-rose-700 text-base leading-relaxed">Evolución de la oficina postal como centro multiservicios para ciudadanos.</p>
+                    </div>
+
+                    <div className="bg-amber-50 border border-amber-100 rounded-3xl p-8 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all group">
+                        <div className="bg-white w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-sm text-amber-600"><Zap size={32} /></div>
+                        <h3 className="text-xl font-bold text-amber-900 mb-3">Modelo Híbrido</h3>
+                        <p className="text-amber-700 text-base leading-relaxed">Combinación de la red física con soluciones digitales avanzadas.</p>
+                    </div>
+
+                    </div>
+                </SlideLayout>
                 )
             },
             {
                 id: 'postal-conclusions',
                 section: SectionType.POSTAL,
                 component: (
-                    <SlideLayout title="Acciones para enfrentar y anticipar las tendencias tecnológicas en el sector postal" chapter="Postal">
-                        <div className="grid md:grid-cols-2 gap-8 h-full">
-                            <div className="flex flex-col justify-center space-y-6"><h3 className="text-2xl font-bold text-slate-800">Competencia y Modernización</h3><p className="text-slate-600 leading-relaxed">Desplazamiento progresivo del canal postal tradicional.  Mayor participación de operadores comerciales basados en inventario reubicado.  Comercio Electrónico -> Presiones regulatorias y mayor competencia..</p><div className="bg-amber-50 border-l-4 border-amber-500 p-4"><span className="font-bold text-amber-800">Acción Clave: </span>Modernizar marcos normativos para garantizar competencia leal entre actores tradicionales y plataformas digitales, incorporando interoperabilidad y protección de datos.</div></div>
-                            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-4">
-                                <div className="flex items-start gap-4"><div className="bg-blue-100 p-3 rounded-lg text-blue-600"><CreditCard size={24}/></div><div><h4 className="font-bold text-slate-800">Inclusión Híbrida</h4><p className="text-sm text-slate-600">Los operadores postales deben aprovechar su capilaridad en zonas con baja cobertura bancaria para ofrecer servicios financieros, logísticos y digitales integrados (modelo híbrido).</p></div></div>
-                                <div className="flex items-start gap-4"><div className="bg-indigo-100 p-3 rounded-lg text-indigo-600"><Globe size={24}/></div><div><h4 className="font-bold text-slate-800">Estándares Globales</h4><p className="text-sm text-slate-600">Adopción de iniciativas como <em>Connect.Post</em> y <em>Ready to Market Interoperability Group</em> para fortalecer ciberseguridad e integración de pagos.</p></div></div>
-                            </div>
+                <SlideLayout 
+                    title="Acciones para enfrentar y anticipar las tendencias tecnológicas en el sector postal" 
+                    chapter="Postal"
+                    subtitle="Recomendaciones estratégicas para la modernización regulatoria."
+                >
+                    <div className="grid md:grid-cols-2 gap-10 h-full">
+                    <div className="flex flex-col justify-center space-y-8">
+                        <h3 className="text-3xl font-bold text-slate-800">Competencia y Modernización</h3>
+                        <p className="text-slate-600 text-lg leading-relaxed">
+                        La cadena de suministro global del comercio electrónico se enfrenta a nuevos desafíos regulatorios y competitivos. 
+                        La tendencia indica que el canal comercial y el inventario reubicado están ganando terreno sobre el canal postal tradicional.
+                        </p>
+                        <div className="bg-amber-50 border-l-8 border-amber-500 p-6 rounded-r-xl">
+                        <span className="font-bold text-amber-800 block mb-2 text-lg">Acción Clave: </span>
+                        Modernizar marcos normativos para garantizar competencia leal entre actores tradicionales y plataformas digitales, incorporando interoperabilidad y protección de datos.
                         </div>
-                    </SlideLayout>
+                    </div>
+                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-lg flex flex-col gap-6 justify-center">
+                        <div className="flex items-start gap-6">
+                        <div className="bg-blue-100 p-4 rounded-2xl text-blue-600 shrink-0"><CreditCard size={32}/></div>
+                        <div>
+                            <h4 className="font-bold text-slate-900 text-xl mb-2">Inclusión Híbrida</h4>
+                            <p className="text-slate-600">Los operadores postales deben aprovechar su capilaridad en zonas con baja cobertura bancaria para ofrecer servicios financieros, logísticos y digitales integrados (modelo híbrido).</p>
+                        </div>
+                        </div>
+                        <div className="w-full h-px bg-slate-100"></div>
+                        <div className="flex items-start gap-6">
+                        <div className="bg-indigo-100 p-4 rounded-2xl text-indigo-600 shrink-0"><Globe size={32}/></div>
+                        <div>
+                            <h4 className="font-bold text-slate-900 text-xl mb-2">Estándares Globales</h4>
+                            <p className="text-slate-600">Adopción de iniciativas como <em>Connect.Post</em> y <em>Ready to Market Interoperability Group</em> para fortalecer ciberseguridad e integración de pagos.</p>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </SlideLayout>
                 )
             },
-            // AUDIOVISUAL
+
+            // --- AUDIOVISUAL ---
             {
                 id: 'av-cover',
                 section: SectionType.AUDIOVISUAL,
                 component: (
-                    <SlideLayout isCover>
-                        <div className="bg-white/20 p-6 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6"><Video size={48} className="text-white"/></div>
-                        <h1 className="text-5xl md:text-6xl font-bold mb-4">SECTOR AUDIOVISUAL</h1>
-                        <p className="text-xl md:text-2xl opacity-90">Convergencia, Producción Virtual y Sostenibilidad</p>
-                    </SlideLayout>
+                <SlideLayout isCover>
+                    <div className="bg-white/20 p-8 rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-8"><Video size={64} className="text-white"/></div>
+                    <h1 className="text-5xl md:text-7xl font-bold mb-6">SECTOR AUDIOVISUAL</h1>
+                    <p className="text-2xl opacity-90 max-w-4xl mx-auto text-center">IA generativa, producción virtual, 5G Broadcast y nuevas reglas de juego para el ecosistema de medios</p>
+                </SlideLayout>
                 )
             },
             {
                 id: 'av-context',
                 section: SectionType.AUDIOVISUAL,
                 component: (
-                    <SlideLayout title="Convergencia Total" chapter="Audiovisual">
-                        <div className="bg-purple-50 p-6 rounded-xl border-l-4 border-purple-500 mb-8"><p className="text-lg text-slate-700">La tecnología está eliminando las fronteras entre producción, distribución y consumo. Estudios virtuales, 5G Broadcast y nuevos modelos de monetización redefinen el juego.</p></div>
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-white p-6 shadow-sm rounded-lg border border-slate-100"><h4 className="font-bold text-purple-600 mb-2">Producción</h4><p className="text-sm text-slate-600">Estudios LED virtuales, Captura Volumétrica 3D, IA Generativa para guiones y post-producción.</p></div>
-                            <div className="bg-white p-6 shadow-sm rounded-lg border border-slate-100"><h4 className="font-bold text-pink-600 mb-2">Consumo</h4><p className="text-sm text-slate-600">SVoD, AVoD, FAST channels. Experiencias inmersivas (XR) y compras en vivo (Live Commerce).</p></div>
+                <SlideLayout 
+                    title="Convergencia tecnológica en el ecosistema audiovisual" 
+                    chapter="Audiovisual"
+                    subtitle="La integración cloud–edge–device y la IA redefinen la cadena de valor."
+                >
+                    <div className="bg-purple-50 p-6 rounded-2xl border-l-8 border-purple-500 mb-8">
+                        <p className="text-slate-700 leading-relaxed mb-4 text-lg">
+                            La integración cloud–edge–device, la IA generativa y las nuevas arquitecturas de emisión (5G Broadcast, CDN federadas) están borrando las fronteras entre creación, distribución y consumo de contenidos.
+                            El procesamiento de los contenidos se reparte entre:
+                        </p>
+                        <ul className="list-disc pl-5 text-slate-700 space-y-1 mb-4">
+                            <li><strong className="text-purple-700">Cloud:</strong> tareas pesadas (IA, render, analítica).</li>
+                            <li><strong className="text-purple-700">Edge:</strong> funciones sensibles a la latencia cerca del usuario (caché, sincronización, XR).</li>
+                            <li><strong className="text-purple-700">Device:</strong> renderiza y muestra el contenido final.</li>
+                        </ul>
+                        <p className="text-slate-700 leading-relaxed font-medium">Esta arquitectura reduce la latencia, optimiza el tráfico y habilita experiencias inmersivas en tiempo real.</p>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-3 gap-6">
+                        <div className="bg-white p-6 shadow-sm rounded-2xl border border-slate-200 hover:shadow-lg transition-all flex flex-col">
+                            <div className="bg-purple-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-purple-600"><Video size={24}/></div>
+                            <h4 className="font-bold text-purple-900 mb-3 text-lg">Creación y Producción</h4>
+                            <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Producción virtual y automatización</p>
+                            <ul className="text-sm text-slate-600 space-y-2 flex-1">
+                                <li>• Estudios LED virtuales, captura volumétrica 3D y motores en tiempo real (Unreal Engine).</li>
+                                <li>• IA generativa para guiones, resúmenes y asistencia de estilo.</li>
+                                <li>• Flujos colaborativos en la nube (OpenUSD, NVIDIA Omniverse).</li>
+                            </ul>
                         </div>
-                    </SlideLayout>
+                        
+                        <div className="bg-white p-6 shadow-sm rounded-2xl border border-slate-200 hover:shadow-lg transition-all flex flex-col">
+                            <div className="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-blue-600"><Network size={24}/></div>
+                            <h4 className="font-bold text-blue-900 mb-3 text-lg">Distribución e Infraestructura</h4>
+                            <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Redes y arquitecturas convergentes</p>
+                            <ul className="text-sm text-slate-600 space-y-2 flex-1">
+                                <li>• Cloud–edge–device para reducir latencia y habilitar XR en tiempo real.</li>
+                                <li>• 5G Broadcast y DVB-I como soporte híbrido broadcast/IP.</li>
+                                <li>• CDN federadas y edge caching con métricas de eficiencia energética.</li>
+                            </ul>
+                        </div>
+
+                        <div className="bg-white p-6 shadow-sm rounded-2xl border border-slate-200 hover:shadow-lg transition-all flex flex-col">
+                            <div className="bg-pink-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 text-pink-600"><Users size={24}/></div>
+                            <h4 className="font-bold text-pink-900 mb-3 text-lg">Consumo y Modelos de Negocio</h4>
+                            <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Plataformas y experiencias inmersivas</p>
+                            <ul className="text-sm text-slate-600 space-y-2 flex-1">
+                                <li>• SVoD, AVoD, BVoD y canales FAST.</li>
+                                <li>• Experiencias inmersivas (XR) y live commerce.</li>
+                                <li>• Personalización basada en sistemas de recomendación y datos de audiencia.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="mt-8 text-[10px] text-slate-400">
+                        Fuentes: Basado en Ericsson, Mobility Report 2024; EBU News Report 2025; ETSI MEC; DVB Project, 2024; GSMA, Consumers in Focus 2024–2025.
+                    </div>
+                </SlideLayout>
                 )
             },
             {
                 id: 'av-video',
                 section: SectionType.AUDIOVISUAL,
                 component: (
-                    <SlideLayout title="Dominio del Video Móvil" chapter="Audiovisual">
-                        <div className="flex flex-col h-full">
-                            <div className="flex-1 min-h-[300px]">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={[{ year: '2020', val: 50 }, { year: '2021', val: 53 }, { year: '2022', val: 57 }, { year: '2023', val: 60 }, { year: '2024', val: 74 }, { year: '2025', val: 77 }, { year: '2026', val: 80 }]}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                        <XAxis dataKey="year" />
-                                        <YAxis domain={[0, 100]} label={{ value: '%', angle: -90, position: 'insideLeft' }}/>
-                                        <Tooltip />
-                                        <Line type="monotone" dataKey="val" name="% Tráfico de Video Móvil" stroke="#ef4444" strokeWidth={3} />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            </div>
-                            <div className="mt-6 text-center"><p className="text-slate-600 mb-2">Para 2026, el <strong>80%</strong> del tráfico móvil mundial será video.</p><div className="inline-block bg-red-100 text-red-700 px-4 py-1 rounded-full text-sm font-bold">Reto: Eficiencia de Red (Edge Computing + 5G Broadcast)</div></div>
+                <SlideLayout 
+                    title="Dominio del Video Móvil y presión sobre las redes" 
+                    chapter="Audiovisual"
+                    subtitle="Participación del video en el tráfico de datos móviles mundial (2020–2026, %)."
+                >
+                    <div className="flex flex-col h-full gap-8">
+                        <div className="h-[400px] w-full">
+                            <AVVideoTrafficChart />
                         </div>
-                    </SlideLayout>
+                        <div className="mt-6 text-center bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                            <p className="text-slate-700 text-xl mb-4">Para 2026, cerca del <strong>80%</strong> del tráfico de datos móviles será video, impulsado por el streaming HD/4K, el video corto en redes sociales, los servicios BVoD/FAST y las primeras experiencias inmersivas (XR) en movilidad.</p>
+                            <div className="inline-block bg-red-100 text-red-700 px-6 py-2 rounded-full text-base font-bold shadow-sm">
+                                Reto central: garantizar calidad de experiencia y eficiencia energética en redes móviles mediante edge computing, arquitecturas cloud–edge–device y mecanismos de descarga de tráfico como 5G Broadcast.
+                            </div>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                                <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2"><Cpu size={20} className="text-blue-500"/> Implicaciones para la industria</h4>
+                                <p className="text-xs text-slate-500 uppercase font-bold mb-2">Para operadores y plataformas</p>
+                                <ul className="text-sm text-slate-600 space-y-2">
+                                    <li>• Necesidad de arquitecturas más eficientes (edge caching, CDN federadas).</li>
+                                    <li>• Mayor inversión en capacidad de red y espectro para video.</li>
+                                    <li>• Presión para optimizar consumo energético de data centers y redes.</li>
+                                </ul>
+                            </div>
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                                <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2"><ShieldCheck size={20} className="text-indigo-500"/> Implicaciones regulatorias</h4>
+                                <p className="text-xs text-slate-500 uppercase font-bold mb-2">Para reguladores</p>
+                                <ul className="text-sm text-slate-600 space-y-2">
+                                    <li>• Definir métricas comparables de calidad de experiencia (QoE) en video.</li>
+                                    <li>• Evaluar el uso de 5G Broadcast como offload de tráfico en eventos masivos.</li>
+                                    <li>• Integrar indicadores de eficiencia energética y huella de CO₂ en licencias y seguimiento del sector.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-2">
+                            Fuentes: Ericsson, Mobility Report 2024; GSMA, Consumers in Focus 2024–2025.
+                        </div>
+                    </div>
+                </SlideLayout>
                 )
             },
             {
                 id: 'av-sustainability',
                 section: SectionType.AUDIOVISUAL,
                 component: (
-                    <SlideLayout title="Sostenibilidad: Desafío Crítico" chapter="Audiovisual">
-                        <div className="flex flex-col md:flex-row gap-8 h-full">
-                            <div className="flex-1">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={[{ year: '2022', val: 460 }, { year: '2023', val: 550 }, { year: '2024', val: 650 }, { year: '2025', val: 800 }, { year: '2026', val: 1000 }]}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                        <XAxis dataKey="year" />
-                                        <YAxis label={{ value: 'TWh', angle: -90, position: 'insideLeft' }}/>
-                                        <Tooltip />
-                                        <Bar dataKey="val" name="Consumo Data Centers (TWh)" fill="#f87171" radius={[4, 4, 0, 0]} />
-                                    </BarChart>
-                                </ResponsiveContainer>
+                <SlideLayout 
+                    title="Sostenibilidad: consumo energético y huella del audiovisual digital" 
+                    chapter="Audiovisual"
+                    subtitle="Consumo de energía de centros de datos a nivel global (2022–2026, TWh) y efectos de la virtualización de la producción."
+                >
+                    <div className="flex flex-col md:flex-row gap-10 h-full">
+                        <div className="flex-1 min-h-[300px] flex flex-col gap-6">
+                            <div className="h-[300px]">
+                                <AVEnergyChart />
                             </div>
-                            <div className="w-full md:w-1/3 flex flex-col justify-center space-y-6">
-                                <div className="bg-green-50 p-6 rounded-xl border border-green-100"><h4 className="font-bold text-green-800 text-xl mb-1">20-50%</h4><p className="text-sm text-green-700">Reducción de emisiones gracias a la <strong>Producción Virtual</strong> (menos desplazamientos).</p></div>
-                                <div className="bg-red-50 p-6 rounded-xl border border-red-100"><h4 className="font-bold text-red-800 text-xl mb-1">1,000 TWh</h4><p className="text-sm text-red-700">Consumo proyectado de Data Centers para 2026. Requiere métricas verificables (CSRD).</p></div>
+                            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-sm text-slate-700">
+                                <p className="mb-3">El consumo energético de los centros de datos podría pasar de <strong>~460 TWh en 2022 a cerca de 1.000 TWh en 2026</strong>, impulsado por el crecimiento del tráfico de video, el streaming y la adopción de IA generativa.</p>
+                                <p>La producción virtual puede reducir entre <strong>20–50%</strong> las emisiones asociadas a desplazamientos y rodajes en locación, pero también aumenta la dependencia de centros de datos, muros LED y render en la nube.</p>
                             </div>
                         </div>
-                    </SlideLayout>
+                        <div className="w-full md:w-1/3 flex flex-col gap-4">
+                            {/* Caja Verde */}
+                            <div className="bg-green-50 p-5 rounded-2xl border border-green-100 shadow-sm">
+                                <h4 className="font-bold text-green-800 text-lg mb-2 flex items-center gap-2"><Lightbulb size={18}/> Oportunidad</h4>
+                                <p className="text-xs font-bold text-green-700 uppercase mb-2">Producción virtual: recortes de emisiones</p>
+                                <ul className="text-xs text-green-800 space-y-2">
+                                    <li>• Estudios reportan reducciones de 20–50% (e incluso hasta 70%) en emisiones frente a rodajes tradicionales.</li>
+                                    <li>• Los impactos dependen del diseño de cada proyecto y del mix eléctrico usado.</li>
+                                </ul>
+                            </div>
+
+                            {/* Caja Roja */}
+                            <div className="bg-red-50 p-5 rounded-2xl border border-red-100 shadow-sm">
+                                <h4 className="font-bold text-red-800 text-lg mb-2 flex items-center gap-2"><Zap size={18}/> Riesgo</h4>
+                                <p className="text-xs font-bold text-red-700 uppercase mb-2">TWh en 2026: presión infraestructura</p>
+                                <ul className="text-xs text-red-800 space-y-2">
+                                    <li>• Centros de datos y redes concentran una parte creciente de la huella del audiovisual.</li>
+                                    <li>• Se requieren métricas comparables (PUE, WUE, CUE) y monitoreo de la cadena completa.</li>
+                                </ul>
+                            </div>
+
+                            {/* Caja Azul */}
+                            <div className="bg-blue-50 p-5 rounded-2xl border border-blue-100 shadow-sm">
+                                <h4 className="font-bold text-blue-800 text-lg mb-2 flex items-center gap-2"><BarChart3 size={18}/> Regulación</h4>
+                                <p className="text-xs font-bold text-blue-700 uppercase mb-2">Normativa climática emergente</p>
+                                <ul className="text-xs text-blue-800 space-y-2">
+                                    <li>• Directiva EED y CSRD exigen reporte obligatorio de consumo y emisiones.</li>
+                                    <li>• Reguladores (ej. ARCOM) impulsan referencias de ecodiseño para streaming.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                     <div className="text-[10px] text-slate-400 mt-4">
+                        Fuentes: International Energy Agency – Data centres and AI (2024); estudios de producción virtual en British Cinematographer (2024); ARCOM/ARCEP/ADEME, avisos REEN y referenciales de ecodiseño (2023–2024).
+                     </div>
+                </SlideLayout>
                 )
             },
             {
                 id: 'av-regulation',
                 section: SectionType.AUDIOVISUAL,
                 component: (
-                    <SlideLayout title="Nuevo Paradigma Regulatorio" chapter="Audiovisual">
-                        <div className="grid gap-6">
-                            {[
-                                { title: "EMFA (European Media Freedom Act)", desc: "Protección de independencia de medios y pluralismo.", icon: ShieldCheck },
-                                { title: "DSA (Digital Services Act)", desc: "Transparencia algorítmica y protección de menores.", icon: Lock },
-                                { title: "Sostenibilidad (CSRD)", desc: "Métricas ambientales obligatorias para streaming y data centers.", icon: Globe },
-                            ].map((reg, i) => (
-                                <div key={i} className="flex items-start gap-4 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                                    <div className="bg-indigo-50 p-3 rounded-lg text-indigo-600"><reg.icon size={24} /></div>
-                                    <div><h4 className="font-bold text-lg text-slate-800">{reg.title}</h4><p className="text-slate-600">{reg.desc}</p></div>
-                                </div>
-                            ))}
+                <SlideLayout 
+                    title="Nuevo paradigma regulatorio del ecosistema audiovisual–digital" 
+                    chapter="Audiovisual"
+                    subtitle="Europa consolida un marco que combina independencia de medios, control de plataformas y métricas ambientales obligatorias."
+                >
+                    <div className="grid gap-6">
+                        <div className="flex items-start gap-6 bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-all">
+                            <div className="bg-indigo-50 p-4 rounded-2xl text-indigo-600 shrink-0"><ShieldCheck size={32} /></div>
+                            <div>
+                                <h4 className="font-bold text-xl text-slate-900 mb-2">EMFA – Libertad de Medios y Pluralismo</h4>
+                                <ul className="text-slate-600 text-sm space-y-2">
+                                    <li>• Refuerza la independencia editorial y de las autoridades nacionales.</li>
+                                    <li>• Crea la European Board for Media Services (sustituye a ERGA).</li>
+                                    <li>• Establece salvaguardas frente a retiradas injustificadas de contenidos y mayor transparencia en publicidad y mediciones de audiencia.</li>
+                                </ul>
+                            </div>
                         </div>
-                    </SlideLayout>
+
+                        <div className="flex items-start gap-6 bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-all">
+                            <div className="bg-pink-50 p-4 rounded-2xl text-pink-600 shrink-0"><Lock size={32} /></div>
+                            <div>
+                                <h4 className="font-bold text-xl text-slate-900 mb-2">DSA + Online Safety – Plataformas y protección de menores</h4>
+                                <ul className="text-slate-600 text-sm space-y-2">
+                                    <li>• Obliga a gestionar riesgos sistémicos (desinformación, retos peligrosos, violencia digital).</li>
+                                    <li>• Exige transparencia de algoritmos, auditorías independientes y acceso a datos para investigadores.</li>
+                                    <li>• Refuerza la protección infantil: privacy by design, verificación de edad proporcionada y configuraciones seguras por defecto.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-6 bg-white p-8 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-all">
+                            <div className="bg-green-50 p-4 rounded-2xl text-green-600 shrink-0"><Globe size={32} /></div>
+                            <div>
+                                <h4 className="font-bold text-xl text-slate-900 mb-2">CSRD + EED – Sostenibilidad y datos ambientales</h4>
+                                <ul className="text-slate-600 text-sm space-y-2">
+                                    <li>• Reporte obligatorio de consumo energético y emisiones para centros de datos y grandes plataformas.</li>
+                                    <li>• Indicadores estandarizados: PUE, WUE, CUE y porcentaje de energía renovable.</li>
+                                    <li>• Integra la sostenibilidad en los reportes corporativos de servicios digitales y audiovisuales (streaming, CDNs, redes).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="text-[10px] text-slate-400 mt-6">
+                        Fuentes: European Commission / European Union (EMFA, DSA, CSRD, EED); ARCOM–ARCEP–ADEME (referenciales de ecodiseño y obligaciones ambientales).
+                    </div>
+                </SlideLayout>
                 )
             },
             {
                 id: 'av-business-models',
                 section: SectionType.AUDIOVISUAL,
                 component: (
-                    <SlideLayout title="Modelos de Negocio" chapter="Sector Audiovisual">
-                        <div className="grid md:grid-cols-2 gap-6 h-full overflow-y-auto pb-20">
-                            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                                <h4 className="font-bold text-indigo-700 mb-2 flex items-center gap-2 text-sm"><CreditCard size={18}/> Hibridación de modelos de pago</h4>
-                                <p className="text-xs text-slate-600">Paso de esquemas solo suscripción a modelos mixtos: SVoD con ad-tiers, BVoD e ingresos contextuales (pause-to-shop, eventos inmersivos).</p>
+                    <SlideLayout 
+                        title="Modelos de negocio en transición" 
+                        chapter="Sector Audiovisual"
+                        subtitle="Hibridación de suscripción y publicidad, plataformización y nuevos acuerdos entre operadores, medios y anunciantes."
+                    >
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 h-full overflow-y-auto pb-10">
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</div>
+                                    <h4 className="font-bold text-indigo-900 text-lg">Hibridación de modelos</h4>
+                                </div>
+                                <p className="text-xs uppercase font-bold text-slate-400 mb-2">De solo suscripción a mixtos</p>
+                                <ul className="text-sm text-slate-600 space-y-2">
+                                    <li>• SVoD con niveles con publicidad (ad-tiers).</li>
+                                    <li>• BVoD de radiodifusores y canales FAST financiados por publicidad.</li>
+                                    <li>• Ingresos contextuales: pause-to-shop, eventos inmersivos y live commerce.</li>
+                                </ul>
                             </div>
-                            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                                <h4 className="font-bold text-pink-700 mb-2 flex items-center gap-2 text-sm"><Tv size={18}/> Publicidad integrada y experiencias inmersivas</h4>
-                                <p className="text-xs text-slate-600">Crecen canales FAST, product placement avanzado, branded content en video corto y formatos de live commerce.</p>
+
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="bg-pink-100 text-pink-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">2</div>
+                                    <h4 className="font-bold text-pink-900 text-lg">Publicidad integrada</h4>
+                                </div>
+                                <p className="text-xs uppercase font-bold text-slate-400 mb-2">Experiencias inmersivas</p>
+                                <ul className="text-sm text-slate-600 space-y-2">
+                                    <li>• Crece el product placement avanzado y branded content en video corto.</li>
+                                    <li>• Formatos interactivos y compras en vivo.</li>
+                                    <li>• Mayor uso de segmentación basada en datos de audiencia.</li>
+                                </ul>
                             </div>
-                            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                                <h4 className="font-bold text-green-700 mb-2 flex items-center gap-2 text-sm"><Network size={18}/> Convergencia (LatAm)</h4>
-                                <p className="text-xs text-slate-600">Paquetes que integran SVoD con publicidad, OTT de radiodifusores que exploran BVoD/FAST y despliegue de ad-tiers en Brasil y México.</p>
+
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="bg-green-100 text-green-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">3</div>
+                                    <h4 className="font-bold text-green-900 text-lg">Convergencia (LatAm)</h4>
+                                </div>
+                                <p className="text-xs uppercase font-bold text-slate-400 mb-2">Acuerdos Operadores + Medios</p>
+                                <ul className="text-sm text-slate-600 space-y-2">
+                                    <li>• Paquetes SVoD/BVoD con publicidad en ofertas móviles/TV.</li>
+                                    <li>• Radiodifusores despliegan BVoD/FAST propios.</li>
+                                    <li>• Mercados clave: Brasil, México, Chile y R. Dominicana.</li>
+                                </ul>
                             </div>
-                            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                                <h4 className="font-bold text-blue-700 mb-2 flex items-center gap-2 text-sm"><Zap size={18}/> Monetización y Datos</h4>
-                                <p className="text-xs text-slate-600">Publicidad segmentada apoyada en acuerdos de cobro conjunto con servicios móviles y de banda ancha.</p>
+
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">4</div>
+                                    <h4 className="font-bold text-blue-900 text-lg">Monetización y Datos</h4>
+                                </div>
+                                <ul className="text-sm text-slate-600 space-y-2">
+                                    <li>• Publicidad segmentada con cobro conjunto (Carrier Billing).</li>
+                                    <li>• Uso intensivo de analítica y recomendación para retención.</li>
+                                    <li>• Tensiones entre personalización y transparencia algorítmica.</li>
+                                </ul>
                             </div>
-                            <div className="col-span-1 md:col-span-2 bg-slate-50 p-5 rounded-xl border-l-4 border-amber-500 shadow-sm hover:shadow-md transition-shadow">
-                                <h4 className="font-bold text-amber-700 mb-1 text-sm">Reconfiguración del poder en el mercado publicitario</h4>
-                                <p className="text-xs text-slate-600">Nuevas relaciones entre plataformas, programadores y anunciantes, con riesgos de concentración y barreras para medios locales.</p>
+
+                            <div className="md:col-span-2 bg-amber-50 p-6 rounded-2xl border-l-4 border-amber-500 shadow-sm hover:shadow-lg transition-all">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="bg-amber-200 text-amber-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">5</div>
+                                    <h4 className="font-bold text-amber-900 text-lg">Reconfiguración del poder en el mercado publicitario</h4>
+                                </div>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <ul className="text-sm text-slate-700 space-y-2">
+                                        <li>• Nuevas relaciones entre plataformas globales, programadores y anunciantes.</li>
+                                        <li>• Concentración del inventario publicitario en pocos intermediarios.</li>
+                                    </ul>
+                                    <ul className="text-sm text-slate-700 space-y-2">
+                                        <li>• Riesgos de barreras para medios locales e independientes.</li>
+                                        <li>• Necesidad de reglas claras sobre transparencia y reparto de ingresos.</li>
+                                    </ul>
+                                </div>
                             </div>
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-6">
+                            Fuentes: Ofcom, Media Nations / Online Nation 2025; GSMA, Consumers in Focus 2024–2025; GSMA 5G LatAm (2025); informes sectoriales sobre BVoD/FAST.
                         </div>
                     </SlideLayout>
                 )
             },
             {
-                id: 'av-conclusions',
+                id: 'av-strategies',
                 section: SectionType.AUDIOVISUAL,
                 component: (
-                    <SlideLayout title="Acciones para enfrentar y anticipar las tendencias tecnológicas en el sector audiovisual" chapter="Audiovisual">
-                        <div className="mb-6"><p className="text-slate-700 mb-4">La gobernanza del ecosistema audiovisual no es un fin en sí mismo, sino el andamiaje para convertir innovaciones en garantías de derechos y pluralismo.</p></div>
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="bg-purple-50 p-5 rounded-lg"><h4 className="font-bold text-purple-800 mb-2 flex items-center gap-2"><Lightbulb size={20}/> Monitoreo y Prospectiva</h4><p className="text-sm text-slate-700">Consolidar sistemas de información sobre consumo y sostenibilidad. Desarrollar hojas de ruta tecnológicas anticipatorias.</p></div>
-                            <div className="bg-blue-50 p-5 rounded-lg"><h4 className="font-bold text-blue-800 mb-2 flex items-center gap-2"><ShieldCheck size={20}/> Herramientas Técnicas</h4><p className="text-sm text-slate-700">Capacidades para auditoría algorítmica y evaluación de sistemas de recomendación. Adopción de estándares como C2PA para autenticidad.</p></div>
-                            <div className="bg-indigo-50 p-5 rounded-lg"><h4 className="font-bold text-indigo-800 mb-2 flex items-center gap-2"><Users size={20}/> Co-regulación</h4><p className="text-sm text-slate-700">Esquemas de corresponsabilidad con la industria: códigos de conducta, interoperabilidad de verificación de edad y transparencia publicitaria.</p></div>
-                            <div className="bg-green-50 p-5 rounded-lg"><h4 className="font-bold text-green-800 mb-2 flex items-center gap-2"><Globe size={20}/> Agenda Pública</h4><p className="text-sm text-slate-700">Integrar alfabetización digital y métricas de eficiencia energética en el otorgamiento de licencias y espectro.</p></div>
+                    <SlideLayout 
+                        title="Acciones estratégicas para orientar la transformación del ecosistema audiovisual"
+                        chapter="Audiovisual"
+                        subtitle="Del diagnóstico de tendencias a una agenda de acción en tecnología, modelos de negocio, protección de audiencias y sostenibilidad impulsada por los distintos actores del ecosistema."
+                    >
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 h-full overflow-y-auto pb-10">
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all">
+                                <BarChart3 className="text-blue-500 mb-4" size={32} />
+                                <h4 className="font-bold text-slate-900 text-lg mb-2">Monitoreo y prospectiva regulatoria</h4>
+                                <p className="text-sm text-slate-600 leading-relaxed">
+                                    Consolidar sistemas de información que integren consumo, modelos de negocio, tráfico de redes y sostenibilidad. Desarrollar escenarios y hojas de ruta tecnológicas (IA, 5G Broadcast, cloud–edge–device).
+                                </p>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all">
+                                <Cpu className="text-purple-500 mb-4" size={32} />
+                                <h4 className="font-bold text-slate-900 text-lg mb-2">Capacidades técnicas y auditoría</h4>
+                                <p className="text-sm text-slate-600 leading-relaxed">
+                                    Reforzar equipos en datos, QoE de video y auditoría algorítmica (C2PA, SMPTE, ETSI). Evaluar impacto de recomendaciones en pluralismo, competencia y protección de NNA.
+                                </p>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all">
+                                <ShieldCheck className="text-green-500 mb-4" size={32} />
+                                <h4 className="font-bold text-slate-900 text-lg mb-2">Co-regulación y prácticas</h4>
+                                <p className="text-sm text-slate-600 leading-relaxed">
+                                    Impulsar códigos de conducta y acuerdos voluntarios (transparencia algorítmica, violencia de género, salud mental), manteniendo supervisión editorial humana frente a la IA.
+                                </p>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all">
+                                <Users className="text-amber-500 mb-4" size={32} />
+                                <h4 className="font-bold text-slate-900 text-lg mb-2">Agenda pública y alfabetización</h4>
+                                <p className="text-sm text-slate-600 leading-relaxed">
+                                    Integrar AMI con foco audiovisual en políticas educativas. Traducir marcos como la Ley 2489 de 2025 en pautas de uso seguro. Incorporar métricas de huella de carbono en licencias.
+                                </p>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all lg:col-span-2">
+                                <div className="flex gap-4">
+                                    <Globe className="text-indigo-500 shrink-0" size={32} />
+                                    <div>
+                                        <h4 className="font-bold text-slate-900 text-lg mb-2">Cooperación y observatorio regional</h4>
+                                        <p className="text-sm text-slate-600 leading-relaxed">
+                                            Participar en un observatorio latinoamericano de marcos regulatorios y prácticas no estatutarias sobre plataformas, IA y sostenibilidad, para compartir evidencia y fortalecer una voz regional coordinada.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="text-[10px] text-slate-400 mt-6">
+                            Referencias: UNESCO–OBSERVACOM (prácticas no estatutarias); European Commission / EU (EMFA, DSA, DMA, CSRD, EED); IEA (2024); GSMA / Ericsson (tráfico de video y 5G); Ley 2489 de 2025.
                         </div>
                     </SlideLayout>
                 )
             },
-            // OUTRO
-            {
-                id: 'outro',
-                section: SectionType.OUTRO,
-                component: (
-                    <SlideLayout isCover>
-                        <h1 className="text-6xl font-bold mb-4">¡Gracias!</h1>
-                        <div className="bg-white/10 p-8 rounded-2xl backdrop-blur-md max-w-2xl w-full flex flex-col items-center">
-                            <p className="text-2xl mb-2 font-bold text-white">Comisión de Regulación de Comunicaciones</p>
-                            <p className="text-xl text-white/90 font-light">Coordinación de Prospectiva Estratégica e Innovación</p>
-                            <div className="h-px bg-white/30 w-1/2 my-6"></div>
-                            <div className="bg-white p-4 rounded-xl">
-                                <img src="logo.png" alt="Logo CRC" className="h-24 object-contain" />
-                            </div>
-                        </div>
-                    </SlideLayout>
-                )
-            }
+
+            { id: 'outro', section: SectionType.OUTRO, component: <SlideLayout isCover><h1 className="text-6xl font-bold mb-4">¡Gracias!</h1><p className="text-xl text-white/90">Comisión de Regulación de Comunicaciones</p></SlideLayout> }
         ];
 
-        // --- 6. APP PRINCIPAL ---
+        // --- APP PRINCIPAL ---
         const App = () => {
             const [activeSection, setActiveSection] = useState(SectionType.INTRO);
-            const mainContentRef = useRef(null);
+            const containerRef = useRef(null);
+            const activeSlides = slides.filter(slide => slide.section === activeSection);
+            const currentIndex = SECTION_ORDER.indexOf(activeSection);
+            const nextSectionTitle = currentIndex < SECTION_ORDER.length - 1 ? SECTION_ORDER[currentIndex + 1] : null;
+            const progress = ((currentIndex + 1) / SECTION_ORDER.length) * 100;
 
-            const sectionSlides = slides.filter(slide => slide.section === activeSection);
+            const handleSectionChange = (sec) => { setActiveSection(sec); if(containerRef.current) containerRef.current.scrollTop = 0; };
+            const handleNext = () => nextSectionTitle && handleSectionChange(nextSectionTitle);
 
-            const handleSectionJump = (section) => {
-                setActiveSection(section);
-                if (mainContentRef.current) {
-                    mainContentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            };
-
-            const handleNextSection = () => {
-                const currentIndex = SECTION_ORDER.indexOf(activeSection);
-                if (currentIndex < SECTION_ORDER.length - 1) {
-                    handleSectionJump(SECTION_ORDER[currentIndex + 1]);
-                }
-            };
-
-            const currentSectionIndex = SECTION_ORDER.indexOf(activeSection);
-            const nextSection = currentSectionIndex < SECTION_ORDER.length - 1 ? SECTION_ORDER[currentSectionIndex + 1] : null;
-            const progress = ((currentSectionIndex + 1) / SECTION_ORDER.length) * 100;
-
-            const Navigation = ({ currentSection, onSectionClick, progress }) => {
-              const items = [
-                { type: SectionType.INTRO, Icon: Icons.Home, label: 'Inicio' },
-                { type: SectionType.TELECOM, Icon: Icons.Radio, label: 'Telecom' },
-                { type: SectionType.POSTAL, Icon: Icons.Mail, label: 'Postal' },
-                { type: SectionType.AUDIOVISUAL, Icon: Icons.Video, label: 'Audiovisual' },
-                { type: SectionType.OUTRO, Icon: Icons.CheckCircle, label: 'Cierre' },
-              ];
-
-              return (
+            const Navigation = () => (
                 <div className="fixed left-0 top-0 h-full w-20 bg-slate-900 flex flex-col items-center py-8 z-50 shadow-2xl border-r border-slate-800">
-                  <div className="font-bold text-white text-xs mb-10 tracking-widest bg-indigo-600 px-2 py-1 rounded">CRC</div>
-                  
-                  <nav className="flex-1 flex flex-col gap-8 w-full px-2">
-                    {items.map((item) => {
-                      const isActive = currentSection === item.type;
-                      return (
-                        <button
-                          key={item.type}
-                          onClick={() => onSectionClick(item.type)}
-                          className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-all duration-300 w-full group relative ${
-                            isActive 
-                              ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 translate-x-1' 
-                              : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                          }`}
-                          title={item.label}
-                        >
-                          <item.Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-                          <span className="absolute left-full ml-4 px-3 py-1.5 bg-slate-800 text-white text-xs font-medium rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-50 pointer-events-none">
-                            {item.label}
-                            <span className="absolute left-0 top-1/2 -translate-x-1 -translate-y-1/2 w-2 h-2 bg-slate-800 rotate-45"></span>
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </nav>
-
-                  <div className="w-full px-4 flex flex-col items-center gap-2">
-                     <div className="text-[10px] text-slate-500 font-mono">{Math.round(progress)}%</div>
-                     <div className="h-24 w-1.5 bg-slate-800 rounded-full overflow-hidden relative">
-                        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-indigo-500 to-purple-500 transition-all duration-500 ease-out" style={{ height: `${progress}%` }} />
-                     </div>
-                  </div>
+                    <div className="font-bold text-white text-xs mb-10 tracking-widest bg-indigo-600 px-2 py-1 rounded">CRC</div>
+                    <nav className="flex-1 flex flex-col gap-8 w-full px-2">
+                        {SECTION_ORDER.map((sec) => {
+                            const isActive = activeSection === sec;
+                            let IconC = Home;
+                            if (sec === SectionType.TELECOM) IconC = Radio;
+                            if (sec === SectionType.POSTAL) IconC = Mail;
+                            if (sec === SectionType.AUDIOVISUAL) IconC = Video;
+                            if (sec === SectionType.OUTRO) IconC = CheckCircle;
+                            return (
+                                <button key={sec} onClick={() => handleSectionChange(sec)} className={`flex flex-col items-center gap-1 p-3 rounded-2xl transition-all duration-300 w-full ${isActive ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`} title={sec}>
+                                    <IconC size={24} strokeWidth={isActive ? 2.5 : 2} />
+                                </button>
+                            );
+                        })}
+                    </nav>
+                    <div className="w-full px-4 flex flex-col items-center gap-2"><div className="text-[10px] text-slate-500 font-mono">{Math.round(progress)}%</div><div className="h-24 w-1.5 bg-slate-800 rounded-full overflow-hidden relative"><div className="absolute bottom-0 left-0 w-full bg-indigo-500 transition-all duration-500" style={{ height: `${progress}%` }} /></div></div>
                 </div>
-              );
-            };
+            );
 
             return (
-                <div className="flex h-screen w-screen overflow-hidden bg-slate-100 font-sans text-slate-900">
-                    <Navigation currentSection={activeSection} onSectionClick={handleSectionJump} progress={progress} />
-
-                    <main ref={mainContentRef} className="snap-container flex-1 ml-20">
-                        <div className="w-full">
-                            {sectionSlides.map((slide, index) => {
-                                const prevSlide = sectionSlides[index - 1];
-                                const nextSlide = sectionSlides[index + 1];
-                                return (
-                                    <div key={slide.id} id={slide.id} className="snap-child relative w-full flex flex-col items-center justify-center p-4 md:p-8 lg:p-12 overflow-hidden bg-slate-50">
-                                        <div className="w-full max-w-[1400px] h-full flex flex-col justify-center relative z-0">
-                                            {slide.component}
-                                        </div>
-                                        <InternalNavigation prevId={prevSlide?.id} nextId={nextSlide?.id} />
-                                    </div>
-                                );
-                            })}
-                            
-                            {nextSection && (
-                                <div className="snap-child w-full flex items-center justify-center bg-slate-100">
-                                    <SectionNavigation onNext={handleNextSection} nextSectionTitle={nextSection} />
-                                </div>
-                            )}
-
-                            {activeSection === SectionType.OUTRO && (
-                                <footer className="snap-start py-12 text-center text-slate-400 text-sm">
-                                    &copy; 2025 Comisión de Regulación de Comunicaciones. Todos los derechos reservados.
-                                </footer>
-                            )}
+                <div className="flex h-screen w-screen overflow-hidden bg-slate-50 text-slate-900 font-sans">
+                    <Navigation />
+                    <main ref={containerRef} className="flex-1 ml-20 h-full overflow-y-auto scroll-smooth">
+                        <div className="flex flex-col w-full min-h-screen">
+                            {activeSlides.map(slide => <div key={slide.id} className="w-full web-section">{slide.component}</div>)}
+                            <SectionNavigation onNext={handleNext} nextSectionTitle={nextSectionTitle} isLast={!nextSectionTitle} />
+                            {activeSection === SectionType.OUTRO && <footer className="py-12 text-center text-slate-400 text-sm bg-slate-900">&copy; 2025 CRC</footer>}
                         </div>
                     </main>
                 </div>
@@ -1391,5 +1225,3 @@
     </script>
 </body>
 </html>
-
-
