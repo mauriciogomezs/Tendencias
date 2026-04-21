@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tendencias en APIs para Telcos — Resumen Ejecutivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=JetBrains+Mono:wght@400;600&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --ink:#0f1419;
+    --ink-soft:#2a3240;
+    --paper:#f6f2ea;
+    --paper-warm:#efe7d8;
+    --rule:#1a1f2a;
+    --accent:#c7451c;        /* ladrillo quemado */
+    --accent-2:#1d4e5a;      /* verde petróleo */
+    --accent-3:#d4a857;      /* mostaza */
+    --muted:#6b6458;
+    --card:#fbf8f1;
+    --hl:#fff1c9;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter Tight', -apple-system, sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.55;
+    font-weight:400;
+    overflow-x:hidden;
+  }
+
+  /* ---------- Grano y textura ---------- */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(199,69,28,0.04) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(29,78,90,0.04) 0%, transparent 40%);
+    pointer-events:none;
+    z-index:0;
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events:none;
+    z-index:1;
+    mix-blend-mode:multiply;
+  }
+  main,header,nav,footer{position:relative;z-index:2}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    border-bottom:1px solid var(--rule);
+    padding:14px 36px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    background:var(--paper);
+  }
+  .topbar .slug{color:var(--muted)}
+  .topbar .date{color:var(--ink)}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:80px 36px 60px;
+    border-bottom:2px solid var(--rule);
+    position:relative;
+  }
+  .hero .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.25em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:24px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .hero .eyebrow::before{
+    content:"";
+    width:40px;
+    height:1px;
+    background:var(--accent);
+  }
+  .hero h1{
+    font-family:'Fraunces', serif;
+    font-weight:300;
+    font-size:clamp(40px, 7.5vw, 96px);
+    line-height:0.98;
+    letter-spacing:-0.03em;
+    max-width:1100px;
+    margin-bottom:32px;
+  }
+  .hero h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--accent);
+  }
+  .hero .lede{
+    max-width:720px;
+    font-size:20px;
+    line-height:1.5;
+    color:var(--ink-soft);
+    font-weight:300;
+  }
+  .hero .meta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:40px;
+    margin-top:48px;
+    padding-top:24px;
+    border-top:1px solid rgba(0,0,0,0.15);
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+  }
+  .hero .meta-row div strong{display:block;color:var(--accent-2);font-size:10px;margin-bottom:4px;letter-spacing:0.15em}
+  .hero .meta-row div span{color:var(--ink);font-weight:500}
+
+  /* ---------- Nav de índice ---------- */
+  .toc{
+    padding:28px 36px;
+    background:var(--paper-warm);
+    border-bottom:1px solid var(--rule);
+    display:flex;
+    gap:0;
+    flex-wrap:wrap;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+  }
+  .toc a{
+    color:var(--ink);
+    text-decoration:none;
+    padding:8px 20px 8px 0;
+    margin-right:20px;
+    border-right:1px solid rgba(0,0,0,0.15);
+    transition:color 0.2s;
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .toc a:last-child{border-right:none}
+  .toc a .num{color:var(--accent);font-weight:600}
+  .toc a:hover{color:var(--accent)}
+
+  /* ---------- Sections ---------- */
+  section{padding:80px 36px;border-bottom:1px solid rgba(0,0,0,0.1)}
+  .section-head{
+    max-width:1400px;
+    margin:0 auto 56px;
+    display:grid;
+    grid-template-columns:120px 1fr;
+    gap:40px;
+    align-items:start;
+  }
+  .section-head .marker{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.2em;
+    color:var(--accent);
+    padding-top:14px;
+    border-top:2px solid var(--accent);
+  }
+  .section-head h2{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:clamp(32px, 4.5vw, 56px);
+    line-height:1.05;
+    letter-spacing:-0.02em;
+    max-width:900px;
+  }
+  .section-head h2 em{font-style:italic;color:var(--accent-2)}
+  .section-head .intro{
+    max-width:700px;
+    font-size:17px;
+    line-height:1.55;
+    color:var(--ink-soft);
+    margin-top:20px;
+    font-weight:300;
+  }
+
+  .container{max-width:1400px;margin:0 auto}
+  .prose{max-width:780px;font-size:17px;line-height:1.65;color:var(--ink-soft);font-weight:400}
+  .prose p{margin-bottom:22px}
+  .prose p strong{color:var(--ink);font-weight:600}
+  .prose a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(199,69,28,0.4);transition:border-color 0.2s}
+  .prose a:hover{border-bottom-color:var(--accent)}
+
+  /* ---------- Subsection ---------- */
+  .sub-title{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:28px;
+    line-height:1.2;
+    letter-spacing:-0.015em;
+    margin:56px 0 20px;
+    display:flex;
+    align-items:baseline;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .sub-title .dot{
+    width:10px;
+    height:10px;
+    background:var(--accent);
+    border-radius:50%;
+    display:inline-block;
+    flex-shrink:0;
+    transform:translateY(-2px);
+  }
+  .sub-title em{
+    font-style:italic;
+    color:var(--accent);
+    font-weight:500;
+  }
+
+  /* ---------- Stats / números grandes ---------- */
+  .stat-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+    gap:0;
+    margin:40px 0;
+    border-top:1px solid var(--rule);
+    border-left:1px solid var(--rule);
+  }
+  .stat{
+    padding:32px 28px;
+    border-right:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    background:var(--card);
+    position:relative;
+  }
+  .stat .num{
+    font-family:'Fraunces', serif;
+    font-size:56px;
+    font-weight:300;
+    line-height:0.95;
+    color:var(--accent);
+    letter-spacing:-0.03em;
+    display:block;
+    margin-bottom:10px;
+  }
+  .stat .num .unit{
+    font-size:22px;
+    color:var(--ink);
+    margin-left:4px;
+  }
+  .stat .label{
+    font-size:14px;
+    line-height:1.45;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+  }
+  .stat .src{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .stat .src a{color:var(--accent-2);text-decoration:none}
+  .stat .src a:hover{text-decoration:underline}
+
+  /* ---------- Pull quote ---------- */
+  .pull{
+    margin:48px 0;
+    padding:36px 40px;
+    background:var(--card);
+    border-left:4px solid var(--accent);
+    font-family:'Fraunces', serif;
+    font-size:24px;
+    line-height:1.35;
+    font-weight:400;
+    font-style:italic;
+    color:var(--ink);
+    position:relative;
+  }
+  .pull .attr{
+    display:block;
+    margin-top:16px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:var(--muted);
+    font-style:normal;
+  }
+  .pull .attr a{color:var(--accent-2);text-decoration:none;border-bottom:1px solid rgba(29,78,90,0.3)}
+
+  /* ---------- Cards (casos de uso / actores) ---------- */
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
+    gap:20px;
+    margin:32px 0;
+  }
+  .card{
+    background:var(--card);
+    padding:28px;
+    border:1px solid rgba(0,0,0,0.1);
+    border-top:3px solid var(--accent-2);
+    position:relative;
+    transition:transform 0.3s, box-shadow 0.3s;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 30px rgba(0,0,0,0.08);
+  }
+  .card h4{
+    font-family:'Fraunces', serif;
+    font-size:22px;
+    font-weight:500;
+    margin-bottom:12px;
+    line-height:1.2;
+  }
+  .card .tag{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:14px;
+    padding:4px 10px;
+    background:rgba(199,69,28,0.08);
+    border-radius:2px;
+  }
+  .card p{font-size:14px;line-height:1.55;color:var(--ink-soft);margin-bottom:12px}
+  .card .src{
+    display:block;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px dashed rgba(0,0,0,0.15);
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .card .src a{color:var(--accent-2);text-decoration:none}
+
+  .card.alt{border-top-color:var(--accent)}
+  .card.alt-3{border-top-color:var(--accent-3)}
+
+  /* ---------- Tabla ---------- */
+  .data-table{
+    width:100%;
+    margin:32px 0;
+    border-collapse:collapse;
+    background:var(--card);
+    font-size:14px;
+  }
+  .data-table th{
+    text-align:left;
+    padding:14px 18px;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    font-weight:500;
+  }
+  .data-table td{
+    padding:16px 18px;
+    border-bottom:1px solid rgba(0,0,0,0.08);
+    vertical-align:top;
+    line-height:1.45;
+  }
+  .data-table tr:hover{background:rgba(199,69,28,0.03)}
+  .data-table td strong{color:var(--ink)}
+  .data-table td a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(199,69,28,0.4)}
+  .data-table .region{
+    font-family:'Fraunces', serif;
+    font-size:18px;
+    font-weight:500;
+    color:var(--accent-2);
+  }
+
+  /* ---------- Gráficas ---------- */
+  .chart-wrap{
+    background:var(--card);
+    padding:36px;
+    margin:32px 0;
+    border:1px solid rgba(0,0,0,0.1);
+    border-left:4px solid var(--accent-2);
+  }
+  .chart-wrap .chart-title{
+    font-family:'Fraunces', serif;
+    font-size:22px;
+    font-weight:500;
+    margin-bottom:6px;
+  }
+  .chart-wrap .chart-sub{
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:24px;
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.05em;
+  }
+  .chart-wrap canvas{max-height:380px}
+  .chart-wrap .chart-src{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-top:16px;
+    padding-top:16px;
+    border-top:1px dashed rgba(0,0,0,0.15);
+  }
+  .chart-wrap .chart-src a{color:var(--accent-2);text-decoration:none}
+
+  /* ---------- Timeline ---------- */
+  .timeline{
+    margin:40px 0;
+    position:relative;
+    padding-left:40px;
+    border-left:2px solid var(--accent);
+  }
+  .tl-item{
+    margin-bottom:32px;
+    position:relative;
+  }
+  .tl-item::before{
+    content:"";
+    width:14px;
+    height:14px;
+    background:var(--accent);
+    border-radius:50%;
+    position:absolute;
+    left:-48px;
+    top:4px;
+    border:3px solid var(--paper);
+  }
+  .tl-item .tl-date{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:6px;
+  }
+  .tl-item h4{
+    font-family:'Fraunces', serif;
+    font-size:20px;
+    font-weight:500;
+    margin-bottom:8px;
+    line-height:1.25;
+  }
+  .tl-item p{
+    font-size:15px;
+    line-height:1.55;
+    color:var(--ink-soft);
+    max-width:680px;
+  }
+  .tl-item p a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(199,69,28,0.3)}
+
+  /* ---------- Infografía regulatoria ---------- */
+  .reg-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:2px;
+    background:var(--rule);
+    border:1px solid var(--rule);
+    margin:32px 0;
+  }
+  .reg-col{
+    background:var(--card);
+    padding:32px 28px;
+  }
+  .reg-col h4{
+    font-family:'Fraunces', serif;
+    font-size:22px;
+    font-weight:500;
+    margin-bottom:6px;
+  }
+  .reg-col .reg-scope{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    padding:4px 10px;
+    background:var(--ink);
+    color:var(--paper);
+    margin-bottom:20px;
+  }
+  .reg-col .reg-scope.eu{background:var(--accent-2)}
+  .reg-col .reg-scope.us{background:var(--accent)}
+  .reg-col .reg-scope.latam{background:var(--accent-3);color:var(--ink)}
+  .reg-col ul{list-style:none;margin-top:12px}
+  .reg-col ul li{
+    font-size:14px;
+    line-height:1.5;
+    padding:10px 0;
+    border-bottom:1px dashed rgba(0,0,0,0.12);
+    color:var(--ink-soft);
+    position:relative;
+    padding-left:22px;
+  }
+  .reg-col ul li::before{
+    content:"→";
+    position:absolute;
+    left:0;
+    color:var(--accent);
+    font-weight:600;
+  }
+  .reg-col ul li a{color:var(--accent-2);text-decoration:none;border-bottom:1px solid rgba(29,78,90,0.3)}
+  .reg-col ul li strong{color:var(--ink)}
+
+  /* ---------- Highlight box ---------- */
+  .highlight{
+    background:var(--hl);
+    padding:32px 36px;
+    border-left:5px solid var(--accent-3);
+    margin:40px 0;
+    position:relative;
+  }
+  .highlight .tag-hl{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:600;
+    margin-bottom:12px;
+    display:block;
+  }
+  .highlight h4{
+    font-family:'Fraunces', serif;
+    font-size:26px;
+    font-weight:500;
+    margin-bottom:12px;
+    letter-spacing:-0.01em;
+    line-height:1.2;
+  }
+  .highlight p{
+    font-size:16px;
+    line-height:1.6;
+    color:var(--ink-soft);
+    max-width:800px;
+    margin-bottom:12px;
+  }
+  .highlight a{
+    color:var(--accent);
+    font-weight:500;
+    text-decoration:none;
+    border-bottom:1px solid var(--accent);
+  }
+
+  /* ---------- Fuentes footer ---------- */
+  .sources{
+    background:var(--ink);
+    color:var(--paper);
+    padding:72px 36px 48px;
+  }
+  .sources .container{max-width:1400px;margin:0 auto}
+  .sources h3{
+    font-family:'Fraunces', serif;
+    font-size:32px;
+    font-weight:400;
+    margin-bottom:32px;
+    color:var(--paper);
+  }
+  .sources h3 em{font-style:italic;color:var(--accent-3)}
+  .src-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:32px;
+    margin-bottom:40px;
+  }
+  .src-cat h5{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    color:var(--accent-3);
+    margin-bottom:14px;
+    padding-bottom:10px;
+    border-bottom:1px solid rgba(212,168,87,0.3);
+  }
+  .src-cat ul{list-style:none}
+  .src-cat ul li{
+    padding:8px 0;
+    font-size:13px;
+    line-height:1.45;
+    color:#c4bdac;
+  }
+  .src-cat ul li a{
+    color:var(--paper);
+    text-decoration:none;
+    border-bottom:1px dotted rgba(246,242,234,0.3);
+    transition:border-color 0.2s;
+  }
+  .src-cat ul li a:hover{border-bottom-color:var(--accent-3)}
+
+  .footer-bar{
+    padding:24px 36px;
+    background:var(--paper);
+    border-top:2px solid var(--ink);
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:20px;
+  }
+
+  /* ---------- Helper: context text ---------- */
+  .ctx-note{
+    background:rgba(29,78,90,0.06);
+    border-left:3px solid var(--accent-2);
+    padding:16px 22px;
+    font-size:14px;
+    line-height:1.55;
+    color:var(--ink-soft);
+    margin:24px 0;
+    font-style:italic;
+  }
+  .ctx-note strong{font-style:normal;color:var(--accent-2)}
+
+  /* ---------- Two-col layout ---------- */
+  .two-col{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:48px;
+    margin:40px 0;
+  }
+  @media (max-width: 900px){
+    .two-col{grid-template-columns:1fr}
+    .reg-grid{grid-template-columns:1fr}
+    .hero{padding:56px 24px 40px}
+    section{padding:56px 24px}
+    .topbar{padding:12px 24px;font-size:10px}
+    .toc{padding:20px 24px;gap:0}
+    .toc a{margin-right:12px;padding:6px 12px 6px 0;font-size:10px}
+    .section-head{grid-template-columns:1fr;gap:20px}
+    .sources{padding:48px 24px 32px}
+  }
+
+  /* Scroll appear */
+  .appear{opacity:0;transform:translateY(24px);transition:opacity 0.8s, transform 0.8s}
+  .appear.in{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">Telecomunicaciones / APIs de red</div>
+  <h1>
+    Del <em>flujo de bits</em> a la<br/>
+    plataforma programable:<br/>
+    las APIs reordenan<br/>
+    el negocio telco.
+  </h1>
+  <p class="lede">
+    Las operadoras de telecomunicaciones están abriendo sus redes a los desarrolladores a través de APIs estandarizadas, en un giro estratégico que redefine quién captura el valor de la economía digital.</p>
+</header>
+
+<nav class="toc">
+  <a href="#tecnologia"><span class="num">01</span> Tecnología</a>
+  <a href="#industria"><span class="num">02</span> Industria y mercado</a>
+  <a href="#regulacion"><span class="num">03</span> Regulación</a>
+  <a href="#fuentes"><span class="num">04</span> Fuentes</a>
+</nav>
+
+<!-- ============================================================= -->
+<!-- SECCIÓN 1 — ¿CÓMO FUNCIONAN LAS API EN LAS REDES TELCO?       -->
+<!-- ============================================================= -->
+<section id="tecnologia">
+  <div class="section-head">
+    <div class="marker">§ 01 / TECNOLOGÍA</div>
+    <div>
+      <h2>¿Cómo funcionan las <em>APIs en las redes Telco?</em></h2>
+      <p class="intro">Qué son las Telco APIs, qué capacidades exponen y por qué representan un cambio estructural en la forma en que las telecomunicaciones se monetizan.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="prose">
+      <p>Las <strong>Telco APIs</strong> (Application Programming Interfaces de red) son interfaces estandarizadas que permiten a desarrolladores externos acceder, de forma programática y bajo demanda, a capacidades que históricamente estaban confinadas dentro del núcleo de las redes móviles: autenticación basada en SIM, verificación de número, detección de cambio de SIM (<em>SIM swap</em>), localización del dispositivo, calidad de servicio bajo demanda (<em>Quality-on-Demand</em>) y acceso a <em>edge computing</em>, entre otras (<a href="https://www.gsma.com/solutions-and-impact/gsma-open-gateway/" target="_blank" rel="noopener">GSMA, 2025</a>).</p>
+
+      <p>El salto conceptual es que la red deja de ser únicamente un <strong>caño de conectividad</strong> (voz y datos) para convertirse en una <strong>plataforma digital programable</strong>, consumible por terceros mediante llamadas de API —del mismo modo en que hoy se consume un servicio cloud de AWS o Azure. Este modelo se conoce como <em>Network-as-a-Service</em> (NaaS) y constituye el eje sobre el que se articula la iniciativa global <strong>GSMA Open Gateway</strong> y su proyecto técnico asociado <strong>CAMARA</strong>, una iniciativa de código abierto liderada por la GSMA y la <a href="https://www.linuxfoundation.org/press/new-collaboration-to-drive-telco-api-transformation" target="_blank" rel="noopener">Linux Foundation</a>.</p>
+
+      <p>A nivel arquitectónico, las APIs se apoyan en las capacidades nativas de <strong>5G Stand-Alone (5G SA)</strong>: núcleo basado en funciones de red desagregadas, <em>network slicing</em>, exposición de eventos de red y orquestación programable. La <a href="https://www.itu.int/epublications/es/publication/itu-t-x-1818-2024-09-security-controls-for-operation-and-maintenance-of-imt-2020-5g-network-systems/en" target="_blank" rel="noopener">Recomendación UIT-T X.1818 (09/2024)</a> establece controles de seguridad para la operación de estas interfaces (autenticación estricta con TLS/OAuth 2.0, protección de mensajes NAS, aislamiento entre <em>slices</em>).</p>
+    </div>
+
+    <h3 class="sub-title"><span class="dot"></span>Capacidades de red expuestas vía API</h3>
+    <div class="cards">
+      <div class="card">
+        <span class="tag">Identidad</span>
+        <h4>Number Verification</h4>
+        <p>Confirma en tiempo real que el número de teléfono está efectivamente vinculado al dispositivo en uso, eliminando la necesidad de OTP por SMS.</p>
+        <span class="src">Fuente · <a href="https://dplnews.com/claro-movistar-y-tigo-anuncian-nuevas-apis-para-seguridad-e-identidad-dentro-de-open-gateway-en-colombia/" target="_blank" rel="noopener">DPL News, 2026</a></span>
+      </div>
+      <div class="card">
+        <span class="tag">Antifraude</span>
+        <h4>SIM Swap</h4>
+        <p>Detecta si la tarjeta SIM asociada a un número ha cambiado recientemente, permitiendo a bancos y fintech bloquear transacciones sospechosas.</p>
+        <span class="src">Fuente · <a href="https://mobiletime.la/noticias/03/02/2026/open-gateway-en-colombia/" target="_blank" rel="noopener">Mobile Time, 2026</a></span>
+      </div>
+      <div class="card">
+        <span class="tag">Calidad</span>
+        <h4>Quality-on-Demand (QoD)</h4>
+        <p>Permite a una aplicación solicitar, por un tiempo limitado, un nivel específico de ancho de banda, latencia o priorización de tráfico sobre la red 5G.</p>
+        <span class="src">Fuente · <a href="https://www.gsmaintelligence.com/research/gsma-open-gateway-state-of-the-market-h1-2025" target="_blank" rel="noopener">GSMA Intelligence, 2025</a></span>
+      </div>
+      <div class="card">
+        <span class="tag">Ubicación</span>
+        <h4>Device Location Verification</h4>
+        <p>Valida la ubicación geográfica del dispositivo según la red móvil (no GPS), útil para antifraude geográfico y detección de suplantación.</p>
+        <span class="src">Fuente · <a href="https://opengateway.telefonica.com/" target="_blank" rel="noopener">Telefónica Open Gateway</a></span>
+      </div>
+      <div class="card">
+        <span class="tag">Conectividad</span>
+        <h4>Device Status / Carrier Billing</h4>
+        <p>Expone el estado de conectividad del dispositivo y permite cargar compras digitales directamente a la factura del operador móvil.</p>
+        <span class="src">Fuente · <a href="https://opengateway.telefonica.com/" target="_blank" rel="noopener">Telefónica Open Gateway</a></span>
+      </div>
+      <div class="card">
+        <span class="tag">Edge</span>
+        <h4>Edge Compute Discovery</h4>
+        <p>Permite a una aplicación descubrir y seleccionar el servidor MEC (Multi-access Edge Computing) óptimo según la ubicación del dispositivo.</p>
+        <span class="src">Fuente · <a href="https://wso2.com/library/blogs/gsma-open-gateway/" target="_blank" rel="noopener">WSO2 / CAMARA, 2026</a></span>
+      </div>
+    </div>
+
+    <div class="ctx-note">
+      <strong>Estándar técnico:</strong> Las APIs se publican en <a href="https://camaraproject.org/" target="_blank" rel="noopener" style="color:var(--accent-2)">CAMARA</a>, el proyecto de código abierto de la Linux Foundation y la GSMA. A marzo de 2026 hay 46 APIs publicadas y aproximadamente 50 en desarrollo, con la expectativa de superar las 100 en el transcurso del año (<a href="https://dplnews.com/open-gateway-95-conexiones-moviles-america-latina/" target="_blank" rel="noopener" style="color:var(--accent-2)">DPL News, 2025</a>).
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================= -->
+<!-- SECCIÓN 2 — TENDENCIAS INDUSTRIA Y MERCADO                   -->
+<!-- ============================================================= -->
+<section id="industria" style="background:var(--paper-warm)">
+  <div class="section-head">
+    <div class="marker">§ 02 / MERCADO</div>
+    <div>
+      <h2>Tendencias <em>de la industria</em> y del mercado</h2>
+      <p class="intro">El mercado de Telco APIs está pasando de la fase de adhesión a la fase de monetización. El 79% de las conexiones móviles del mundo ya están cubiertas por operadoras adheridas a GSMA Open Gateway, y América Latina lidera en cobertura regional.</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- ======= Cifras clave globales ======= -->
+    <div class="stat-grid">
+      <div class="stat">
+        <span class="num">79<span class="unit">%</span></span>
+        <span class="label">de la cuota mundial de conexiones móviles cubierta por operadoras adheridas a GSMA Open Gateway (H1 2025).</span>
+        <span class="src">Fuente · <a href="https://www.gsmaintelligence.com/research/gsma-open-gateway-state-of-the-market-h1-2025" target="_blank" rel="noopener">GSMA Intelligence, 2025</a></span>
+      </div>
+      <div class="stat">
+        <span class="num">73</span>
+        <span class="label">grupos operadores comprometidos con Open Gateway, representando 285 redes a nivel global.</span>
+        <span class="src">Fuente · <a href="https://telcomagazine.com/news/gsma-open-gateway-2025-global-api-adoption-insights" target="_blank" rel="noopener">Telco Magazine, 2025</a></span>
+      </div>
+      <div class="stat">
+        <span class="num">46</span>
+        <span class="label">APIs publicadas en el repositorio CAMARA, con ~50 adicionales en desarrollo.</span>
+        <span class="src">Fuente · <a href="https://dplnews.com/open-gateway-95-conexiones-moviles-america-latina/" target="_blank" rel="noopener">DPL News, 2025</a></span>
+      </div>
+      <div class="stat">
+        <span class="num">95<span class="unit">%</span></span>
+        <span class="label">de las conexiones móviles en América Latina ya están bajo el paraguas de Open Gateway.</span>
+        <span class="src">Fuente · <a href="https://dplnews.com/open-gateway-95-conexiones-moviles-america-latina/" target="_blank" rel="noopener">DPL News, 2025</a></span>
+      </div>
+    </div>
+
+    <!-- ======= Subsección: Estimaciones de mercado ======= -->
+    <h3 class="sub-title"><span class="dot"></span>Tamaño del mercado: de <em>USD 7.600 millones</em> a <em>USD 300.000 millones</em></h3>
+    <p class="prose">Las estimaciones del tamaño del mercado varían sustancialmente entre consultoras, reflejando la incertidumbre sobre qué porción del valor logran capturar los operadores frente a los intermediarios (hyperscalers, agregadores, CPaaS). McKinsey ha proyectado un potencial de hasta <strong>USD 300 mil millones</strong> en ingresos asociados al 5G entre 2024 y 2030; Analysys Mason prevé un mercado más estrecho de ingresos directamente imputables a APIs CAMARA, pasando de <strong>USD 550 millones en 2024 a USD 7.6 mil millones en 2030</strong> (0.6% del total de ingresos móviles), con potencial de llegar al 5% hacia 2035.</p>
+
+    <div class="chart-wrap">
+      <div class="chart-title">Proyecciones del mercado global de network APIs al 2030</div>
+      <div class="chart-sub">USD mil millones · distintas metodologías / consultoras</div>
+      <canvas id="marketChart"></canvas>
+      <div class="chart-src">
+        Fuentes · <a href="https://www.analysysmason.com/research/content/comments/network-apis-forecast-rma32/" target="_blank" rel="noopener">Analysys Mason (2025)</a> ·
+        <a href="https://www.marketsandmarkets.com/Market-Reports/network-api-market-8655078.html" target="_blank" rel="noopener">MarketsandMarkets (2025)</a> ·
+        <a href="https://www.telecoms.com/network-software/stl-downgrades-api-revenue-forecast" target="_blank" rel="noopener">STL Partners (2025)</a> ·
+        <a href="https://www.mckinsey.com/industries/technology-media-and-telecommunications/our-insights/playing-to-win-in-b2b-telecom" target="_blank" rel="noopener">McKinsey (2024)</a>
+      </div>
+    </div>
+
+    <div class="pull">
+      "Telecom operators could unlock between USD 100–300 billion in connectivity and edge-related revenue over the next 5–7 years, plus USD 10–30 billion from APIs themselves — but risk ceding up to two-thirds of that value to cloud providers and aggregators if they do not move together."
+      <span class="attr">— <a href="https://www.mckinsey.com/industries/technology-media-and-telecommunications/our-insights/playing-to-win-in-b2b-telecom" target="_blank" rel="noopener">McKinsey & Company, <em>Playing to Win in B2B Telecom</em> (2024)</a></span>
+    </div>
+
+    <!-- ======= Subsección: Actores ======= -->
+    <h3 class="sub-title"><span class="dot"></span>Principales actores del ecosistema</h3>
+    <p class="prose">El ecosistema se ha estructurado rápidamente en cuatro capas: <strong>operadores</strong>, <strong>proveedores tecnológicos (vendors)</strong>, <strong>hiperescaladores / cloud</strong>, y <strong>agregadores / CPaaS</strong> que cierran el puente hacia los desarrolladores. La formación en julio de 2025 de <strong>Aduna</strong>, la <em>joint venture</em> entre Ericsson y 12 grandes operadores (50/50), consolida una capa global de agregación inédita en la historia del sector.</p>
+
+    <div class="chart-wrap">
+      <div class="chart-title">Adopción de Open Gateway por región (cobertura de conexiones móviles)</div>
+      <div class="chart-sub">% de suscripciones móviles en redes de operadores adheridos · 2026</div>
+      <canvas id="regionChart"></canvas>
+      <div class="chart-src">Fuentes · <a href="https://www.gsmaintelligence.com/research/gsma-open-gateway-state-of-the-market-h1-2025" target="_blank" rel="noopener">GSMA Intelligence H1 2025</a> · <a href="https://impactotic.co/tecnologia/tecnologias-empresariales/open-gateway-llega-a-colombia-que-significa-para-los-operadores/" target="_blank" rel="noopener">Impacto TIC, 2026</a> · <a href="https://dplnews.com/open-gateway-95-conexiones-moviles-america-latina/" target="_blank" rel="noopener">DPL News, 2025</a></div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:18%">Capa</th>
+          <th style="width:42%">Actores clave</th>
+          <th>Rol en la cadena de valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="region">Operadores</td>
+          <td>Telefónica, Vodafone, Orange, Deutsche Telekom, AT&amp;T, Verizon, T-Mobile US, América Móvil, China Mobile, Bharti Airtel, Reliance Jio, KDDI, Singtel, Telstra</td>
+          <td>Dueños de la infraestructura y de las capacidades de red; exponen las APIs. <a href="https://www.gsma.com/solutions-and-impact/gsma-open-gateway/gsma-open-gateway-goes-from-strength-to-strength-with-worldwide-commercial-launches-more-operators-and-new-go-to-market-channels/" target="_blank" rel="noopener">[GSMA]</a></td>
+        </tr>
+        <tr>
+          <td class="region">Vendors</td>
+          <td>Ericsson (Aduna + NEP), Nokia (<em>Network as Code</em>), Huawei, Cisco</td>
+          <td>Proveen la plataforma técnica de exposición y facturación; algunos (Ericsson) se están convirtiendo en agregadores globales. <a href="https://www.ericsson.com/en/press-releases/2025/7/ericsson-announces-completion-of-aduna-transaction" target="_blank" rel="noopener">[Ericsson]</a></td>
+        </tr>
+        <tr>
+          <td class="region">Hyperscalers</td>
+          <td>Microsoft Azure (<em>Programmable Connectivity</em>), Google Cloud, AWS</td>
+          <td>Distribución a desarrolladores a través de marketplaces cloud. <a href="https://www.gsma.com/solutions-and-impact/gsma-open-gateway/gsma-open-gateway-goes-from-strength-to-strength-with-worldwide-commercial-launches-more-operators-and-new-go-to-market-channels/" target="_blank" rel="noopener">[GSMA]</a></td>
+        </tr>
+        <tr>
+          <td class="region">Agregadores / CPaaS</td>
+          <td>Aduna, Vonage (Ericsson), Infobip, Sinch, Twilio, Bemobi</td>
+          <td>Agregan múltiples operadores en una sola integración para el desarrollador. 43 <em>channel partners</em> en Open Gateway a mediados de 2025. <a href="https://www.rcrwireless.com/20250624/carriers/api-gsma" target="_blank" rel="noopener">[RCR Wireless]</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="highlight">
+      <span class="tag-hl">Movimiento estratégico · julio 2025</span>
+      <h4>Aduna: una <em style="font-style:italic">joint venture</em> global para agregar APIs de red</h4>
+      <p>En julio de 2025, Ericsson y 12 de las mayores operadoras globales (AT&amp;T, T-Mobile, Verizon, Deutsche Telekom, Orange, Telefónica, Vodafone, Bharti Airtel, Reliance Jio, KDDI, Singtel, Telstra) cerraron la constitución de Aduna como empresa 50/50. A marzo de 2026, Aduna opera en EE.UU., Alemania, España, Canadá, Francia y Países Bajos, y se extenderá a Australia, Brasil, India, Grecia, Singapur, Tailandia y Reino Unido, alcanzando cobertura sobre 40 operadores móviles.</p>
+      <a href="https://www.ericsson.com/en/press-releases/2025/7/ericsson-announces-completion-of-aduna-transaction" target="_blank" rel="noopener">Leer comunicado oficial de Ericsson →</a>
+    </div>
+
+    <!-- ======= Subsección: Casos de uso ======= -->
+    <h3 class="sub-title"><span class="dot"></span>Casos de uso dominantes</h3>
+    <p class="prose">Los primeros despliegues comerciales se concentraron en <strong>seguridad y antifraude</strong>, que todavía representan dos tercios del total de APIs desplegadas comercialmente. Sin embargo, en el primer semestre de 2025 las APIs de <em>Quality-on-Demand</em> pasaron a representar el 25% de los nuevos lanzamientos, frente a menos del 10% en 2024, señalando una diversificación activa de la cartera.</p>
+
+    <div class="chart-wrap">
+      <div class="chart-title">Distribución de APIs comercialmente desplegadas por categoría de uso</div>
+      <div class="chart-sub">Participación sobre el total de APIs lanzadas · H1 2025</div>
+      <canvas id="useCaseChart"></canvas>
+      <div class="chart-src">Fuente · <a href="https://www.rcrwireless.com/20250624/carriers/api-gsma" target="_blank" rel="noopener">RCR Wireless / GSMA Open Gateway State of the Market H1 2025</a></div>
+    </div>
+
+    <div class="cards">
+      <div class="card alt">
+        <span class="tag">Banca y fintech</span>
+        <h4>Autenticación silenciosa y antifraude</h4>
+        <p>Verificación en tiempo real de SIM swap y coincidencia de número-dispositivo para aprobar pagos sin OTP. Fraude en pagos digitales en Europa supera los <strong>EUR 4 mil millones anuales</strong>.</p>
+        <span class="src">Caso de referencia · <a href="https://dplnews.com/claro-movistar-y-tigo-anuncian-nuevas-apis-para-seguridad-e-identidad-dentro-de-open-gateway-en-colombia/" target="_blank" rel="noopener">Claro, Movistar y Tigo — Colombia 2026</a></span>
+      </div>
+      <div class="card alt">
+        <span class="tag">Gaming y XR</span>
+        <h4>Quality-on-Demand para juegos en la nube</h4>
+        <p>Orange, Vodafone y Telefónica demostraron en MWC 2023 partidas de gaming sin latencia mediante una API de QoD. Mercado atractivo para gaming, eventos en vivo y realidad aumentada.</p>
+        <span class="src">Fuente · <a href="https://www.gsma.com/solutions-and-impact/gsma-open-gateway/gsma-open-gateway-goes-from-strength-to-strength-with-worldwide-commercial-launches-more-operators-and-new-go-to-market-channels/" target="_blank" rel="noopener">GSMA</a></span>
+      </div>
+      <div class="card alt">
+        <span class="tag">Automoción y drones</span>
+        <h4>Vehículos autónomos y UAS</h4>
+        <p>Telefónica y Nokia mostraron en MWC 2025 tecnología de drones autónomos con APIs de red (QoD + localización). GSMA Fusion + Tata Elxsi priorizan automoción y drones.</p>
+        <span class="src">Fuente · <a href="https://www.tataelxsi.com/news-and-events/press-releases/tata-elxsi-and-gsma-announce-joint-focus-to-accelerate-operator-network-monetization-and-enterprise-api-adoption" target="_blank" rel="noopener">Tata Elxsi / GSMA, nov 2025</a></span>
+      </div>
+      <div class="card alt">
+        <span class="tag">Logística portuaria</span>
+        <h4>Conducción remota en el Puerto de Amberes</h4>
+        <p>Nokia y Liberty Global realizaron pruebas entregando video HD a capitanes remotos para maniobrar buques en zonas congestionadas.</p>
+        <span class="src">Fuente · <a href="https://www.gsma.com/solutions-and-impact/gsma-open-gateway/gsma-open-gateway-goes-from-strength-to-strength-with-worldwide-commercial-launches-more-operators-and-new-go-to-market-channels/" target="_blank" rel="noopener">GSMA, 2024</a></span>
+      </div>
+      <div class="card alt">
+        <span class="tag">Salud</span>
+        <h4>Healthcare lidera en adopción de desarrolladores</h4>
+        <p>Según GSMA Intelligence H2 2025, el 70% de los desarrolladores afiliados a salud que han desplegado una API de red han trabajado con operadores móviles — la tasa más alta entre sectores.</p>
+        <span class="src">Fuente · <a href="https://www.gsmaintelligence.com/research/gsma-open-gateway-state-of-the-market-h2-2025" target="_blank" rel="noopener">GSMA Intelligence, H2 2025</a></span>
+      </div>
+      <div class="card alt">
+        <span class="tag">Pagos digitales</span>
+        <h4>Carrier Billing y micro-pagos</h4>
+        <p>Pagos a la factura del operador para pay TV, transporte público, streaming. GSMA reporta que APIs de pagos representan apenas el 1% del portafolio comercial, pese a alta demanda empresarial.</p>
+        <span class="src">Fuente · <a href="https://www.rcrwireless.com/20250624/carriers/api-gsma" target="_blank" rel="noopener">RCR Wireless, 2025</a></span>
+      </div>
+    </div>
+
+    <!-- ======= Subsección: Países y despliegue regional ======= -->
+    <h3 class="sub-title"><span class="dot"></span>Países y cronología de despliegue en Latinoamérica</h3>
+    <p class="prose">América Latina también da muestras de avances importantes en la adopción de Open Gateway. El despliegue ha seguido un orden marcado por el tamaño del mercado y la intensidad competitiva entre operadores.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">2023 · Brasil — primer país</div>
+        <h4>Claro, Vivo y TIM lanzan APIs conjuntas de SIM Swap y Number Verification</h4>
+        <p>Brasil inaugura el modelo regional con las tres operadoras principales (participación de mercado ~30% cada una) cooperando para ofrecer APIs antifraude a bancos y e-commerce. <a href="https://mobiletime.la/noticias/15/05/2025/open-gateway-en-america-latina/" target="_blank" rel="noopener">[Mobile Time]</a></p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2024 · Argentina, Chile, Perú</div>
+        <h4>Claro, Entel, Telefónica y Telecom activan el estándar</h4>
+        <p>Se extiende la cobertura regional. Uruguay y Paraguay se preparan para sumarse. <a href="https://dplnews.com/open-gateway-95-conexiones-moviles-america-latina/" target="_blank" rel="noopener">[DPL News]</a></p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Enero 2025 · México</div>
+        <h4>América Móvil (Telcel), AT&amp;T México, Telefónica y Altán Redes</h4>
+        <p>El lanzamiento mexicano completa a los mercados grandes de la región. <a href="https://www.gsma.com/about-us/regions/latin-america/gsma-open-gateway/" target="_blank" rel="noopener">[GSMA Latam]</a></p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Mayo 2025 · Ecuador</div>
+        <h4>Claro y Movistar Ecuador se suman</h4>
+        <p>Consolidación andina previa a Colombia. <a href="https://www.gsma.com/about-us/regions/latin-america/gsma-open-gateway/" target="_blank" rel="noopener">[GSMA Latam]</a></p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">3 de febrero 2026 · Colombia</div>
+        <h4>Claro, Movistar y Tigo lanzan comercialmente SIM Swap y Number Verification</h4>
+        <p>Colombia se convierte en el octavo país latinoamericano en adoptar el estándar. El lanzamiento en Bogotá, organizado por GSMA, priorizó casos de uso antifraude dada la coyuntura de ataques digitales. La coordinación entre las tres operadoras busca exportar talento digital colombiano al resto de la región. <a href="https://mobiletime.la/noticias/03/02/2026/open-gateway-en-colombia/" target="_blank" rel="noopener">[Mobile Time Latinoamérica]</a> · <a href="https://dplnews.com/claro-movistar-y-tigo-anuncian-nuevas-apis-para-seguridad-e-identidad-dentro-de-open-gateway-en-colombia/" target="_blank" rel="noopener">[DPL News]</a></p>
+      </div>
+    </div>
+
+    <div class="highlight" style="background:#f5e7dd;border-left-color:var(--accent)">
+      <span class="tag-hl">Colombia · posición estratégica</span>
+      <h4>El caso del mercado colombiano</h4>
+      <p>Colombia fue <strong>el último de los grandes mercados latinoamericanos</strong> en lanzar Open Gateway. Analistas señalan que el rezago frente a Brasil se explica parcialmente por la estructura de mercado: mientras en Brasil las tres principales operadoras están cerca del 30% de participación cada una, en Colombia Claro supera el 50% — lo que reduce el incentivo competitivo para una unificación técnica temprana. Aun así, el mercado colombiano —con la fusión Movistar/Tigo como movimiento reciente— accede ahora al protocolo global unificado.</p>
+      <a href="https://mobiletime.la/noticias/15/05/2025/open-gateway-en-america-latina/" target="_blank" rel="noopener">Leer análisis Mobile Time →</a>
+    </div>
+
+    <!-- ======= Modelo de negocio ======= -->
+    <h3 class="sub-title"><span class="dot"></span>El giro del modelo de negocio</h3>
+    <p class="prose">Las Telco APIs están dando lugar a nuevas fórmulas de monetización <em>B2B</em> y <em>B2B2X</em>. Los operadores pueden vender acceso directo a APIs (por verificación, por suscripción), forjar alianzas con <strong>marketplaces cloud</strong> (AWS, Azure, Google), o canalizar a través de <strong>agregadores y CPaaS</strong> (Infobip, Vonage, Aduna). De acuerdo con McKinsey, el punto clave es que los operadores podrían ceder hasta dos tercios del valor si no construyen una oferta unificada.</p>
+
+    <div class="two-col">
+      <div>
+        <h4 style="font-family:'Fraunces',serif;font-size:22px;font-weight:500;margin-bottom:14px;color:var(--accent-2)">Antes · modelo tradicional</h4>
+        <p style="font-size:15px;line-height:1.6;color:var(--ink-soft)">
+          Operador → Cliente final o empresa<br/><br/>
+          El vendor (Ericsson, Nokia) estaba <em>"detrás"</em> vendiendo equipos. El ingreso provenía de <strong>conectividad</strong> (voz, datos, planes móviles) y hardware.
+        </p>
+      </div>
+      <div>
+        <h4 style="font-family:'Fraunces',serif;font-size:22px;font-weight:500;margin-bottom:14px;color:var(--accent)">Ahora · modelo programable</h4>
+        <p style="font-size:15px;line-height:1.6;color:var(--ink-soft)">
+          Operador → Vendor / Plataforma → Desarrolladores → Usuario final<br/><br/>
+          El vendor se convierte en <strong>intermediario</strong> entre la red y el ecosistema digital. Surgen ingresos <em>pay-per-use</em>, <em>revenue share</em>, suscripciones de desarrolladores.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================= -->
+<!-- SECCIÓN 3 — SITUACIÓN REGULATORIA                            -->
+<!-- ============================================================= -->
+<section id="regulacion">
+  <div class="section-head">
+    <div class="marker">§ 03 / REGULACIÓN</div>
+    <div>
+      <h2>Situación <em>regulatoria</em> global, regional y nacional</h2>
+      <p class="intro">Los reguladores están abordando el fenómeno desde diferentes enfoques: Ofcom desde el punto de vista de la neutralidad, BEREC ha abordado el network slicing, AGCOM se ha enfocado en las CDN.  Sin embargo, no hay una respuesta concreta a la situación cuando un operador vende capacidades de red como servicio digital vía API a terceros</p>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="stat-grid">
+      <div class="stat">
+        <span class="num">2016</span>
+        <span class="label">Año del Reglamento de Internet Abierto de la UE, marco aplicable para APIs de "servicios especializados".</span>
+        <span class="src">Fuente · <a href="https://www.berec.europa.eu/en/document-categories/berec/regulatory-best-practices/guidelines/berec-guidelines-on-the-implementation-by-national-regulators-of-european-net-neutrality-rules" target="_blank" rel="noopener">BEREC</a></span>
+      </div>
+      <div class="stat">
+        <span class="num">2024</span>
+        <span class="label">La FCC de EE.UU. restaura las reglas de Internet Abierto, revirtiendo la derogación de 2017.</span>
+        <span class="src">Fuente · <a href="https://www.politico.com/news/2024/04/25/fcc-reinstates-net-neutrality-rules-00154296" target="_blank" rel="noopener">Politico, 2024</a></span>
+      </div>
+      <div class="stat">
+        <span class="num">X.1818</span>
+        <span class="label">Recomendación UIT-T (09/2024) sobre controles de seguridad en operación de APIs de red 5G.</span>
+        <span class="src">Fuente · <a href="https://www.itu.int/epublications/es/publication/itu-t-x-1818-2024-09-security-controls-for-operation-and-maintenance-of-imt-2020-5g-network-systems/en" target="_blank" rel="noopener">UIT-T, 2024</a></span>
+      </div>
+    </div>
+
+    <!-- ======= Visión comparada regional ======= -->
+    <h3 class="sub-title"><span class="dot"></span>Panorama comparado: tres aproximaciones regulatorias</h3>
+
+    <div class="reg-grid">
+      <div class="reg-col">
+        <span class="reg-scope eu">Unión Europea</span>
+        <h4>Internet abierto + servicios especializados</h4>
+        <ul>
+          <li>El <strong>Reglamento (UE) 2015/2120</strong> prohíbe discriminar tráfico general; admite <em>servicios especializados</em> (ej. <em>slice</em> 5G de telemedicina) solo si no degradan la calidad del acceso general. <a href="https://eur-lex.europa.eu/eli/reg/2015/2120/oj" target="_blank" rel="noopener">[EUR-Lex]</a></li>
+          <li>BEREC (2020) precisa las condiciones bajo las que las APIs pueden encuadrarse como servicios gestionados. <a href="https://www.berec.europa.eu/" target="_blank" rel="noopener">[BEREC]</a></li>
+          <li><strong>GDPR</strong> aplica plenamente a intercambio de información de usuarios (ubicación, identidad, SIM). <a href="https://gdpr-info.eu/" target="_blank" rel="noopener">[GDPR]</a></li>
+          <li>Debate activo sobre <em>Fair Share</em> y posible regulación futura de APIs como infraestructura esencial. <a href="https://digital-strategy.ec.europa.eu/en/library/exploratory-consultation-future-electronic-communications-sector-and-its-infrastructure" target="_blank" rel="noopener">[CE]</a></li>
+        </ul>
+      </div>
+      <div class="reg-col">
+        <span class="reg-scope us">Estados Unidos</span>
+        <h4>Enfoque de mercado y marco de competencia</h4>
+        <ul>
+          <li>Neutralidad eliminada en 2017; <strong>restaurada por la FCC en abril 2024</strong>, anticipando batallas legales. <a href="https://www.politico.com/news/2024/04/25/fcc-reinstates-net-neutrality-rules-00154296" target="_blank" rel="noopener">[Politico]</a></li>
+          <li>Enfoque centrado en <strong>innovación 5G avanzado</strong> y seguridad de la cadena de suministro. <a href="https://www.fcc.gov/" target="_blank" rel="noopener">[FCC]</a></li>
+          <li>AT&amp;T, T-Mobile y Verizon activaron en febrero 2025 las APIs nacionales de Number Verification y SIM Swap vía Aduna. <a href="https://www.rcrwireless.com/20250227/carriers/apis-us" target="_blank" rel="noopener">[RCR]</a></li>
+          <li>Sin normativa específica sobre APIs como infraestructura esencial; se aplica el marco general de competencia (FTC). </li>
+        </ul>
+      </div>
+      <div class="reg-col">
+        <span class="reg-scope latam">Latinoamérica</span>
+        <h4>Enfoque pro-innovación, regulación emergente</h4>
+        <ul>
+          <li><strong>CITEL</strong> (OEA) insta a <em>modernizar y armonizar la regulación</em> en las Américas. <a href="https://www.citel.oas.org/" target="_blank" rel="noopener">[CITEL]</a></li>
+          <li>UIT promueve <strong>regulación colaborativa (5ª generación)</strong> adecuada para transformación digital. <a href="https://www.itu.int/en/ITU-D/Regulatory-Market/Pages/Policy-&-Regulatory-Frameworks.aspx" target="_blank" rel="noopener">[UIT]</a></li>
+          <li>La prioridad de los gobiernos y reguladores en la región sigue siendo <strong>cerrar la brecha digital y ampliar el acceso a internet móvil</strong>: aún hay cerca de 300 millones de personas sin conectividad en Latinoamérica, por lo que la agenda regulatoria se enfoca más en impulsar la cobertura que en imponer reglas específicas a las APIs de red. <a href="https://www.gsma.com/solutions-and-impact/connectivity-for-good/mobile-economy/latam/" target="_blank" rel="noopener">[GSMA Mobile Economy Latam 2025]</a></li>
+          <li>Leyes de <em>habeas data</em> (ej. Ley 1581/2012 en Colombia) aplican al intercambio de datos vía API. <a href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981" target="_blank" rel="noopener">[Función Pública]</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ======= Subsección GLOBAL ======= -->
+    <h3 class="sub-title"><span class="dot"></span>Nivel global: UIT, OECD y estándares técnicos</h3>
+    <div class="prose">
+      <p>A nivel multilateral, no existe aún un instrumento regulatorio vinculante específico para Telco APIs. La labor se ha concentrado en <strong>estándares técnicos</strong> y <strong>directrices de política</strong>:</p>
+      <p><strong>UIT-T</strong> publicó en septiembre 2024 la <a href="https://www.itu.int/epublications/es/publication/itu-t-x-1818-2024-09-security-controls-for-operation-and-maintenance-of-imt-2020-5g-network-systems/en" target="_blank" rel="noopener">Recomendación X.1818</a>, que establece controles de seguridad para operación de sistemas de red 5G, incluyendo requisitos específicos para endpoints de API (autenticación estricta, TLS, OAuth 2.0, protección de mensajes NAS, aislamiento entre <em>network slices</em>). La UIT-D, a través de su <a href="https://www.itu.int/en/ITU-D/Regulatory-Market/Pages/GSR.aspx" target="_blank" rel="noopener">Global Symposium for Regulators</a>, promueve el concepto de <em>regulación colaborativa (G5)</em> como marco para la transformación digital.</p>
+      <p>La <strong>OECD</strong>, en su <a href="https://www.oecd.org/digital/" target="_blank" rel="noopener">Committee on Digital Policy (CDP)</a>, ha identificado la gobernanza de plataformas digitales como prioridad para su Programa de Trabajo 2027-2030, incluyendo aspectos de competencia en ecosistemas API-intensivos, portabilidad de datos y soberanía digital. La <strong>GSMA</strong>, en articulación con la Linux Foundation, mantiene el repositorio abierto <a href="https://camaraproject.org/" target="_blank" rel="noopener">CAMARA</a> como eje de estandarización técnica.</p>
+    </div>
+
+    <!-- ======= REGIONAL LATAM ======= -->
+    <h3 class="sub-title"><span class="dot"></span>Nivel regional: CITEL y GSMA Latam</h3>
+    <div class="prose">
+      <p>En las Américas, la <strong>CITEL</strong> (Comisión Interamericana de Telecomunicaciones de la OEA) ha enfatizado la importancia de <em>modernizar y armonizar la regulación de telecomunicaciones</em>, fomentando la coordinación entre países para aprovechar plenamente innovaciones como 5G y APIs de red sin sacrificar la competencia ni la inclusión digital (<a href="https://www.citel.oas.org/" target="_blank" rel="noopener">CITEL</a>).</p>
+      <p>La <strong>GSMA Latam</strong>, principal gremio del sector a nivel regional, ha impulsado activamente Open Gateway como estándar común y en sus <a href="https://www.gsma.com/about-us/regions/latin-america/the-mobile-economy-latin-america-2025/" target="_blank" rel="noopener">informes de The Mobile Economy Latin America</a> ha llamado a modernizar el marco regulatorio para habilitar nuevos modelos de negocio. Entre los temas regulatorios sensibles identificados están: la categorización jurídica de APIs de red (servicio de valor agregado vs. servicio especializado), los requisitos de consentimiento y privacidad, y la potencial aplicación de obligaciones <em>ex-ante</em> de acceso abierto si ciertos agregadores alcanzan posiciones dominantes.</p>
+    </div>
+
+    <!-- ======= NACIONAL COLOMBIA ======= -->
+    <h3 class="sub-title"><span class="dot"></span>Nivel nacional: Colombia y el marco de la CRC</h3>
+    <div class="prose">
+      <p>Colombia cuenta con un marco regulatorio que, si bien no contempla explícitamente las Telco APIs, establece los principios bajo los cuales estas deben encuadrarse. Los instrumentos relevantes son:</p>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:20%">Instrumento</th>
+          <th style="width:28%">Contenido</th>
+          <th style="width:32%">Relación / aplicabilidad con Telco APIs</th>
+          <th style="width:20%">Fuente oficial</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ley 1341 de 2009</strong> (modif. Ley 1978 de 2019)</td>
+          <td>Marco general de TIC. Otorga a la CRC competencia regulatoria sobre servicios de telecomunicaciones, con criterios de mejora normativa y análisis de impacto.</td>
+          <td>Es el <strong>marco habilitante</strong> que faculta a la CRC para definir el encuadre regulatorio de las Telco APIs, emitir lineamientos y, en su caso, categorizarlas como servicios de telecomunicaciones, de valor agregado o especializados.</td>
+          <td><a href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=36913" target="_blank" rel="noopener">Ley 1341 de 2009</a></td>
+        </tr>
+        <tr>
+          <td><strong>Resolución CRC 3502 de 2011</strong> (compilada en 5050 de 2016)</td>
+          <td>Establece la <strong>neutralidad de red</strong> bajo principios de libre elección, no discriminación de contenidos, transparencia e información de gestión de tráfico.</td>
+          <td>Aplica directamente a APIs que involucren <em>priorización de tráfico</em> o calidad diferenciada (ej. <em>Quality-on-Demand</em>, <em>network slicing</em>), las cuales deberán encuadrarse sin vulnerar los principios de libre elección y no discriminación.</td>
+          <td><a href="https://normograma.mintic.gov.co/mintic/docs/resolucion_crc_5050_2016.htm" target="_blank" rel="noopener">Resolución CRC 5050/2016</a></td>
+        </tr>
+        <tr>
+          <td><strong>Resolución CRC 5969 de 2020</strong></td>
+          <td>Subrogó el artículo 7 de la Res. 3502 permitiendo medidas de <em>gestión razonable</em> de tráfico no discriminatorias respecto de algún proveedor, servicio, contenido o protocolo específico.</td>
+          <td>Provee la <strong>base regulatoria para gestión diferenciada de tráfico</strong> que habilita, bajo condiciones de razonabilidad y no discriminación, servicios sobre APIs como QoD o priorización contratada por terceros.</td>
+          <td><a href="https://www.crcom.gov.co/es" target="_blank" rel="noopener">CRC</a></td>
+        </tr>
+        <tr>
+          <td><strong>Estudio CRC 2021 — Estado de la Neutralidad de Red</strong></td>
+          <td>Concluye que las disposiciones vigentes siguen siendo válidas y aplicables. Advierte que será necesario evaluar tendencias futuras, especialmente con <em>despliegue de 5G y servicios diferenciados</em>.</td>
+          <td>Antecedente analítico que <strong>anticipa la revisión regulatoria</strong> necesaria con 5G y servicios diferenciados — categoría en la que encajan las Telco APIs de QoD, slicing y edge compute.</td>
+          <td><a href="https://www.crcom.gov.co/es/biblioteca-virtual/estado-neutralidad-red-en-colombia-2021" target="_blank" rel="noopener">CRC, 2021</a></td>
+        </tr>
+        <tr>
+          <td><strong>Ley 1581 de 2012</strong> — Habeas Data</td>
+          <td>Régimen de protección de datos personales. Exige consentimiento explícito y principios de finalidad, seguridad y circulación restringida.</td>
+          <td>Aplica directamente al <strong>intercambio vía API de información del usuario</strong> (identidad, número, ubicación, estado de SIM, cambios de SIM). Condiciona los flujos de datos hacia desarrolladores y agregadores terceros.</td>
+          <td><a href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981" target="_blank" rel="noopener">Ley 1581 de 2012</a></td>
+        </tr>
+        <tr>
+          <td><strong>Resolución CRC 7363 de 2024</strong></td>
+          <td>Establece medidas de calidad de Internet móvil 4G en 802 municipios.</td>
+          <td>Relevante como <strong>línea de base de calidad</strong> del Internet abierto sobre la cual se evalúa si los servicios diferenciados habilitados por APIs (p. ej. QoD) degradan o no el servicio general — requisito central de compatibilidad con la neutralidad de red.</td>
+          <td><a href="https://www.crcom.gov.co/es/noticias/comunicado-prensa/con-nuevas-medidas-crc-contribuye-al-cierre-brecha-digital-en-colombia" target="_blank" rel="noopener">CRC, 2024</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="highlight">
+      <h4>Retos normativos de las Telco APIs en Colombia</h4>
+      <p>El despliegue comercial en Colombia iniciado en febrero 2026 plantea cuestionamientos regulatorios que la CRC deberá abordar en los próximos ciclos regulatorios: (i) si las APIs deben tratarse como <em>servicios de valor agregado</em>, <em>servicios especializados</em>, o una nueva categoría; (ii) si su uso menoscaba la calidad del Internet abierto; (iii) cómo se garantiza el cumplimiento de la Ley 1581 en los flujos de datos hacia terceros desarrolladores; (iv) si se requiere habilitar <em>sandboxes regulatorios</em> para pruebas controladas en sectores como salud, movilidad o finanzas; y (v) cómo prevenir la aparición de cuellos de botella competitivos por dependencia de agregadores dominantes (Aduna, hyperscalers).</p>
+      <p>El estudio CRC 2021 ya anticipaba que <em>"la puesta en marcha de nuevas ofertas y posibles servicios diferenciados derivados de la implementación de redes móviles 5G"</em> requeriría una revisión futura del marco regulatorio de neutralidad (<a href="https://www.crcom.gov.co/es/biblioteca-virtual/estado-neutralidad-red-en-colombia-2021" target="_blank" rel="noopener">CRC, 2021</a>).</p>
+    </div>
+
+    <!-- Consideraciones finales -->
+    <h3 class="sub-title"><span class="dot"></span>Consideraciones finales</h3>
+
+    <div class="cards">
+      <div class="card alt-3">
+        <span class="tag">Mercados multilaterales</span>
+        <h4>Nuevos efectos de red</h4>
+        <p>Las APIs permiten que el operador pase de proveedor a intermediario, creando efectos de red y mercados multilaterales. Esto podría activar obligaciones regulatorias <em>ex-ante</em> si surgen posiciones dominantes.</p>
+      </div>
+      <div class="card alt-3">
+        <span class="tag">Gobernanza de datos</span>
+        <h4>Propiedad y uso secundario</h4>
+        <p>¿Quién es dueño de los datos generados por la red? ¿Son portables entre operadores? ¿Se admiten usos secundarios? ¿Cuáles son los requisitos de localización? Revisión a la luz de GDPR / habeas data.</p>
+      </div>
+      <div class="card alt-3">
+        <span class="tag">Competencia</span>
+        <h4>Vendor lock-in y acceso abierto</h4>
+        <p>Riesgo de que agregadores globales (Aduna) o hyperscalers alcancen posiciones dominantes en la capa de intermediación, generando dependencia tecnológica y barreras para desarrolladores pequeños.</p>
+      </div>
+      <div class="card alt-3">
+        <span class="tag">Neutralidad</span>
+        <h4>Discriminación y servicios diferenciados</h4>
+        <p>¿QoD por API viola neutralidad? Debate entre tratarlas como <em>servicios especializados</em> (zona permitida) vs. gestión discriminatoria del acceso general.</p>
+      </div>
+      <div class="card alt-3">
+        <span class="tag">Ciberseguridad</span>
+        <h4>Reducción de fraude digital</h4>
+        <p>Impacto regulatorio positivo: APIs antifraude apoyan políticas públicas de seguridad digital. Sinergia con la UIT-T X.1818 y frameworks nacionales de ciberseguridad.</p>
+      </div>
+      <div class="card alt-3">
+        <span class="tag">Estandarización</span>
+        <h4>Interoperabilidad global</h4>
+        <p>CAMARA como base técnica común reduce fragmentación, pero plantea el reto de cómo las autoridades nacionales supervisan estándares desarrollados en foros privados multilaterales (GSMA + Linux Foundation).</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================= -->
+<!-- FUENTES                                                       -->
+<!-- ============================================================= -->
+<section id="fuentes" class="sources" style="border-bottom:none">
+  <div class="container">
+    <h3>Fuentes <em>consultadas</em></h3>
+
+    <div class="src-grid">
+      <div class="src-cat">
+        <h5>Organismos multilaterales</h5>
+        <ul>
+          <li><a href="https://www.itu.int/epublications/es/publication/itu-t-x-1818-2024-09-security-controls-for-operation-and-maintenance-of-imt-2020-5g-network-systems/en" target="_blank" rel="noopener">UIT-T Rec. X.1818 (09/2024) — Security controls for 5G network systems</a></li>
+          <li><a href="https://www.itu.int/en/ITU-D/Regulatory-Market/Pages/Policy-&-Regulatory-Frameworks.aspx" target="_blank" rel="noopener">UIT-D — Policy & Regulatory Frameworks</a></li>
+          <li><a href="https://www.citel.oas.org/" target="_blank" rel="noopener">CITEL — Comisión Interamericana de Telecomunicaciones (OEA)</a></li>
+          <li><a href="https://www.oecd.org/digital/" target="_blank" rel="noopener">OECD — Digital Policy Committee</a></li>
+          <li><a href="https://www.berec.europa.eu/" target="_blank" rel="noopener">BEREC — Body of European Regulators</a></li>
+        </ul>
+      </div>
+
+      <div class="src-cat">
+        <h5>Gremios y estándares técnicos</h5>
+        <ul>
+          <li><a href="https://www.gsma.com/solutions-and-impact/gsma-open-gateway/" target="_blank" rel="noopener">GSMA — Open Gateway (portal oficial)</a></li>
+          <li><a href="https://www.gsmaintelligence.com/research/gsma-open-gateway-state-of-the-market-h1-2025" target="_blank" rel="noopener">GSMA Intelligence — State of the Market H1 2025</a></li>
+          <li><a href="https://www.gsmaintelligence.com/research/gsma-open-gateway-state-of-the-market-h2-2025" target="_blank" rel="noopener">GSMA Intelligence — State of the Market H2 2025</a></li>
+          <li><a href="https://www.gsma.com/about-us/regions/latin-america/gsma-open-gateway/" target="_blank" rel="noopener">GSMA Latam — Open Gateway</a></li>
+          <li><a href="https://camaraproject.org/" target="_blank" rel="noopener">CAMARA Project (Linux Foundation + GSMA)</a></li>
+        </ul>
+      </div>
+
+      <div class="src-cat">
+        <h5>Reguladores y fuentes oficiales Colombia</h5>
+        <ul>
+          <li><a href="https://www.crcom.gov.co/es" target="_blank" rel="noopener">CRC — Comisión de Regulación de Comunicaciones</a></li>
+          <li><a href="https://www.crcom.gov.co/es/biblioteca-virtual/estado-neutralidad-red-en-colombia-2021" target="_blank" rel="noopener">CRC — Estado de la Neutralidad de Red en Colombia (2021)</a></li>
+          <li><a href="https://www.crcom.gov.co/es/noticias/comunicado-prensa/con-nuevas-medidas-crc-contribuye-al-cierre-brecha-digital-en-colombia" target="_blank" rel="noopener">CRC — Resolución 7363 de 2024</a></li>
+          <li><a href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981" target="_blank" rel="noopener">Ley 1581 de 2012 — Habeas Data</a></li>
+          <li><a href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=36913" target="_blank" rel="noopener">Ley 1341 de 2009 — Marco de TIC</a></li>
+        </ul>
+      </div>
+
+      <div class="src-cat">
+        <h5>Consultoras y análisis sectorial</h5>
+        <ul>
+          <li><a href="https://www.mckinsey.com/industries/technology-media-and-telecommunications/our-insights/playing-to-win-in-b2b-telecom" target="_blank" rel="noopener">McKinsey — Playing to Win in B2B Telecom (2024)</a></li>
+          <li><a href="https://www.analysysmason.com/research/content/comments/network-apis-forecast-rma32/" target="_blank" rel="noopener">Analysys Mason — Network APIs Worldwide Forecast 2024-2030</a></li>
+          <li><a href="https://stlpartners.com/research/mobile-network-api-monetisation-forecast-2024-2030-can-telcos-make-up-for-lost-time/" target="_blank" rel="noopener">STL Partners — Mobile Network API Monetisation Forecast 2024-2030</a></li>
+          <li><a href="https://www.marketsandmarkets.com/Market-Reports/network-api-market-8655078.html" target="_blank" rel="noopener">MarketsandMarkets — Network API Market Report 2025-2030</a></li>
+          <li><a href="https://omdia.tech.informa.com/om128804/telco-network-api-revenue-forecast-(202330)" target="_blank" rel="noopener">Omdia — Telco Network API Revenue Forecast</a></li>
+        </ul>
+      </div>
+
+      <div class="src-cat">
+        <h5>Prensa especializada</h5>
+        <ul>
+          <li><a href="https://mobiletime.la/noticias/03/02/2026/open-gateway-en-colombia/" target="_blank" rel="noopener">Mobile Time Latam — Open Gateway en Colombia (feb 2026)</a></li>
+          <li><a href="https://dplnews.com/claro-movistar-y-tigo-anuncian-nuevas-apis-para-seguridad-e-identidad-dentro-de-open-gateway-en-colombia/" target="_blank" rel="noopener">DPL News — Claro, Movistar y Tigo en Colombia</a></li>
+          <li><a href="https://impactotic.co/tecnologia/tecnologias-empresariales/open-gateway-llega-a-colombia-que-significa-para-los-operadores/" target="_blank" rel="noopener">Impacto TIC — Open Gateway llega a Colombia</a></li>
+          <li><a href="https://www.rcrwireless.com/20250624/carriers/api-gsma" target="_blank" rel="noopener">RCR Wireless — GSMA Open Gateway hits 80% market share</a></li>
+          <li><a href="https://www.mobileworldlive.com/mwc-barcelona-2023-news/industry-throws-weight-behind-gsma-api-initiative/" target="_blank" rel="noopener">Mobile World Live — Lanzamiento GSMA API (2023)</a></li>
+          <li><a href="https://www.politico.com/news/2024/04/25/fcc-reinstates-net-neutrality-rules-00154296" target="_blank" rel="noopener">Politico — FCC reinstates net neutrality (2024)</a></li>
+        </ul>
+      </div>
+
+      <div class="src-cat">
+        <h5>Operadores y vendors</h5>
+        <ul>
+          <li><a href="https://opengateway.telefonica.com/" target="_blank" rel="noopener">Telefónica — Open Gateway</a></li>
+          <li><a href="https://www.ericsson.com/en/press-releases/2025/7/ericsson-announces-completion-of-aduna-transaction" target="_blank" rel="noopener">Ericsson — Aduna JV (julio 2025)</a></li>
+          <li><a href="https://www.nokia.com/networks/network-as-code/" target="_blank" rel="noopener">Nokia — Network as Code</a></li>
+          <li><a href="https://wso2.com/library/blogs/gsma-open-gateway/" target="_blank" rel="noopener">WSO2 — Análisis técnico GSMA Open Gateway</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer-bar">
+  <span>CRC · Coord. Prospectiva Estratégica e Innovación</span>
+  <span>Documento de trabajo · Actualizado abril 2026</span>
+</footer>
+
+<script>
+// --------- Animación de aparición al hacer scroll ---------
+const els = document.querySelectorAll('.stat, .card, .chart-wrap, .pull, .highlight, .tl-item, .reg-col, .data-table');
+els.forEach(e => e.classList.add('appear'));
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('in');
+      io.unobserve(entry.target);
+    }
+  });
+}, {threshold: 0.1});
+els.forEach(e => io.observe(e));
+
+// --------- Chart 1: Proyecciones del mercado ---------
+const inkColor = '#0f1419';
+const accent = '#c7451c';
+const accent2 = '#1d4e5a';
+const accent3 = '#d4a857';
+
+Chart.defaults.font.family = "'Inter Tight', sans-serif";
+Chart.defaults.color = '#2a3240';
+
+new Chart(document.getElementById('marketChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Analysys Mason (2030)', 'MarketsandMarkets (2030)', 'STL Partners — identidad+ubicación (2030)', 'McKinsey — APIs directas (2030)', 'McKinsey — potencial 5G+edge (hasta 2030)'],
+    datasets: [{
+      label: 'USD mil millones',
+      data: [7.6, 6.13, 12, 30, 300],
+      backgroundColor: [accent2, accent2, accent3, accent, accent],
+      borderRadius: 2,
+      borderWidth: 0
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: inkColor,
+        padding: 12,
+        titleFont: { family: "'JetBrains Mono', monospace", size: 11 },
+        callbacks: {
+          label: (ctx) => ` USD ${ctx.parsed.x} mil millones`
+        }
+      }
+    },
+    scales: {
+      x: {
+        type: 'logarithmic',
+        title: { display: true, text: 'USD mil millones (escala logarítmica)', font: { size: 11 } },
+        grid: { color: 'rgba(0,0,0,0.06)' }
+      },
+      y: {
+        grid: { display: false },
+        ticks: { font: { size: 12 } }
+      }
+    },
+    responsive: true,
+    maintainAspectRatio: false
+  }
+});
+
+// --------- Chart 2: Regiones ---------
+new Chart(document.getElementById('regionChart'), {
+  type: 'bar',
+  data: {
+    labels: ['América Latina', 'Asia-Pacífico (SEA)', 'Europa', 'Global (promedio)', 'Norteamérica', 'África'],
+    datasets: [{
+      label: 'Cobertura Open Gateway (%)',
+      data: [95, 85, 82, 79, 75, 40],
+      backgroundColor: (ctx) => {
+        const v = ctx.parsed.y;
+        if (v >= 90) return accent;
+        if (v >= 80) return accent2;
+        if (v >= 70) return accent3;
+        return '#8a8373';
+      },
+      borderRadius: 3
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: inkColor,
+        padding: 12,
+        callbacks: { label: (ctx) => ` ${ctx.parsed.y}% de conexiones móviles` }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        ticks: { callback: (v) => v + '%' },
+        grid: { color: 'rgba(0,0,0,0.06)' }
+      },
+      x: { grid: { display: false } }
+    },
+    responsive: true,
+    maintainAspectRatio: false
+  }
+});
+
+// --------- Chart 3: Casos de uso ---------
+new Chart(document.getElementById('useCaseChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Seguridad y antifraude (SIM Swap, Number Verification)', 'Quality-on-Demand (QoD)', 'Edge Compute', 'Ubicación del dispositivo', 'Pagos móviles / Carrier Billing', 'Otras'],
+    datasets: [{
+      data: [66, 18, 7, 5, 1, 3],
+      backgroundColor: [accent, accent2, accent3, '#8a8373', '#c4bdac', '#2a3240'],
+      borderWidth: 2,
+      borderColor: '#fbf8f1'
+    }]
+  },
+  options: {
+    cutout: '55%',
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          boxWidth: 14,
+          boxHeight: 14,
+          padding: 14,
+          font: { size: 12 }
+        }
+      },
+      tooltip: {
+        backgroundColor: inkColor,
+        padding: 12,
+        callbacks: { label: (ctx) => ` ${ctx.label}: ${ctx.parsed}%` }
+      }
+    },
+    responsive: true,
+    maintainAspectRatio: false
+  }
+});
+</script>
+
+</body>
+</html>
