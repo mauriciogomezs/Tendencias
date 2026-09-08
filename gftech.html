@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>GFTech · Presentación</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f7fb;
+            padding: 16px 14px 40px;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* encabezado */
+        .header {
+            background: #0b2b4a;
+            color: white;
+            padding: 20px 18px 16px;
+            border-radius: 24px 24px 16px 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .header .sub {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 4px;
+            font-weight: 400;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: #2d5a7a;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: #e6f0fa;
+        }
+
+        /* índice / navegación */
+        .nav-index {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 28px;
+            background: white;
+            padding: 12px 14px;
+            border-radius: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            justify-content: center;
+        }
+
+        .nav-index a {
+            background: #eef2f6;
+            padding: 8px 18px;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e3b5a;
+            text-decoration: none;
+            transition: all 0.15s;
+            flex: 0 1 auto;
+            white-space: nowrap;
+            border: 1px solid transparent;
+        }
+
+        .nav-index a:active {
+            background: #d0dbe8;
+            transform: scale(0.96);
+        }
+
+        .nav-index a.active {
+            background: #0b2b4a;
+            color: white;
+            border-color: #0b2b4a;
+            box-shadow: 0 2px 6px rgba(11,43,74,0.2);
+        }
+
+        /* tarjetas de tema */
+        .topic-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px 18px 12px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+            transition: box-shadow 0.2s;
+            border: 1px solid #eef2f8;
+        }
+
+        .topic-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0b2b4a;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e9edf3;
+            margin-bottom: 16px;
+            line-height: 1.3;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .topic-number {
+            background: #dce4ed;
+            color: #1e3b5a;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 12px;
+            line-height: 1.6;
+            white-space: nowrap;
+        }
+
+        .col-section {
+            margin-bottom: 16px;
+        }
+
+        .col-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            padding: 8px 12px 8px 16px;
+            border-radius: 60px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: background 0.1s;
+            user-select: none;
+        }
+
+        .col-head:active {
+            background: #e9edf4;
+        }
+
+        .col-head .col-label {
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #1e3b5a;
+            letter-spacing: -0.2px;
+        }
+
+        .col-head .toggle-icon {
+            font-size: 1.3rem;
+            line-height: 1;
+            color: #4d6a89;
+            transition: transform 0.2s ease;
+            display: inline-block;
+            width: 24px;
+            text-align: center;
+        }
+
+        .col-head.open .toggle-icon {
+            transform: rotate(45deg);
+        }
+
+        .col-content {
+            background: #fafcff;
+            padding: 14px 16px 8px;
+            border-radius: 16px;
+            margin: 4px 0 12px 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #1e2f44;
+            border-left: 3px solid #b7ccdf;
+            display: none;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .col-content.open {
+            display: block;
+        }
+
+        .col-content ul {
+            padding-left: 20px;
+            margin: 6px 0 10px;
+        }
+
+        .col-content li {
+            margin-bottom: 6px;
+        }
+
+        .col-content p {
+            margin-bottom: 8px;
+        }
+
+        .col-content strong {
+            color: #0b2b4a;
+        }
+
+        .col-content em {
+            color: #2b4d6e;
+            font-style: italic;
+        }
+
+        .meta-tag {
+            display: inline-block;
+            background: #e6edf6;
+            color: #1e4668;
+            font-size: 0.65rem;
+            font-weight: 500;
+            padding: 0 10px;
+            border-radius: 40px;
+            letter-spacing: 0.2px;
+            margin-left: 6px;
+        }
+
+        .footnote {
+            margin-top: 16px;
+            font-size: 0.7rem;
+            color: #6b7f94;
+            border-top: 1px dashed #dce3ed;
+            padding-top: 12px;
+            text-align: center;
+        }
+
+        /* adaptaciones móviles */
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.4rem; }
+            .topic-title { font-size: 1rem; }
+            .col-content { font-size: 0.9rem; padding: 12px 14px 6px; }
+            .nav-index a { font-size: 0.8rem; padding: 6px 14px; }
+        }
+
+        /* accesibilidad toque */
+        .col-head {
+            min-height: 44px;
+        }
+
+        .nav-index a {
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📡 GFTech · Horizon</h1>
+        <div class="sub">
+            <span>Presentation Guide · <span style="font-weight:300;">by time budget</span></span>
+            <span class="badge">~1 / 3 / 5 min</span>
+        </div>
+    </div>
+
+    <!-- índice de temas -->
+    <div class="nav-index" id="topicNav">
+        <a href="#topic1" class="active" data-topic="1">Tema 1</a>
+        <a href="#topic2" data-topic="2">Tema 2</a>
+        <a href="#topic3" data-topic="3">Tema 3</a>
+    </div>
+
+    <!-- ========== TEMA 1 ========== -->
+    <div class="topic-card" id="topic1">
+        <div class="topic-title">
+            <span>1</span>
+            <span>Horizon Scanning · rol único</span>
+        </div>
+
+        <!-- Columna 1 (siempre visible) -->
+        <div class="col-section">
+            <div class="col-head" style="background:#eef4fa; border-color:#c6d7e8; cursor:default;">
+                <span class="col-label">📌 COL 1 · Core message</span>
+                <span class="toggle-icon" style="opacity:0.4;">▶</span>
+            </div>
+            <div class="col-content open" style="display:block; border-left-color:#2b5a82;">
+                <p><strong>From our experience as Colombia's Communications Regulator</strong>, telecom infrastructure is the foundation that enables the development and deployment of virtually every new technology. GFTech is well positioned to reflect this in its work.</p>
+                <p>At the CRC, we have a strong focus on keeping up with technological developments and understanding how technology is evolving. To do that, different types of studies and monitoring activities have been carried out, which provide a basis for identifying how communication needs are changing and which use cases require specific communication capabilities.</p>
+                <p>We have conducted studies on topics such as artificial intelligence, cybersecurity, and 5G networks, among others. More generally, we also continuously monitor technological trends, which gives us a constant overview of how new communication technologies are evolving to meet the needs of emerging solutions, services, and use cases that arise from the development of these technologies.</p>
+            </div>
+        </div>
+
+        <!-- Columna 2 (toggle) -->
+        <div class="col-section">
+            <div class="col-head" data-target="t1c2">
+                <span class="col-label">📘 COL 2 · Main argument + evidencia</span>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="col-content" id="t1c2">
+                <p>Today, it is very difficult to find a technological development that does not rely heavily on communications. Most technologies are becoming increasingly connected, rather than working in isolation.</p>
+                <p>At the same time, the requirements for those communications are growing more demanding. Emerging technologies in particular need communications that are fast, reliable, secure, and continuously available.</p>
+                <p>The three areas GFTech already works on — immersive technologies, quantum, and synthetic biology — all depend on this kind of infrastructure. Networks, resilience, and data centres are not secondary considerations; they are the conditions that determine whether these technologies can work and scale.</p>
+            </div>
+        </div>
+
+        <!-- Columna 3 (toggle) -->
+        <div class="col-section">
+            <div class="col-head" data-target="t1c3">
+                <span class="col-label">📗 COL 3 · Deeper context & ejemplos</span>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="col-content" id="t1c3">
+                <p>Not every technology has the same requirements. Each one has specific needs in terms of connectivity and communications. It is therefore necessary to look at each case individually and assess whether the existing capabilities are sufficient — and if not, what needs to be developed or adjusted to create the right conditions for deployment and scale.</p>
+                <p>Two features of GFTech make it well suited for this. First, its multilateral nature, which should be used to encourage concrete action that complements and materialises the results of its analytical work. Second, its 'nexus' technology mandate — GFTech already covers technologies that other technologies depend on, which creates a natural entry point for telecom infrastructure.</p>
+                <p>A practical way to operationalise this is by applying a consistent infrastructure lens to every technology GFTech examines — looking at latency, availability, reliability, resilience, quality of service, security, capacity, computing power, energy dependency, and equity.</p>
+            </div>
+        </div>
+
+        <!-- Columna 4 (toggle) -->
+        <div class="col-section">
+            <div class="col-head" data-target="t1c4">
+                <span class="col-label">📕 COL 4 · Detalle adicional / Q&A</span>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="col-content" id="t1c4">
+                <p>The equity dimension is worth highlighting: it is important to identify who is most likely to face infrastructure bottlenecks — whether in developed or developing countries — and to make this part of the core analysis.</p>
+                <p>The broader shift we would encourage is moving from tracking how technologies evolve to understanding the infrastructure conditions those technologies need to become viable and scalable.</p>
+                <p>AI can support this as an early-signal tool. It can identify infrastructure signals before they appear in the news — cable tenders, spectrum filings, data centre permits — across sources and languages that are difficult to track manually.</p>
+                <p>As a concrete example: quantum and immersive technologies cannot scale without data centres that offer low latency, high processing power, resilience, security, and sufficient energy. These are not optional conditions — they determine whether the technology can work at scale.</p>
+                <p><strong>To close this point:</strong> the proposal is not to add telecom to a long list of topics. It is to recognise it for what it is — the condition that makes everything else possible. New technology cannot deliver its full value without networks that are reliable, fast, capable, secure, and resilient. GFTech has an opportunity to treat telecom infrastructure as the enabling layer it truly is for all the technologies it examines.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TEMA 2 ========== -->
+    <div class="topic-card" id="topic2">
+        <div class="topic-title">
+            <span>2</span>
+            <span>Tech trends · foco estratégico</span>
+        </div>
+
+        <!-- Columna 1 -->
+        <div class="col-section">
+            <div class="col-head" style="background:#eef4fa; border-color:#c6d7e8; cursor:default;">
+                <span class="col-label">📌 COL 1 · Core message</span>
+                <span class="toggle-icon" style="opacity:0.4;">▶</span>
+            </div>
+            <div class="col-content open" style="display:block; border-left-color:#2b5a82;">
+                <p>A large part of the uncertainty GFTech aims to reduce comes not only from the technologies themselves, but from the infrastructure conditions that support them. Telecom infrastructure trends deserve a place in GFTech's scope.</p>
+            </div>
+        </div>
+
+        <!-- Columna 2 -->
+        <div class="col-section">
+            <div class="col-head" data-target="t2c2">
+                <span class="col-label">📘 COL 2 · Main argument + evidencia</span>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="col-content" id="t2c2">
+                <p>An illustrative example: a well-developed immersive application running on an unreliable or insecure network will inherit all of that network's limitations. Ensuring the infrastructure is resilient and fit for purpose is therefore part of reducing uncertainty around the technology itself.</p>
+                <p>Colombia's CRC has been systematically identifying and monitoring infrastructure and technology trends since 2020, publishing annual updates that track how the landscape changes over time. This provides a concrete, multi-year evidence base on how emerging connectivity trends develop and how quickly infrastructure conditions can change in practice.</p>
+                <p>We are now developing a dedicated web platform to make this monitoring work more accessible and continuously updatable — moving from an annual publication cycle to a living repository of trends and signals. We believe this model could connect well with GFTech's horizon scanning work and help build on it.</p>
+            </div>
+        </div>
+
+        <!-- Columna 3 -->
+        <div class="col-section">
+            <div class="col-head" data-target="t2c3">
+                <span class="col-label">📗 COL 3 · Deeper context & ejemplos</span>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="col-content" id="t2c3">
+                <p>We would highlight four priority areas for GFTech to consider.</p>
+                <p><strong>First — connectivity developments and cross-border connectivity:</strong> technologies such as fibre, laser-based connectivity, and non-terrestrial networks (NTN) are essential to provide the capacity, coverage, resilience, and low-latency connectivity required by immersive technologies, synthetic biology, and quantum technologies — while also ensuring reliable connectivity across borders.</p>
+                <p><strong>Second — programmable networks and specialised connectivity services:</strong> advances in SDN, 5G and 6G, network APIs, NaaS, and CaaS will allow networks to become more flexible and programmable, adapting their performance and resources to the specific requirements of each emerging technology, including immersive applications, distributed synthetic biology systems, and quantum technologies.</p>
+            </div>
+        </div>
+
+        <!-- Columna 4 -->
+        <div class="col-section">
+            <div class="col-head" data-target="t2c4">
+                <span class="col-label">📕 COL 4 · Detalle adicional / Q&A</span>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="col-content" id="t2c4">
+                <p><strong>Third — cybersecurity of critical network infrastructure:</strong> as communications networks become more distributed, interconnected, and software-driven, cybersecurity will be increasingly important to protect the infrastructure on which emerging technologies depend — from evolving threats, vulnerabilities, and supply-chain risks.</p>
+                <p><strong>Fourth — quantum-safe networks and quantum communications:</strong> networks will need to transition to post-quantum cryptography as quantum computing advances and current encryption standards come under pressure. At the same time, quantum communication could become a new type of network technology in its own right — potentially enabling more secure ways to transmit data.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TEMA 3 ========== -->
+    <div class="topic-card" id="topic3">
+        <div class="topic-title">
+            <span>3</span>
+            <span>Engagement · países no OCDE</span>
+        </div>
+
+        <!-- Columna 1 -->
+        <div class="col-section">
+            <div class="col-head" style="background:#eef4fa; border-color:#c6d7e8; cursor:default;">
+                <span class="col-label">📌 COL 1 · Core message</span>
+                <span class="toggle-icon" style="opacity:0.4;">▶</span>
+            </div>
+            <div class="col-content open" style="display:block; border-left-color:#2b5a82;">
+                <p>Engaging non-OECD countries in GFTech is a structural necessity. Emerging technologies depend on transnational infrastructure, so the analysis needs to incorporate perspectives from beyond the OECD.</p>
+            </div>
+        </div>
+
+        <!-- Columna 2 -->
+        <div class="col-section">
+            <div class="col-head" data-target="t3c2">
+                <span class="col-label">📘 COL 2 · Main argument + evidencia</span>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="col-content" id="t3c2">
+                <p>Telecom networks are interdependent by nature: a submarine cable connects at least two countries, standards are set internationally, and a small number of manufacturers supply equipment to most of the world.</p>
+                <p>Data flows, and the infrastructure supporting emerging technologies — satellites, cloud, AI, quantum — all have cross-border dimensions. A complete picture of the technology landscape requires input from non-OECD countries.</p>
+                <p>The relationship should be seen in both directions: non-OECD countries are not only recipients of GFTech's findings — they are also sources of evidence, insight, and signals that GFTech needs to do its work well.</p>
+            </div>
+        </div>
+
+        <!-- Columna 3 -->
+        <div class="col-section">
+            <div class="col-head" data-target="t3c3">
+                <span class="col-label">📗 COL 3 · Deeper context & ejemplos</span>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="col-content" id="t3c3">
+                <p>We would suggest three practical approaches.</p>
+                <p><strong>First — engage regional telecom bodies</strong> rather than managing individual country relationships: organisations such as CITEL, APT, and ATU aggregate regulatory experience from dozens of non-OECD members, providing access to regional perspectives and trends not visible from any single national vantage point.</p>
+                <p><strong>Second — create a structured channel</strong> for non-member regulators to contribute evidence directly into horizon scanning from the outset, not only to receive conclusions after the fact. This means involving them upstream — sharing deployment experiences, regulatory models, sandbox results, market shifts, and early signals.</p>
+                <p><strong>Third — focus engagement on telecom infrastructure</strong>, where the two-way value is clearest: OECD countries bring regulatory experience, standards, and competition policy; non-OECD countries bring leapfrogging experience, deployment innovation, and evidence from operating in more constrained environments.</p>
+            </div>
+        </div>
+
+        <!-- Columna 4 -->
+        <div class="col-section">
+            <div class="col-head" data-target="t3c4">
+                <span class="col-label">📕 COL 4 · Detalle adicional / Q&A</span>
+                <span class="toggle-icon">+</span>
+            </div>
+            <div class="col-content" id="t3c4">
+                <p>Sustaining meaningful engagement over time requires more than occasional consultations. Digital tools and online platforms can make participation continuous, structured, and effective — with clear scope, shared commitments, and defined deliverables.</p>
+                <ul>
+                    <li><strong>Shared knowledge resources:</strong> open libraries, shared document repositories, and dedicated web platforms allow regulators and bodies from non-OECD countries to access and contribute to GFTech's horizon scanning materials on an ongoing basis.</li>
+                    <li><strong>Activity and commitment tracking:</strong> digital platforms that track agreed activities, milestones, and outputs make participation accountable and results measurable — not only symbolic. Explicit scope, responsibilities, and deadlines are essential for this.</li>
+                    <li><strong>Collaborative workspaces:</strong> online platforms allow working groups with both OECD and non-OECD participants to co-develop outputs — analyses, early signals, regulatory case studies — under a shared framework, regardless of geography.</li>
+                </ul>
+                <p>This kind of infrastructure — digital as well as institutional — is what converts engagement from a one-off exercise into a continuous and productive relationship, with clear objectives and the ability to track progress over time.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footnote">GFTech · Horizon Scanning · Basado en la guía de presentación (CRC)</div>
+</div>
+
+<script>
+    (function() {
+        // Toggle de columnas (col 2,3,4) – cada topic
+        const heads = document.querySelectorAll('.col-head[data-target]');
+        heads.forEach(head => {
+            head.addEventListener('click', function(e) {
+                const targetId = this.dataset.target;
+                const content = document.getElementById(targetId);
+                if (!content) return;
+
+                // alternar clase open en content
+                const isOpen = content.classList.contains('open');
+                if (isOpen) {
+                    content.classList.remove('open');
+                    content.style.display = 'none';
+                    this.classList.remove('open');
+                    this.querySelector('.toggle-icon').textContent = '+';
+                } else {
+                    content.classList.add('open');
+                    content.style.display = 'block';
+                    this.classList.add('open');
+                    this.querySelector('.toggle-icon').textContent = '✕';
+                }
+            });
+        });
+
+        // Navegación por temas (scroll suave + active)
+        const navLinks = document.querySelectorAll('#topicNav a');
+        const topics = {
+            1: document.getElementById('topic1'),
+            2: document.getElementById('topic2'),
+            3: document.getElementById('topic3')
+        };
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const topicNum = this.dataset.topic;
+                const targetTopic = topics[topicNum];
+                if (targetTopic) {
+                    targetTopic.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                // actualizar active
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // resaltar tema al hacer scroll (opcional)
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                let currentTopic = null;
+                for (let i = 1; i <= 3; i++) {
+                    const el = topics[i];
+                    if (el) {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.top <= 120) {
+                            currentTopic = i;
+                        }
+                    }
+                }
+                if (currentTopic) {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    const activeLink = document.querySelector(`#topicNav a[data-topic="${currentTopic}"]`);
+                    if (activeLink) activeLink.classList.add('active');
+                }
+            }, 80);
+        });
+    })();
+</script>
+
+</body>
+</html>
